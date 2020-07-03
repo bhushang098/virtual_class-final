@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "659633795980",
+    "firebase_url": "https://virtual-class-2922d.firebaseio.com",
+    "project_id": "virtual-class-2922d",
+    "storage_bucket": "virtual-class-2922d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:659633795980:android:702f5a30f2f691a9415ca9",
+        "android_client_info": {
+          "package_name": "edu.virtualskills.virtualclass"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "659633795980-1cumq92i3qvbo6dtqnqg1ciqbdpmfuq5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBzweUJcVOZW1u97ZYpTFSUk7yQjP1CP94"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "659633795980-1cumq92i3qvbo6dtqnqg1ciqbdpmfuq5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

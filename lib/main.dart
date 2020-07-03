@@ -1,3 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:provider/provider.dart';
+import 'package:virtualclass/screens/mainScreen.dart';
+import 'package:virtualclass/services/authentication.dart';
+
 import 'constants.dart';
 import 'sign_in.dart';
 import 'package:flutter/material.dart';
@@ -7,27 +12,35 @@ void main() => runApp(MyApp());
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Virtual Class',
-      theme: ThemeData(
-        brightness: Brightness.dark,
-        primaryColor: kPrimaryColor,
-        scaffoldBackgroundColor: kBackgroundColor,
-        textTheme: TextTheme(
-          display1: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-          button: TextStyle(color: kPrimaryColor),
-          headline:
-              TextStyle(color: Colors.white, fontWeight: FontWeight.normal),
-        ),
-        inputDecorationTheme: InputDecorationTheme(
-          enabledBorder: UnderlineInputBorder(
-            borderSide: BorderSide(
-              color: Colors.white.withOpacity(.2),
+    return StreamProvider<FirebaseUser>.value(
+      value: Auth().user,
+      child: MaterialApp(
+        title: 'Virtual Class',
+        theme: ThemeData(
+//        brightness: Brightness.dark,
+          primaryColor: kPrimaryColor,
+//        scaffoldBackgroundColor: kBackgroundColor,
+          textTheme: TextTheme(
+            display1:
+                TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+            button: TextStyle(color: kPrimaryColor),
+            headline:
+                TextStyle(color: Colors.white, fontWeight: FontWeight.normal),
+          ),
+          inputDecorationTheme: InputDecorationTheme(
+            enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(
+                color: Colors.white.withOpacity(.2),
+              ),
             ),
           ),
         ),
+        routes: <String, WidgetBuilder>{
+          '/Loginpage': (BuildContext context) => new SignInScreen(),
+          '/MainPage': (BuildContext context) => new MainScreen(),
+        },
+        home: WelcomeScreen(),
       ),
-      home: WelcomeScreen(),
     );
   }
 }
@@ -35,7 +48,9 @@ class MyApp extends StatelessWidget {
 class WelcomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<FirebaseUser>(context);
     return Scaffold(
+      backgroundColor: kBackgroundColor,
       body: Column(
         children: <Widget>[
           Expanded(
@@ -85,11 +100,19 @@ class WelcomeScreen extends StatelessWidget {
                   FittedBox(
                     child: GestureDetector(
                       onTap: () {
-                        Navigator.push(context, MaterialPageRoute(
-                          builder: (context) {
-                            return SignInScreen();
-                          },
-                        ));
+                        if (user == null) {
+                          Navigator.push(context, MaterialPageRoute(
+                            builder: (context) {
+                              return SignInScreen();
+                            },
+                          ));
+                        } else {
+                          Navigator.push(context, MaterialPageRoute(
+                            builder: (context) {
+                              return MainScreen();
+                            },
+                          ));
+                        }
                       },
                       child: Container(
                         margin: EdgeInsets.only(bottom: 25),

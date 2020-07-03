@@ -2,7 +2,10 @@ import 'dart:ui';
 
 import 'package:flutter/material.dart';
 import 'package:virtualclass/constants.dart';
+import 'package:virtualclass/modals/userModal.dart';
 import 'package:virtualclass/screens/mainScreen.dart';
+import 'package:virtualclass/services/authentication.dart';
+import 'package:virtualclass/services/fStoreCollection.dart';
 
 class SignUp extends StatefulWidget {
   @override
@@ -10,6 +13,24 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
+  String mail, name, phone, pass1, pass2;
+
+  TextEditingController mailController = new TextEditingController();
+  TextEditingController nameController = new TextEditingController();
+  TextEditingController phoneController = new TextEditingController();
+  TextEditingController pass1Controller = new TextEditingController();
+  TextEditingController pass2Controller = new TextEditingController();
+  Auth _auth;
+  Myusers _user;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _auth = new Auth();
+    _user = new Myusers();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,7 +55,7 @@ class _SignUpState extends State<SignUp> {
                   child: Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Text(
-                      'Sign Up',
+                      'Create Account ',
                       style: Theme.of(context).textTheme.display1,
                     ),
                   ),
@@ -55,8 +76,9 @@ class _SignUpState extends State<SignUp> {
                   ),
                   Expanded(
                     child: TextField(
+                      controller: nameController,
                       decoration: InputDecoration(
-                        hintText: "fulle Name",
+                        hintText: "full Name",
                       ),
                     ),
                   )
@@ -77,6 +99,7 @@ class _SignUpState extends State<SignUp> {
                   ),
                   Expanded(
                     child: TextField(
+                      controller: mailController,
                       decoration: InputDecoration(
                         hintText: "Email Address",
                       ),
@@ -99,6 +122,7 @@ class _SignUpState extends State<SignUp> {
                   ),
                   Expanded(
                     child: TextField(
+                      controller: phoneController,
                       decoration: InputDecoration(
                         hintText: "Mobile No",
                       ),
@@ -121,6 +145,7 @@ class _SignUpState extends State<SignUp> {
                   ),
                   Expanded(
                     child: TextField(
+                      controller: pass1Controller,
                       decoration: InputDecoration(
                         hintText: "password",
                       ),
@@ -143,6 +168,7 @@ class _SignUpState extends State<SignUp> {
                   ),
                   Expanded(
                     child: TextField(
+                      controller: pass2Controller,
                       decoration: InputDecoration(
                         hintText: "conform Password",
                       ),
@@ -152,12 +178,41 @@ class _SignUpState extends State<SignUp> {
               ),
             ),
             GestureDetector(
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(
-                  builder: (context) {
-                    return MainScreen();
-                  },
-                ));
+              onTap: () async {
+                name = nameController.text;
+                mail = mailController.text;
+                phone = phoneController.text;
+                pass1 = pass1Controller.text;
+                pass2 = pass2Controller.text;
+
+                if (mail.isEmpty ||
+                    pass1.isEmpty ||
+                    phone.isEmpty ||
+                    pass2.isEmpty) {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        // Retrieve the text the that user has entered by using the
+                        // TextEditingController.
+                        content: Text('provide all info'),
+                      );
+                    },
+                  );
+                } else {
+                  if (pass2 == pass1) {
+                    dynamic user = await _auth.signUp(mail, pass1, context);
+                    if (user != null) {
+                      // Push Deta To fireStore
+                      setUserInitialDeta();
+                      new DbUserCollection(user).pushUserDeta(_user);
+                      Navigator.of(context).pushNamedAndRemoveUntil(
+                          '/MainPage', (Route<dynamic> route) => false);
+                    }
+                  } else {
+                    print('Password Not mached');
+                  }
+                }
               },
               child: Container(
                 margin: EdgeInsets.symmetric(horizontal: 80),
@@ -191,5 +246,18 @@ class _SignUpState extends State<SignUp> {
         ),
       ),
     );
+  }
+
+  void setUserInitialDeta() {
+    _user.name = name;
+    _user.phone = phone;
+    _user.email = mail;
+    _user.noOfPost = 0;
+    _user.followers = 0;
+    _user.following = 0;
+    _user.posts = ['post 1 ', 'post2'];
+    _user.images = [];
+    _user.videos = ['vid1', 'vid2 2'];
+    _user.links = [];
   }
 }

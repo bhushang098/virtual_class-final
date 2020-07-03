@@ -1,10 +1,16 @@
 import 'package:flutter/cupertino.dart';
 import 'package:virtualclass/screens/mainScreen.dart';
 import 'package:virtualclass/screens/signUp.dart';
+import 'package:virtualclass/services/authentication.dart';
 import 'constants.dart';
 import 'package:flutter/material.dart';
 
 class SignInScreen extends StatelessWidget {
+  String email, password;
+  TextEditingController mailController = new TextEditingController();
+  TextEditingController passController = new TextEditingController();
+  Auth _auth = new Auth();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -33,7 +39,10 @@ class SignInScreen extends StatelessWidget {
                     children: <Widget>[
                       Text(
                         "SIGN IN",
-                        style: Theme.of(context).textTheme.display1,
+                        style: TextStyle(
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 28),
                       ),
                       GestureDetector(
                         onTap: () {
@@ -45,7 +54,10 @@ class SignInScreen extends StatelessWidget {
                         },
                         child: Text(
                           "SIGN UP",
-                          style: Theme.of(context).textTheme.button,
+                          style: TextStyle(
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                              fontSize: 18),
                         ),
                       ),
                     ],
@@ -65,6 +77,7 @@ class SignInScreen extends StatelessWidget {
                         ),
                         Expanded(
                           child: TextField(
+                            controller: mailController,
                             decoration: InputDecoration(
                               hintText: "Email Address",
                             ),
@@ -85,6 +98,8 @@ class SignInScreen extends StatelessWidget {
                       ),
                       Expanded(
                         child: TextField(
+                          obscureText: true,
+                          controller: passController,
                           decoration: InputDecoration(
                             hintText: "Password",
                           ),
@@ -94,12 +109,43 @@ class SignInScreen extends StatelessWidget {
                   ),
                   Spacer(),
                   GestureDetector(
-                    onTap: () {
-                      Navigator.push(context, MaterialPageRoute(
-                        builder: (context) {
-                          return MainScreen();
-                        },
-                      ));
+                    onTap: () async {
+                      email = mailController.text;
+                      password = passController.text;
+                      if (email.isEmpty || password.isEmpty) {
+                        return showDialog(
+                          context: context,
+                          builder: (context) {
+                            return AlertDialog(
+                              // Retrieve the text the that user has entered by using the
+                              // TextEditingController.
+                              content: Text('Provide all info'),
+                            );
+                          },
+                        );
+                      } else {
+                        dynamic userid =
+                            await _auth.signIn(email, password, context);
+                        if (userid == null) {
+                          showDialog(
+                            context: context,
+                            builder: (context) {
+                              return AlertDialog(
+                                // Retrieve the text the that user has entered by using the
+                                // TextEditingController.
+                                content: Text('failed login'),
+                              );
+                            },
+                          );
+                        } else {
+                          Navigator.push(context, MaterialPageRoute(
+                            builder: (context) {
+                              return MainScreen();
+                            },
+                          ));
+                          print('>>>>>>>>>>>>>>>>>>' + userid.toString());
+                        }
+                      }
                     },
                     child: Container(
                       margin: EdgeInsets.symmetric(horizontal: 80),
