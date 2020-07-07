@@ -1,9 +1,6 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:virtualclass/constants.dart';
 import 'package:virtualclass/modals/userModal.dart';
-import 'package:virtualclass/screens/mainScreen.dart';
 import 'package:virtualclass/services/authentication.dart';
 import 'package:virtualclass/services/fStoreCollection.dart';
 
@@ -13,13 +10,14 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
-  String mail, name, phone, pass1, pass2;
+  String mail, name, phone, pass1, pass2, gender;
 
   TextEditingController mailController = new TextEditingController();
   TextEditingController nameController = new TextEditingController();
   TextEditingController phoneController = new TextEditingController();
   TextEditingController pass1Controller = new TextEditingController();
   TextEditingController pass2Controller = new TextEditingController();
+  TextEditingController genderController = new TextEditingController();
   Auth _auth;
   Myusers _user;
 
@@ -177,6 +175,29 @@ class _SignUpState extends State<SignUp> {
                 ],
               ),
             ),
+            Padding(
+              padding: EdgeInsets.all(20),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(right: 16),
+                    child: Icon(
+                      Icons.face,
+                      color: kPrimaryColor,
+                    ),
+                  ),
+                  Expanded(
+                    child: TextField(
+                      controller: genderController,
+                      decoration: InputDecoration(
+                        hintText: "Gender",
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
             GestureDetector(
               onTap: () async {
                 name = nameController.text;
@@ -184,11 +205,13 @@ class _SignUpState extends State<SignUp> {
                 phone = phoneController.text;
                 pass1 = pass1Controller.text;
                 pass2 = pass2Controller.text;
+                gender = genderController.text;
 
                 if (mail.isEmpty ||
                     pass1.isEmpty ||
                     phone.isEmpty ||
-                    pass2.isEmpty) {
+                    pass2.isEmpty ||
+                    gender.isEmpty) {
                   showDialog(
                     context: context,
                     builder: (context) {
@@ -255,9 +278,13 @@ class _SignUpState extends State<SignUp> {
     _user.noOfPost = 0;
     _user.followers = 0;
     _user.following = 0;
-    _user.posts = ['post 1 ', 'post2'];
+    _user.posts = [];
     _user.images = [];
-    _user.videos = ['vid1', 'vid2 2'];
+    _user.videos = [];
     _user.links = [];
+    _user.gender = gender.length > 4 ? false : true;
+    _user.post_liked = [];
+    _user.profile_url =
+        'https://firebasestorage.googleapis.com/v0/b/virtual-class-2922d.appspot.com/o/dummy%20profile%2Fdefault-avatar-profile-icon-social-media-user-vector-default-avatar-profile-icon-social-media-user-vector-portrait-176194876.jpg?alt=media&token=0aecb938-9b35-495c-bcac-9a212b54711c';
   }
 }

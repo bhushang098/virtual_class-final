@@ -1,11 +1,39 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Post {
-  String _userIdWhoPosted, _content, _imageUrl, _timesAgo;
+  String _userIdWhoPosted, _content, _imageUrl, _postId, _profile_url;
+  Timestamp _time_posted;
   int _likes;
+  Map<String, dynamic> _comments;
+
+  Map<String, dynamic> get comments => _comments;
+
+  set comments(Map<String, dynamic> value) {
+    _comments = value;
+  }
+
+  get profile_url => _profile_url;
+
+  set profile_url(value) {
+    _profile_url = value;
+  }
 
   String get userIdWhoPosted => _userIdWhoPosted;
 
   set userIdWhoPosted(String value) {
     _userIdWhoPosted = value;
+  }
+
+  Timestamp get time_posted => _time_posted;
+
+  set time_posted(Timestamp value) {
+    _time_posted = value;
+  }
+
+  get postId => _postId;
+
+  set postId(value) {
+    _postId = value;
   }
 
   get content => _content;
@@ -14,12 +42,6 @@ class Post {
 
   set likes(int value) {
     _likes = value;
-  }
-
-  get timesAgo => _timesAgo;
-
-  set timesAgo(value) {
-    _timesAgo = value;
   }
 
   get imageUrl => _imageUrl;

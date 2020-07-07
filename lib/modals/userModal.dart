@@ -1,10 +1,14 @@
 class Myusers {
-  String _name, _email, _phone, _gender;
-  int _noOfPost, _followers, _following;
-  List<String> _posts;
-  List<String> _images;
-  List<String> _videos;
-  List<String> _links;
+  String _name, _email, _phone, _profile_url;
+  bool _gender;
+  int _noOfPost;
+  int _followers;
+  int _following;
+  List<dynamic> _posts;
+  List<dynamic> _images;
+  List<dynamic> _videos;
+  List<dynamic> _links;
+  List<dynamic> _post_liked;
 
   String get name => _name;
 
@@ -12,41 +16,53 @@ class Myusers {
     _name = value;
   }
 
+  get profile_url => _profile_url;
+
+  set profile_url(value) {
+    _profile_url = value;
+  }
+
   get email => _email;
 
-  List<String> get links => _links;
+  List<dynamic> get post_liked => _post_liked;
 
-  set links(List<String> value) {
+  set post_liked(List<dynamic> value) {
+    _post_liked = value;
+  }
+
+  List<dynamic> get links => _links;
+
+  set links(List<dynamic> value) {
     _links = value;
   }
 
-  List<String> get videos => _videos;
+  List<dynamic> get videos => _videos;
 
-  set videos(List<String> value) {
+  set videos(List<dynamic> value) {
     _videos = value;
   }
 
-  List<String> get images => _images;
+  List<dynamic> get images => _images;
 
-  set images(List<String> value) {
+  set images(List<dynamic> value) {
     _images = value;
   }
 
-  List<String> get posts => _posts;
+  List<dynamic> get posts => _posts;
 
-  set posts(List<String> value) {
+  set posts(List<dynamic> value) {
     _posts = value;
   }
 
-  get following => _following;
+  int get following => _following;
 
-  set following(value) {
+  set following(int value) {
     _following = value;
   }
 
-  get followers => _followers;
+  int get followers => _followers;
 
-  set followers(value) {
+  set followers(int value) {
     _followers = value;
   }
 
@@ -56,9 +72,9 @@ class Myusers {
     _noOfPost = value;
   }
 
-  get gender => _gender;
+  bool get gender => _gender;
 
-  set gender(value) {
+  set gender(bool value) {
     _gender = value;
   }
 

@@ -5,11 +5,26 @@ import 'package:virtualclass/services/authentication.dart';
 import 'constants.dart';
 import 'package:flutter/material.dart';
 
-class SignInScreen extends StatelessWidget {
+class SignInScreen extends StatefulWidget {
+  @override
+  _SignInScreenState createState() => _SignInScreenState();
+}
+
+class _SignInScreenState extends State<SignInScreen> {
   String email, password;
+
   TextEditingController mailController = new TextEditingController();
+
   TextEditingController passController = new TextEditingController();
+
   Auth _auth = new Auth();
+  bool _obscureText = true;
+
+  void _toggle() {
+    setState(() {
+      _obscureText = !_obscureText;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -98,13 +113,25 @@ class SignInScreen extends StatelessWidget {
                       ),
                       Expanded(
                         child: TextField(
-                          obscureText: true,
+                          obscureText: _obscureText,
                           controller: passController,
                           decoration: InputDecoration(
                             hintText: "Password",
                           ),
                         ),
                       ),
+                      IconButton(
+                        icon: _obscureText
+                            ? Icon(
+                                Icons.visibility_off,
+                                color: kPrimaryColor,
+                              )
+                            : Icon(
+                                Icons.visibility,
+                                color: kPrimaryColor,
+                              ),
+                        onPressed: _toggle,
+                      )
                     ],
                   ),
                   Spacer(),

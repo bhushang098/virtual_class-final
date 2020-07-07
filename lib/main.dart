@@ -1,6 +1,9 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
+import 'package:virtualclass/screens/commentsScreen.dart';
 import 'package:virtualclass/screens/mainScreen.dart';
+import 'package:virtualclass/screens/makePostScreen.dart';
+import 'package:virtualclass/screens/profilepage.dart';
 import 'package:virtualclass/services/authentication.dart';
 
 import 'constants.dart';
@@ -38,6 +41,9 @@ class MyApp extends StatelessWidget {
         routes: <String, WidgetBuilder>{
           '/Loginpage': (BuildContext context) => new SignInScreen(),
           '/MainPage': (BuildContext context) => new MainScreen(),
+          '/ProfilePage': (BuildContext context) => new ProfilePage(),
+          '/CommentScreen': (BuildContext context) => new CommentsScreen(),
+          '/MakePostScreen': (BuildContext context) => new MakePostScreen(),
         },
         home: WelcomeScreen(),
       ),
