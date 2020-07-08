@@ -1,4 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:provider/provider.dart';
+import 'package:virtualclass/main.dart';
 import 'package:virtualclass/screens/mainScreen.dart';
 import 'package:virtualclass/screens/signUp.dart';
 import 'package:virtualclass/services/authentication.dart';
@@ -29,184 +32,225 @@ class _SignInScreenState extends State<SignInScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        children: <Widget>[
-          Expanded(
-            flex: 2,
-            child: Container(
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                  image: AssetImage("images/welcome_image.jpeg"),
-                  fit: BoxFit.cover,
-                  alignment: Alignment.bottomCenter,
-                ),
-              ),
-            ),
-          ),
-          Expanded(
-            flex: 5,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16),
-              child: Column(
-                children: <Widget>[
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Text(
-                        "SIGN IN",
-                        style: TextStyle(
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                            fontSize: 28),
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          Navigator.push(context, MaterialPageRoute(
-                            builder: (context) {
-                              return SignUp();
-                            },
-                          ));
-                        },
-                        child: Text(
-                          "SIGN UP",
-                          style: TextStyle(
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                              fontSize: 18),
-                        ),
-                      ),
-                    ],
+      body: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            Stack(
+              children: <Widget>[
+                Container(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height / 3,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage("images/welcome_image.jpeg"),
+                      fit: BoxFit.cover,
+                      alignment: Alignment.bottomCenter,
+                    ),
                   ),
-                  Spacer(),
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 40),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.center,
+                ),
+                Positioned(
+                  bottom: 0.0,
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Wrap(
                       children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.only(right: 16),
-                          child: Icon(
-                            Icons.mail,
-                            color: kPrimaryColor,
-                          ),
-                        ),
-                        Expanded(
-                          child: TextField(
-                            controller: mailController,
-                            decoration: InputDecoration(
-                              hintText: "Email Address",
-                            ),
-                          ),
+                        Text(
+                          'Welcome To VirtualSkill',
+                          style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 28,
+                              fontWeight: FontWeight.bold),
                         )
                       ],
                     ),
                   ),
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: <Widget>[
-                      Padding(
-                        padding: const EdgeInsets.only(right: 16),
-                        child: Icon(
-                          Icons.lock,
-                          color: kPrimaryColor,
-                        ),
-                      ),
-                      Expanded(
-                        child: TextField(
-                          obscureText: _obscureText,
-                          controller: passController,
-                          decoration: InputDecoration(
-                            hintText: "Password",
-                          ),
-                        ),
-                      ),
-                      IconButton(
-                        icon: _obscureText
-                            ? Icon(
-                                Icons.visibility_off,
-                                color: kPrimaryColor,
-                              )
-                            : Icon(
-                                Icons.visibility,
-                                color: kPrimaryColor,
-                              ),
-                        onPressed: _toggle,
-                      )
-                    ],
+                )
+              ],
+            ),
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: <Widget>[
+                  Text(
+                    "SIGN IN",
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 30),
                   ),
-                  Spacer(),
                   GestureDetector(
-                    onTap: () async {
-                      email = mailController.text;
-                      password = passController.text;
-                      if (email.isEmpty || password.isEmpty) {
-                        return showDialog(
-                          context: context,
-                          builder: (context) {
-                            return AlertDialog(
-                              // Retrieve the text the that user has entered by using the
-                              // TextEditingController.
-                              content: Text('Provide all info'),
-                            );
-                          },
-                        );
-                      } else {
-                        dynamic userid =
-                            await _auth.signIn(email, password, context);
-                        if (userid == null) {
-                          showDialog(
-                            context: context,
-                            builder: (context) {
-                              return AlertDialog(
-                                // Retrieve the text the that user has entered by using the
-                                // TextEditingController.
-                                content: Text('failed login'),
-                              );
-                            },
-                          );
-                        } else {
-                          Navigator.push(context, MaterialPageRoute(
-                            builder: (context) {
-                              return MainScreen();
-                            },
-                          ));
-                          print('>>>>>>>>>>>>>>>>>>' + userid.toString());
-                        }
-                      }
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(
+                        builder: (context) {
+                          return SignUp();
+                        },
+                      ));
                     },
-                    child: Container(
-                      margin: EdgeInsets.symmetric(horizontal: 80),
-                      padding:
-                          EdgeInsets.symmetric(horizontal: 26, vertical: 16),
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(25),
-                        color: kPrimaryColor,
-                      ),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: <Widget>[
-                          Text(
-                            "Log In ",
-                            style: Theme.of(context).textTheme.button.copyWith(
-                                  color: Colors.black,
-                                ),
-                          ),
-                          SizedBox(width: 10),
-                          Icon(
-                            Icons.arrow_forward,
-                            color: Colors.black,
-                          )
-                        ],
-                      ),
+                    child: Text(
+                      "SIGN UP",
+                      style: TextStyle(
+                          color: Colors.blue,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18),
                     ),
                   ),
-                  Spacer(),
                 ],
               ),
             ),
-          ),
-        ],
+            Padding(
+              padding: EdgeInsets.all(20),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(right: 16),
+                    child: Icon(
+                      Icons.mail,
+                      color: kPrimaryColor,
+                    ),
+                  ),
+                  Expanded(
+                    child: TextField(
+                      controller: mailController,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(15.0),
+                          ),
+                        ),
+                        hintText: "Mail Id",
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(20),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(right: 16),
+                    child: Icon(
+                      Icons.lock,
+                      color: kPrimaryColor,
+                    ),
+                  ),
+                  Expanded(
+                    child: TextField(
+                      obscureText: _obscureText,
+                      controller: passController,
+                      decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(15.0),
+                          ),
+                        ),
+                        hintText: "Password",
+                      ),
+                    ),
+                  ),
+                  IconButton(
+                    icon: _obscureText
+                        ? Icon(
+                            Icons.visibility_off,
+                            color: kPrimaryColor,
+                          )
+                        : Icon(
+                            Icons.visibility,
+                            color: kPrimaryColor,
+                          ),
+                    onPressed: _toggle,
+                  )
+                ],
+              ),
+            ),
+            GestureDetector(
+              onTap: () async {
+                email = mailController.text;
+                password = passController.text;
+                if (email.isEmpty || password.isEmpty) {
+                  return showDialog(
+                    context: context,
+                    builder: (context) {
+                      return AlertDialog(
+                        // Retrieve the text the that user has entered by using the
+                        // TextEditingController.
+                        content: Text('Provide all info'),
+                      );
+                    },
+                  );
+                } else {
+                  showProgressDialog();
+
+                  dynamic userid = await _auth.signIn(email, password, context);
+
+                  if (userid == null) {
+                    Navigator.pop(context);
+                    Navigator.pop(context);
+                    FocusScope.of(context).unfocus();
+                    dynamic userid =
+                        await _auth.signIn(email, password, context);
+                  } else {
+                    navToMainScreen();
+                    print('>>>>>>>>>>>>>>>>>>' + userid.toString());
+                  }
+                }
+              },
+              child: Container(
+                margin: EdgeInsets.symmetric(horizontal: 80),
+                padding: EdgeInsets.symmetric(horizontal: 26, vertical: 16),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(25),
+                  color: kPrimaryColor,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      "Log In ",
+                      style: Theme.of(context).textTheme.button.copyWith(
+                            color: Colors.black,
+                          ),
+                    ),
+                    SizedBox(width: 10),
+                    Icon(
+                      Icons.arrow_forward,
+                      color: Colors.black,
+                    )
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
+  }
+
+  Widget showProgressDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          // Retrieve the text the that user has entered by using the
+          // TextEditingController.
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Text('Logging In ..'),
+              CircularProgressIndicator(),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void navToMainScreen() {
+    Navigator.of(context)
+        .pushNamedAndRemoveUntil('/MainPage', (Route<dynamic> route) => false);
   }
 }

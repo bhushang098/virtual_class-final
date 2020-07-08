@@ -72,7 +72,11 @@ class Auth implements BaseAuth {
         },
       );
     }
-    return user.uid;
+    if (user == null) {
+      return null;
+    } else {
+      return user.uid;
+    }
   }
 
   Future<String> signUp(
@@ -123,7 +127,11 @@ class Auth implements BaseAuth {
         },
       );
     }
-    return user.uid;
+    if (user == null) {
+      return null;
+    } else {
+      return user.uid;
+    }
   }
 
   Future<FirebaseUser> getCurrentUser() async {

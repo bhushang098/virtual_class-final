@@ -1,6 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:virtualclass/modals/postsmodal.dart';
 import 'package:virtualclass/screens/timeService.dart';
+import 'package:virtualclass/services/fStoreCollection.dart';
 
 class CommentsScreen extends StatefulWidget {
   @override
@@ -9,10 +13,28 @@ class CommentsScreen extends StatefulWidget {
 
 class _CommentsScreenState extends State<CommentsScreen> {
   Post _post;
+  Map<String, dynamic> _comments;
+  List<dynamic> _userComment;
+  List<dynamic> _userNames;
+  String comment;
+  TextEditingController commentController = new TextEditingController();
+  FirebaseUser user;
+
+  @override
+  void initState() {
+    super.initState();
+    _userComment = [];
+    _userNames = [];
+  }
+
   @override
   Widget build(BuildContext context) {
     _post = ModalRoute.of(context).settings.arguments;
-
+    user = Provider.of<FirebaseUser>(context);
+    _comments = _post.comments;
+    _userNames.clear();
+    _userComment.clear();
+    setcomments(_comments);
     return Scaffold(
       appBar: AppBar(
         title: Text('Comments'),
@@ -65,9 +87,12 @@ class _CommentsScreenState extends State<CommentsScreen> {
                             Icons.comment,
                             color: Colors.black38,
                           ),
-                          Spacer(),
+                          SizedBox(
+                            width: 20,
+                          ),
                           Expanded(
                             child: TextField(
+                                controller: commentController,
                                 decoration:
                                     InputDecoration(hintText: 'Write Comment')),
                           ),
@@ -78,26 +103,47 @@ class _CommentsScreenState extends State<CommentsScreen> {
                                 color: Colors.black38,
                               ),
                               onTap: () {
-                                //ToDO Post Comment
+                                comment = commentController.text;
+                                if (comment.isEmpty) {
+                                } else {
+                                  setState(() {
+                                    FocusScope.of(context).unfocus();
+                                    new DbUserCollection(user.uid)
+                                        .addcomment(
+                                            comment, user.uid, _post.postId)
+                                        .then((onValue) {
+                                      showAlertDialog(context);
+                                    });
+                                  });
+                                }
                               }),
                         ],
                       ),
                     ),
-                    Padding(
-                      padding: const EdgeInsets.all(12.0),
-                      child: ListView.builder(
-                          scrollDirection: Axis.vertical,
-                          shrinkWrap: true,
-                          itemCount: _post.comments.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            return ListTile(
-                              leading: CircleAvatar(
-                                backgroundImage: NetworkImage(_post.imageUrl),
-                                radius: 10,
-                              ),
-                              title: Text('Comment 12'),
-                            );
-                          }),
+                    Container(
+                      height: MediaQuery.of(context).size.height / 2,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 20.0, vertical: 5),
+                        child: ListView.builder(
+                            scrollDirection: Axis.vertical,
+                            shrinkWrap: true,
+                            itemCount: _userComment.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return ListTile(
+                                leading: CircleAvatar(
+                                  backgroundImage: NetworkImage(
+                                      _userNames[index].split('>>.>>').first),
+                                  radius: 20,
+                                ),
+                                title: Text(
+                                  _userNames[index].split('>>.>>').last,
+                                  style: TextStyle(fontSize: 14),
+                                ),
+                                subtitle: Text(_userComment[index]),
+                              );
+                            }),
+                      ),
                     ),
                   ],
                 ),
@@ -115,5 +161,39 @@ class _CommentsScreenState extends State<CommentsScreen> {
   String convertTimeStamp(var timeStamp) {
     DateTime t = timeStamp.toDate();
     return timeAgo(t);
+  }
+
+  void setcomments(Map<String, dynamic> comments) {
+    for (var singleuser in comments.keys) {
+      _userNames.add(singleuser);
+      _userComment.add(comments[singleuser]);
+    }
+  }
+
+  void showAlertDialog(BuildContext context) {
+    Widget okButton = FlatButton(
+      child: Text("Ok"),
+      onPressed: () {
+        Navigator.of(context).pop();
+        Navigator.of(context).pop();
+      },
+    );
+
+    // Create AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("Comment Added"),
+      content: Text('Thanks For Posting Your Comment '),
+      actions: [
+        okButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
   }
 }

@@ -10,7 +10,9 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
-  String mail, name, phone, pass1, pass2, gender;
+  String mail, name, phone, pass1, pass2;
+  int gender;
+  final snackBar = SnackBar(content: Text('Password Not Matched'));
 
   TextEditingController mailController = new TextEditingController();
   TextEditingController nameController = new TextEditingController();
@@ -20,6 +22,14 @@ class _SignUpState extends State<SignUp> {
   TextEditingController genderController = new TextEditingController();
   Auth _auth;
   Myusers _user;
+  bool _obscureText = true;
+  int selectedRadioTile;
+  bool _ShowProgress = false;
+  void _toggle() {
+    setState(() {
+      _obscureText = !_obscureText;
+    });
+  }
 
   @override
   void initState() {
@@ -27,6 +37,13 @@ class _SignUpState extends State<SignUp> {
     super.initState();
     _auth = new Auth();
     _user = new Myusers();
+    selectedRadioTile = 0;
+  }
+
+  setSelectedRadioTile(int val) {
+    setState(() {
+      selectedRadioTile = val;
+    });
   }
 
   @override
@@ -76,7 +93,12 @@ class _SignUpState extends State<SignUp> {
                     child: TextField(
                       controller: nameController,
                       decoration: InputDecoration(
-                        hintText: "full Name",
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(15.0),
+                          ),
+                        ),
+                        hintText: "Full Name",
                       ),
                     ),
                   )
@@ -99,6 +121,11 @@ class _SignUpState extends State<SignUp> {
                     child: TextField(
                       controller: mailController,
                       decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(15.0),
+                          ),
+                        ),
                         hintText: "Email Address",
                       ),
                     ),
@@ -120,8 +147,14 @@ class _SignUpState extends State<SignUp> {
                   ),
                   Expanded(
                     child: TextField(
+                      keyboardType: TextInputType.phone,
                       controller: phoneController,
                       decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(15.0),
+                          ),
+                        ),
                         hintText: "Mobile No",
                       ),
                     ),
@@ -143,11 +176,29 @@ class _SignUpState extends State<SignUp> {
                   ),
                   Expanded(
                     child: TextField(
+                      obscureText: _obscureText,
                       controller: pass1Controller,
                       decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(15.0),
+                          ),
+                        ),
                         hintText: "password",
                       ),
                     ),
+                  ),
+                  IconButton(
+                    icon: _obscureText
+                        ? Icon(
+                            Icons.visibility_off,
+                            color: kPrimaryColor,
+                          )
+                        : Icon(
+                            Icons.visibility,
+                            color: kPrimaryColor,
+                          ),
+                    onPressed: _toggle,
                   )
                 ],
               ),
@@ -166,18 +217,36 @@ class _SignUpState extends State<SignUp> {
                   ),
                   Expanded(
                     child: TextField(
+                      obscureText: _obscureText,
                       controller: pass2Controller,
                       decoration: InputDecoration(
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.all(
+                            Radius.circular(15.0),
+                          ),
+                        ),
                         hintText: "conform Password",
                       ),
                     ),
+                  ),
+                  IconButton(
+                    icon: _obscureText
+                        ? Icon(
+                            Icons.visibility_off,
+                            color: kPrimaryColor,
+                          )
+                        : Icon(
+                            Icons.visibility,
+                            color: kPrimaryColor,
+                          ),
+                    onPressed: _toggle,
                   )
                 ],
               ),
             ),
             Padding(
               padding: EdgeInsets.all(20),
-              child: Row(
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
                   Padding(
@@ -187,14 +256,28 @@ class _SignUpState extends State<SignUp> {
                       color: kPrimaryColor,
                     ),
                   ),
-                  Expanded(
-                    child: TextField(
-                      controller: genderController,
-                      decoration: InputDecoration(
-                        hintText: "Gender",
-                      ),
-                    ),
-                  )
+                  RadioListTile(
+                    value: 1,
+                    groupValue: selectedRadioTile,
+                    title: Text("Male"),
+                    onChanged: (val) {
+                      print(" Mail ");
+                      setSelectedRadioTile(val);
+                    },
+                    activeColor: Colors.green,
+                    selected: false,
+                  ),
+                  RadioListTile(
+                    value: 2,
+                    groupValue: selectedRadioTile,
+                    title: Text("Female"),
+                    onChanged: (val) {
+                      print("Female");
+                      setSelectedRadioTile(val);
+                    },
+                    activeColor: Colors.green,
+                    selected: false,
+                  ),
                 ],
               ),
             ),
@@ -205,13 +288,13 @@ class _SignUpState extends State<SignUp> {
                 phone = phoneController.text;
                 pass1 = pass1Controller.text;
                 pass2 = pass2Controller.text;
-                gender = genderController.text;
+                gender = selectedRadioTile;
 
                 if (mail.isEmpty ||
                     pass1.isEmpty ||
                     phone.isEmpty ||
                     pass2.isEmpty ||
-                    gender.isEmpty) {
+                    gender.isNaN) {
                   showDialog(
                     context: context,
                     builder: (context) {
@@ -224,15 +307,34 @@ class _SignUpState extends State<SignUp> {
                   );
                 } else {
                   if (pass2 == pass1) {
+                    showProgressDialog();
                     dynamic user = await _auth.signUp(mail, pass1, context);
+
+                    if (user == null) {
+                      Navigator.pop(context);
+                      Navigator.pop(context);
+                      FocusScope.of(context).unfocus();
+                      dynamic user = await _auth.signUp(mail, pass1, context);
+                    }
+
                     if (user != null) {
                       // Push Deta To fireStore
                       setUserInitialDeta();
                       new DbUserCollection(user).pushUserDeta(_user);
                       Navigator.of(context).pushNamedAndRemoveUntil(
-                          '/MainPage', (Route<dynamic> route) => false);
+                          '/WelcomeScreen', (Route<dynamic> route) => false);
                     }
                   } else {
+                    showDialog(
+                      context: context,
+                      builder: (context) {
+                        return AlertDialog(
+                          // Retrieve the text the that user has entered by using the
+                          // TextEditingController.
+                          content: Text('Password Not Matched'),
+                        );
+                      },
+                    );
                     print('Password Not mached');
                   }
                 }
@@ -282,9 +384,28 @@ class _SignUpState extends State<SignUp> {
     _user.images = [];
     _user.videos = [];
     _user.links = [];
-    _user.gender = gender.length > 4 ? false : true;
+    _user.gender = gender == 1 ? true : false;
     _user.post_liked = [];
     _user.profile_url =
         'https://firebasestorage.googleapis.com/v0/b/virtual-class-2922d.appspot.com/o/dummy%20profile%2Fdefault-avatar-profile-icon-social-media-user-vector-default-avatar-profile-icon-social-media-user-vector-portrait-176194876.jpg?alt=media&token=0aecb938-9b35-495c-bcac-9a212b54711c';
+  }
+
+  Widget showProgressDialog() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          // Retrieve the text the that user has entered by using the
+          // TextEditingController.
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              Text('Registering..'),
+              CircularProgressIndicator(),
+            ],
+          ),
+        );
+      },
+    );
   }
 }

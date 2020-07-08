@@ -5,6 +5,7 @@ import 'package:virtualclass/modals/userModal.dart';
 
 class DbUserCollection {
   String uid;
+  Uuid uuid;
 
   DbUserCollection(this.uid);
 
@@ -38,10 +39,37 @@ class DbUserCollection {
     });
   }
 
+  Future addcomment(String comment, String uid, String postId) async {
+    uuid = new Uuid();
+    var newComment = comment;
+    Map<String, dynamic> oldComments;
+    DocumentSnapshot snapshot =
+        await Firestore.instance.collection('posts').document(postId).get();
+    DocumentSnapshot usersnapshot =
+        await Firestore.instance.collection('users').document(uid).get();
+    var userImgurl = usersnapshot.data['profile_url'];
+    var userName = usersnapshot.data['name'];
+    oldComments = snapshot.data['comments'];
+    oldComments.putIfAbsent(
+        userImgurl +
+            '>>.>>' +
+            uid +
+            '>>.>>' +
+            DateTime.now().toString() +
+            '>>.>>' +
+            userName,
+        () => newComment);
+
+    return await postCollection.document(postId).updateData({
+      'comments': oldComments,
+    });
+  }
+
   Future addLikeInPost(String postId) async {
     DocumentSnapshot snapshot =
         await Firestore.instance.collection('posts').document(postId).get();
     int likesBefore = snapshot.data['likes'];
+
     return await postCollection
         .document(postId)
         .updateData({'likes': likesBefore + 1});
@@ -102,5 +130,28 @@ class DbUserCollection {
       'comments': {},
       'profile_url': profileUrl,
     });
+
+    updateuserPostmade();
+  }
+
+  Future updateuserProfilerPic(String fileName, Uuid uuid, String uid) async {
+    var fileUrl;
+    final StorageReference firebaseStorageRef =
+        FirebaseStorage.instance.ref().child('images/').child(fileName);
+    fileUrl = await firebaseStorageRef.getDownloadURL();
+
+    return await userCollection
+        .document(uid)
+        .updateData({'profile_url': fileUrl});
+  }
+
+  void updateuserPostmade() async {
+    // just Adding No of Post Noe AfterWord Add image Urkl to shghow In user profile Section
+    DocumentSnapshot snapshot =
+        await Firestore.instance.collection(uid).document(uid).get();
+    int newNoOfPosts = snapshot.data['no_of_posts'] + 1;
+    return await userCollection
+        .document(uid)
+        .updateData({'no_of_posts': newNoOfPosts});
   }
 }

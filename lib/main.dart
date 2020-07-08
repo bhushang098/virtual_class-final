@@ -4,6 +4,7 @@ import 'package:virtualclass/screens/commentsScreen.dart';
 import 'package:virtualclass/screens/mainScreen.dart';
 import 'package:virtualclass/screens/makePostScreen.dart';
 import 'package:virtualclass/screens/profilepage.dart';
+import 'package:virtualclass/screens/wrapper.dart';
 import 'package:virtualclass/services/authentication.dart';
 
 import 'constants.dart';
@@ -44,8 +45,9 @@ class MyApp extends StatelessWidget {
           '/ProfilePage': (BuildContext context) => new ProfilePage(),
           '/CommentScreen': (BuildContext context) => new CommentsScreen(),
           '/MakePostScreen': (BuildContext context) => new MakePostScreen(),
+          '/WelcomeScreen': (BuildContext context) => new WelcomeScreen(),
         },
-        home: WelcomeScreen(),
+        home: Wrapper(),
       ),
     );
   }
@@ -113,11 +115,8 @@ class WelcomeScreen extends StatelessWidget {
                             },
                           ));
                         } else {
-                          Navigator.push(context, MaterialPageRoute(
-                            builder: (context) {
-                              return MainScreen();
-                            },
-                          ));
+                          Navigator.of(context).pushNamedAndRemoveUntil(
+                              '/MainPage', (Route<dynamic> route) => false);
                         }
                       },
                       child: Container(

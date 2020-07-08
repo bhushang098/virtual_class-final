@@ -177,9 +177,22 @@ class _HomePageState extends State<HomePage> {
                                       ),
                               ),
                               Text(snapShot.data[index].data['content']),
-                              Image.network(snapShot
-                                  .data[index].data['image_url']
-                                  .toString()),
+                              SizedBox(
+                                height: 5,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Image.network(
+                                  snapShot.data[index].data['image_url']
+                                      .toString(),
+                                  height:
+                                      MediaQuery.of(context).size.height / 3,
+                                  scale: 1.0,
+                                  fit: BoxFit.cover,
+                                  width: double.infinity,
+                                  alignment: Alignment.center,
+                                ),
+                              ),
                               SizedBox(
                                 height: 5,
                               ),
