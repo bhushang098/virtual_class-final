@@ -183,6 +183,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     },
                   );
                 } else {
+
                   showProgressDialog();
 
                   dynamic userid = await _auth.signIn(email, password, context);
