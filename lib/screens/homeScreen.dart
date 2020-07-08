@@ -8,6 +8,7 @@ import 'package:virtualclass/constants.dart';
 import 'package:virtualclass/modals/postsmodal.dart';
 import 'package:virtualclass/modals/userModal.dart';
 import 'package:virtualclass/screens/deawer.dart';
+import 'package:virtualclass/screens/networkVidScreen.dart';
 import 'package:virtualclass/screens/timeService.dart';
 import 'package:virtualclass/services/fStoreCollection.dart';
 import 'package:virtualclass/services/serchdeligate.dart';
@@ -180,19 +181,34 @@ class _HomePageState extends State<HomePage> {
                               SizedBox(
                                 height: 5,
                               ),
-                              Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Image.network(
-                                  snapShot.data[index].data['image_url']
-                                      .toString(),
-                                  height:
-                                      MediaQuery.of(context).size.height / 3,
-                                  scale: 1.0,
-                                  fit: BoxFit.cover,
-                                  width: double.infinity,
-                                  alignment: Alignment.center,
-                                ),
-                              ),
+                              snapShot.data[index].data['is_image']
+                                  ? Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Image.network(
+                                        snapShot.data[index].data['image_url']
+                                            .toString(),
+                                        height:
+                                            MediaQuery.of(context).size.height /
+                                                3,
+                                        scale: 1.0,
+                                        fit: BoxFit.cover,
+                                        width: double.infinity,
+                                        alignment: Alignment.center,
+                                      ),
+                                    )
+                                  : Padding(
+                                      padding: const EdgeInsets.all(8.0),
+                                      child: Container(
+                                        height:
+                                            MediaQuery.of(context).size.height /
+                                                3,
+                                        width:
+                                            MediaQuery.of(context).size.width,
+                                        child: NetworkPlayer(snapShot
+                                            .data[index].data['image_url']
+                                            .toString()),
+                                      ),
+                                    ),
                               SizedBox(
                                 height: 5,
                               ),

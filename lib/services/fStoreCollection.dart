@@ -129,6 +129,7 @@ class DbUserCollection {
       'user_id_who_posted': userName,
       'comments': {},
       'profile_url': profileUrl,
+      'is_image': true,
     });
 
     updateuserPostmade();

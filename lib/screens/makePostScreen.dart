@@ -7,6 +7,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 import 'package:virtualclass/constants.dart';
+import 'package:virtualclass/screens/videoScreen.dart';
 import 'package:virtualclass/services/fStoreCollection.dart';
 
 class MakePostScreen extends StatefulWidget {
@@ -16,15 +17,38 @@ class MakePostScreen extends StatefulWidget {
 
 class _MakePostScreenState extends State<MakePostScreen> {
   Future<File> imageFile;
+  File videoFile;
   bool _showProgress = false;
   TextEditingController captnController = new TextEditingController();
+  TextEditingController youTubeVideoLinkController =
+      new TextEditingController();
   String caption;
+  String uTubeLink;
   FirebaseUser user;
-  //Open gallery
+  bool _islinkOk = false;
+
+  @override
+  void initState() {
+    super.initState();
+    videoFile = null;
+    imageFile = null;
+    _showProgress = false;
+    uTubeLink = null;
+    _islinkOk = false;
+  }
+
   pickImageFromGallery(ImageSource source) {
     setState(() {
       imageFile = ImagePicker.pickImage(source: source);
     });
+  }
+
+  pickVideofromGallery(ImageSource source) async {
+    File video = await ImagePicker.pickVideo(source: ImageSource.gallery);
+    setState(() {
+      videoFile = video;
+    });
+    new DownloadedVidPalyer(videoFile);
   }
 
   Future uploadPic(BuildContext context) async {
@@ -125,21 +149,44 @@ class _MakePostScreenState extends State<MakePostScreen> {
                     ),
                     Spacer(),
                     GestureDetector(
-                      child: Icon(
-                        Icons.ondemand_video,
-                        color: Colors.black38,
-                      ),
-                    ),
+                        child: Icon(
+                          Icons.ondemand_video,
+                          color: Colors.black38,
+                        ),
+                        onTap: () {
+                          pickVideofromGallery(ImageSource.gallery);
+                        }),
                     Spacer(),
                     GestureDetector(
                       child: Icon(
                         Icons.insert_link,
                         color: Colors.black38,
                       ),
+                      onTap: () {
+                        setState(() {
+                          _islinkOk = true;
+                        });
+                      },
                     ),
                   ],
                 ),
               ),
+              _islinkOk
+                  ? Padding(
+                      padding: const EdgeInsets.all(12.0),
+                      child: TextField(
+                        controller: youTubeVideoLinkController,
+                        decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(15.0),
+                            ),
+                          ),
+                          hintText: "YouTube Video Link...",
+                        ),
+                      ),
+                    )
+                  : Text(''),
               _showProgress ? CircularProgressIndicator() : Text(''),
               SizedBox(
                 height: 30,
@@ -147,6 +194,10 @@ class _MakePostScreenState extends State<MakePostScreen> {
               Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: showImage(),
+              ),
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: showVideo(),
               ),
               TextFormField(
                 controller: captnController,
@@ -202,5 +253,29 @@ class _MakePostScreenState extends State<MakePostScreen> {
         }
       },
     );
+  }
+
+  Widget showVideo() {
+    return videoFile == null
+        ? Text('')
+        : Container(
+            width: MediaQuery.of(context).size.width,
+            height: MediaQuery.of(context).size.height / 4,
+            child: Stack(
+              children: <Widget>[
+                DownloadedVidPalyer(videoFile),
+                IconButton(
+                  icon: Icon(
+                    Icons.cancel,
+                    color: kPrimaryColor,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      videoFile = null;
+                    });
+                  },
+                ),
+              ],
+            ));
   }
 }
