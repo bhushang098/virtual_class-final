@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:virtualclass/modals/postsmodal.dart';
+import 'package:virtualclass/screens/networkVidScreen.dart';
 import 'package:virtualclass/screens/timeService.dart';
 import 'package:virtualclass/services/fStoreCollection.dart';
 
@@ -74,7 +75,19 @@ class _CommentsScreenState extends State<CommentsScreen> {
                       ),
                     ),
                     Text(_post.content),
-                    Image.network(_post.imageUrl),
+                    SizedBox(
+                      height: 5.0,
+                    ),
+                    _post.isImage
+                        ? Image.network(_post.imageUrl)
+                        : Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Container(
+                              height: MediaQuery.of(context).size.height / 3,
+                              width: MediaQuery.of(context).size.width,
+                              child: NetworkPlayer(_post.imageUrl),
+                            ),
+                          ),
                     SizedBox(
                       height: 5,
                     ),

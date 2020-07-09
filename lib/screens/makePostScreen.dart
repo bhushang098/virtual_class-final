@@ -1,4 +1,7 @@
+import 'dart:async';
 import 'dart:io';
+import 'package:connectivity/connectivity.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
@@ -6,6 +9,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
+import 'package:flutter/services.dart';
 import 'package:virtualclass/constants.dart';
 import 'package:virtualclass/screens/videoScreen.dart';
 import 'package:virtualclass/services/fStoreCollection.dart';
@@ -22,33 +26,33 @@ class _MakePostScreenState extends State<MakePostScreen> {
   TextEditingController captnController = new TextEditingController();
   TextEditingController youTubeVideoLinkController =
       new TextEditingController();
+
   String caption;
   String uTubeLink;
+  String vidFileName;
   FirebaseUser user;
   bool _islinkOk = false;
-
-  @override
-  void initState() {
-    super.initState();
-    videoFile = null;
-    imageFile = null;
-    _showProgress = false;
-    uTubeLink = null;
-    _islinkOk = false;
-  }
+  Uuid uuid = new Uuid();
+  StorageUploadTask _tasks;
 
   pickImageFromGallery(ImageSource source) {
+    videoFile = null;
+    _islinkOk = false;
     setState(() {
       imageFile = ImagePicker.pickImage(source: source);
     });
   }
 
   pickVideofromGallery(ImageSource source) async {
+    imageFile = null;
+    _islinkOk = false;
     File video = await ImagePicker.pickVideo(source: ImageSource.gallery);
+
     setState(() {
       videoFile = video;
     });
     new DownloadedVidPalyer(videoFile);
+    uploadVid(context);
   }
 
   Future uploadPic(BuildContext context) async {
@@ -78,7 +82,41 @@ class _MakePostScreenState extends State<MakePostScreen> {
     });
   }
 
+  Future uploadVid(BuildContext context) async {
+    String _extension = videoFile.path.split('.').last;
+
+    String fileName = uuid.v1() + videoFile.path.split('/').last;
+    vidFileName = fileName;
+    StorageReference storageReference =
+        FirebaseStorage.instance.ref().child('videos/').child(fileName);
+
+    final StorageUploadTask uploadTask = storageReference.putFile(
+        videoFile,
+        StorageMetadata(
+          contentType: 'videos/$_extension',
+        ));
+
+    setState(() {
+      _tasks = uploadTask;
+    });
+
+//    if (uploadTask.isComplete && uploadTask.isSuccessful) {
+//      new DbUserCollection(user.uid)
+//          .makePostWithVideo(fileName, uuid, caption, user.uid)
+//          .then((onValue) {
+//        setState(() {
+//          _showProgress = false;
+//        });
+//        showAlertDialog(context);
+//      });
+//    }
+  }
+
   void showAlertDialog(BuildContext context) {
+    setState(() {
+      _showProgress = false;
+    });
+
     Widget okButton = FlatButton(
       child: Text("See Your post"),
       onPressed: () {
@@ -108,22 +146,55 @@ class _MakePostScreenState extends State<MakePostScreen> {
   @override
   Widget build(BuildContext context) {
     user = Provider.of<FirebaseUser>(context);
+    Widget children;
+    if (_tasks == null) {
+    } else {
+      children = getTaskDetail(_tasks);
+    }
+
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         backgroundColor: kPrimaryColor,
         child: Icon(Icons.send),
-        onPressed: () {
-          _showProgress = true;
+        onPressed: () async {
           FocusScope.of(context).unfocus();
-          caption = captnController.text;
-          if (caption.isEmpty) {
-            print('share some thoughts Before');
-          } else {
-            if (imageFile != null) {
-              uploadPic(context);
+          var result = await Connectivity().checkConnectivity();
+          if (result == ConnectivityResult.none) {
+            _showDialog('No internet', "You're not connected to a network");
+          } else if (result == ConnectivityResult.mobile) {
+            caption = captnController.text;
+            if (caption.isEmpty) {
+              _showDialog('Needed Caption', 'Share Some Thoughts');
+            } else {
+              if (imageFile != null) {
+                uploadPic(context);
+                //uploadVid(context);
+              }
+              if (videoFile != null) {
+                setState(() {
+                  _showProgress = true;
+                });
+                new DbUserCollection(user.uid)
+                    .makePostWithVideo(vidFileName, uuid, caption, user.uid)
+                    .then((onValue) {
+                  showAlertDialog(context);
+                });
+              }
+            }
+          } else if (result == ConnectivityResult.wifi) {
+            caption = captnController.text;
+            if (caption.isEmpty) {
+              _showDialog('Needed Caption', 'Share Some Thoughts');
+            } else {
+              if (imageFile != null) {
+                uploadPic(context);
+                //uploadVid(context);
+              }
+              if (videoFile != null) {
+                uploadVid(context);
+              }
             }
           }
-          // makePostWithoutIamge();
         },
       ),
       appBar: AppBar(
@@ -189,7 +260,10 @@ class _MakePostScreenState extends State<MakePostScreen> {
                   : Text(''),
               _showProgress ? CircularProgressIndicator() : Text(''),
               SizedBox(
-                height: 30,
+                height: 5,
+              ),
+              Container(
+                child: children,
               ),
               Padding(
                 padding: const EdgeInsets.all(8.0),
@@ -277,5 +351,127 @@ class _MakePostScreenState extends State<MakePostScreen> {
                 ),
               ],
             ));
+  }
+
+  _showDialog(title, text) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(title),
+            content: Text(text),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('Ok'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          );
+        });
+  }
+
+  Widget getTaskDetail(StorageUploadTask tasks) {
+    return UploadTaskListTile(
+      task: _tasks,
+      onDismissed: null,
+      onDownload: null,
+    );
+  }
+}
+
+class UploadTaskListTile extends StatelessWidget {
+  const UploadTaskListTile(
+      {Key key, this.task, this.onDismissed, this.onDownload})
+      : super(key: key);
+
+  final StorageUploadTask task;
+  final VoidCallback onDismissed;
+  final VoidCallback onDownload;
+
+  String get status {
+    String result;
+    if (task.isComplete) {
+      if (task.isSuccessful) {
+        result = 'Complete';
+      } else if (task.isCanceled) {
+        result = 'Canceled';
+      } else {
+        result = 'Failed ERROR: ${task.lastSnapshot.error}';
+      }
+    } else if (task.isInProgress) {
+      result = 'Uploading';
+    } else if (task.isPaused) {
+      result = 'Paused';
+    }
+    return result;
+  }
+
+  String _bytesTransferred(StorageTaskSnapshot snapshot) {
+    return '${snapshot.bytesTransferred / snapshot.totalByteCount * 100}';
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    bool _isProgres = true;
+    return StreamBuilder<StorageTaskEvent>(
+      stream: task.events,
+      builder: (BuildContext context,
+          AsyncSnapshot<StorageTaskEvent> asyncSnapshot) {
+        Widget subtitle;
+        if (asyncSnapshot.hasData) {
+          final StorageTaskEvent event = asyncSnapshot.data;
+          final StorageTaskSnapshot snapshot = event.snapshot;
+          subtitle = Text('$status: ${_bytesTransferred(snapshot)}  %');
+        } else {
+          subtitle = const Text('Starting...');
+        }
+        return Dismissible(
+          key: Key(task.hashCode.toString()),
+          onDismissed: (_) => onDismissed(),
+          child: ListTile(
+            title: Text('Uploading Your Video...'),
+            subtitle: subtitle,
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Offstage(
+                  offstage: !task.isInProgress,
+                  child: IconButton(
+                    icon: const Icon(Icons.pause),
+                    onPressed: () => task.pause(),
+                  ),
+                ),
+                Offstage(
+                  offstage: !task.isPaused,
+                  child: IconButton(
+                    icon: const Icon(Icons.file_upload),
+                    onPressed: () => task.resume(),
+                  ),
+                ),
+                Offstage(
+                  offstage: task.isComplete,
+                  child: IconButton(
+                    icon: const Icon(Icons.cancel),
+                    onPressed: () => task.cancel(),
+                  ),
+                ),
+                Offstage(
+                  offstage: !(task.isComplete && task.isSuccessful),
+                  child: IconButton(
+                    icon: const Icon(
+                      Icons.check,
+                      color: Colors.green,
+                    ),
+                    onPressed: onDownload,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 }

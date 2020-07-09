@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:uuid/uuid.dart';
+import 'package:virtualclass/modals/teamModal.dart';
 import 'package:virtualclass/modals/userModal.dart';
 
 class DbUserCollection {
@@ -14,6 +15,9 @@ class DbUserCollection {
 
   final CollectionReference postCollection =
       Firestore.instance.collection('posts');
+
+  final CollectionReference teamsCollection =
+      Firestore.instance.collection('teams');
 
   Future pushUserDeta(Myusers user) async {
     return await userCollection.document(uid).setData({
@@ -135,6 +139,35 @@ class DbUserCollection {
     updateuserPostmade();
   }
 
+  Future makePostWithVideo(
+      String fileName, Uuid uuid, String caption, String uid) async {
+    //Whenever Stucked with Instance of Dynamic try Using var Insted Of String i Solvs
+    var fileUrl;
+    final StorageReference firebaseStorageRef =
+        FirebaseStorage.instance.ref().child('videos/').child(fileName);
+    fileUrl = await firebaseStorageRef.getDownloadURL();
+
+    DocumentSnapshot snapshot =
+        await Firestore.instance.collection('users').document(uid).get();
+
+    var userName = snapshot.data['name'];
+    var profileUrl = snapshot.data['profile_url'];
+
+    return await postCollection.document(fileName).setData({
+      'content': caption,
+      'image_url': fileUrl,
+      'likes': 0,
+      'post_id': fileName,
+      'time_uploaded': Timestamp.fromDate(DateTime.now()),
+      'user_id_who_posted': userName,
+      'comments': {},
+      'profile_url': profileUrl,
+      'is_image': false,
+    });
+
+    //updateuserPostmade();
+  }
+
   Future updateuserProfilerPic(String fileName, Uuid uuid, String uid) async {
     var fileUrl;
     final StorageReference firebaseStorageRef =
@@ -154,5 +187,29 @@ class DbUserCollection {
     return await userCollection
         .document(uid)
         .updateData({'no_of_posts': newNoOfPosts});
+  }
+
+  Future makeNewTeam(Team team) async {
+    return await teamsCollection.document(team.teamId).setData({
+      'team_name': team.teamName,
+      'about': team.about,
+      'location': team.location,
+      'who_can_post': team.whoCnaPost,
+      'who_can_see_post': team.whoCanSeePost,
+      'who_can_send_message': team.whoCanSendMessage,
+      'team_id': team.teamId,
+      'user_id': team.userId,
+      'members': {},
+    });
+  }
+
+  Future updateuserData1(String name, String email, String location,
+      String skill, String uid) async {
+    return await userCollection.document(uid).updateData({
+      'name': name,
+      'email': email,
+      'location': location,
+      'skill': skill,
+    });
   }
 }

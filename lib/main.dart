@@ -1,6 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:virtualclass/screens/commentsScreen.dart';
+import 'package:virtualclass/screens/editProfileScreen.dart';
+import 'package:virtualclass/screens/getTeamDetails.dart';
 import 'package:virtualclass/screens/mainScreen.dart';
 import 'package:virtualclass/screens/makePostScreen.dart';
 import 'package:virtualclass/screens/profilepage.dart';
@@ -46,6 +48,8 @@ class MyApp extends StatelessWidget {
           '/CommentScreen': (BuildContext context) => new CommentsScreen(),
           '/MakePostScreen': (BuildContext context) => new MakePostScreen(),
           '/WelcomeScreen': (BuildContext context) => new WelcomeScreen(),
+          '/GetTeamDetails': (BuildContext context) => new GetTeamDetails(),
+          '/EditProfile': (BuildContext context) => new EditProfileScreen(),
         },
         home: Wrapper(),
       ),

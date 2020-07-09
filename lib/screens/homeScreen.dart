@@ -250,6 +250,8 @@ class _HomePageState extends State<HomePage> {
 
                                         _post.profile_url = snapShot
                                             .data[index].data['profile_url'];
+                                        _post.isImage = snapShot
+                                            .data[index].data['is_image'];
 
                                         navToCommentscreen(_post);
                                       },

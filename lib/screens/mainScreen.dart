@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:virtualclass/constants.dart';
-import 'package:virtualclass/screens/groupPage.dart';
+import 'package:virtualclass/screens/teamPage.dart';
 import 'package:virtualclass/screens/homeScreen.dart';
 import 'package:virtualclass/screens/skillsPage.dart';
 import 'package:virtualclass/screens/studentPage.dart';
@@ -19,7 +19,7 @@ class _MainScreenState extends State<MainScreen> {
   List<Widget> _screens = [
     HomePage(),
     SkillsPage(),
-    GroupPage(),
+    TeamPage(),
     WorkshopPage(),
     StudentPage()
   ];

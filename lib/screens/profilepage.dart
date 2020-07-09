@@ -1,9 +1,9 @@
 import 'dart:io';
 
+import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 import 'package:virtualclass/constants.dart';
@@ -21,9 +21,9 @@ class _ProfilePageState extends State<ProfilePage> {
   bool _showProgress = false;
   FirebaseUser user;
 
-  pickImageFromGallery(ImageSource source) {
+  pickImageFromGallery() {
     setState(() {
-      imageFile = ImagePicker.pickImage(source: source);
+      imageFile = FilePicker.getFile(type: FileType.image);
       if (imageFile != null) {
         _showProgress = true;
         uploadPic(context);
@@ -142,7 +142,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             Spacer(),
                             GestureDetector(
                               onTap: () {
-                                pickImageFromGallery(ImageSource.gallery);
+                                pickImageFromGallery();
                               },
                               child: CircleAvatar(
                                 backgroundImage: NetworkImage(
@@ -152,12 +152,20 @@ class _ProfilePageState extends State<ProfilePage> {
                               ),
                             ),
                             Spacer(),
-                            Card(
-                              child: Padding(
-                                padding: const EdgeInsets.all(5.0),
-                                child: Icon(Icons.more_vert),
+                            GestureDetector(
+                              onTap: () {
+                                navToEditprofile(_myusers);
+                              },
+                              child: Card(
+                                child: Padding(
+                                  padding: const EdgeInsets.all(5.0),
+                                  child: Icon(
+                                    Icons.mode_edit,
+                                    color: Colors.black,
+                                  ),
+                                ),
+                                elevation: 5,
                               ),
-                              elevation: 5,
                             ),
                           ],
                         ),
@@ -319,5 +327,9 @@ class _ProfilePageState extends State<ProfilePage> {
         ),
       ),
     );
+  }
+
+  void navToEditprofile(Myusers myusers) {
+    Navigator.pushNamed(context, '/EditProfile', arguments: myusers);
   }
 }
