@@ -4,6 +4,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 import 'package:virtualclass/constants.dart';
@@ -23,7 +24,7 @@ class _ProfilePageState extends State<ProfilePage> {
 
   pickImageFromGallery() {
     setState(() {
-      imageFile = FilePicker.getFile(type: FileType.image);
+      imageFile = ImagePicker.pickImage(source: ImageSource.gallery);
       if (imageFile != null) {
         _showProgress = true;
         uploadPic(context);
