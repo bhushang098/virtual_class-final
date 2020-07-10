@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:connectivity/connectivity.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -35,6 +36,25 @@ class _HomePageState extends State<HomePage>
     _liked_Posts = new Set();
   }
 
+  _showDialog(title, text) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(title),
+            content: Text(text),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('Ok'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          );
+        });
+  }
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
@@ -64,10 +84,16 @@ class _HomePageState extends State<HomePage>
           IconButton(
               icon: Icon(Icons.person),
               onPressed: () async {
-                _myusers =
-                    await new DbUserCollection(user.uid).getUserDeta(user.uid);
-
-                navToprofilePage(_myusers);
+                var result = await Connectivity().checkConnectivity();
+                if (result == ConnectivityResult.none) {
+                  _showDialog(
+                      'No internet', "You're not connected to a network");
+                } else if (result == ConnectivityResult.mobile ||
+                    result == ConnectivityResult.wifi) {
+                  _myusers = await new DbUserCollection(user.uid)
+                      .getUserDeta(user.uid);
+                  navToprofilePage(_myusers);
+                }
                 print("u tapped profile");
               }),
           IconButton(

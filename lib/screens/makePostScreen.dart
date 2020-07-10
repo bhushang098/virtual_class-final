@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:connectivity/connectivity.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
@@ -38,6 +37,7 @@ class _MakePostScreenState extends State<MakePostScreen> {
   pickImageFromGallery(ImageSource source) {
     videoFile = null;
     _islinkOk = false;
+    _tasks = null;
     setState(() {
       imageFile = ImagePicker.pickImage(source: source);
     });
@@ -46,6 +46,7 @@ class _MakePostScreenState extends State<MakePostScreen> {
   pickVideofromGallery(ImageSource source) async {
     imageFile = null;
     _islinkOk = false;
+    _tasks = null;
     File video = await ImagePicker.pickVideo(source: ImageSource.gallery);
 
     setState(() {
@@ -99,17 +100,6 @@ class _MakePostScreenState extends State<MakePostScreen> {
     setState(() {
       _tasks = uploadTask;
     });
-
-//    if (uploadTask.isComplete && uploadTask.isSuccessful) {
-//      new DbUserCollection(user.uid)
-//          .makePostWithVideo(fileName, uuid, caption, user.uid)
-//          .then((onValue) {
-//        setState(() {
-//          _showProgress = false;
-//        });
-//        showAlertDialog(context);
-//      });
-//    }
   }
 
   void showAlertDialog(BuildContext context) {
@@ -144,6 +134,14 @@ class _MakePostScreenState extends State<MakePostScreen> {
   }
 
   @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+
+    _showProgress = false;
+  }
+
+  @override
   Widget build(BuildContext context) {
     user = Provider.of<FirebaseUser>(context);
     Widget children;
@@ -167,15 +165,19 @@ class _MakePostScreenState extends State<MakePostScreen> {
               _showDialog('Needed Caption', 'Share Some Thoughts');
             } else {
               if (imageFile != null) {
+                setState(() {
+                  _showProgress = true;
+                });
                 uploadPic(context);
-                //uploadVid(context);
               }
               if (videoFile != null) {
                 setState(() {
                   _showProgress = true;
                 });
+
                 new DbUserCollection(user.uid)
-                    .makePostWithVideo(vidFileName, uuid, caption, user.uid)
+                    .makePostWithVideo(
+                        vidFileName, uuid, caption, user.uid, context)
                     .then((onValue) {
                   showAlertDialog(context);
                 });
@@ -187,11 +189,22 @@ class _MakePostScreenState extends State<MakePostScreen> {
               _showDialog('Needed Caption', 'Share Some Thoughts');
             } else {
               if (imageFile != null) {
+                setState(() {
+                  _showProgress = true;
+                });
                 uploadPic(context);
-                //uploadVid(context);
               }
               if (videoFile != null) {
-                uploadVid(context);
+                setState(() {
+                  _showProgress = true;
+                });
+
+                new DbUserCollection(user.uid)
+                    .makePostWithVideo(
+                        vidFileName, uuid, caption, user.uid, context)
+                    .then((onValue) {
+                  showAlertDialog(context);
+                });
               }
             }
           }
@@ -346,6 +359,7 @@ class _MakePostScreenState extends State<MakePostScreen> {
                   onPressed: () {
                     setState(() {
                       videoFile = null;
+                      _showProgress = false;
                     });
                   },
                 ),
@@ -375,9 +389,15 @@ class _MakePostScreenState extends State<MakePostScreen> {
   Widget getTaskDetail(StorageUploadTask tasks) {
     return UploadTaskListTile(
       task: _tasks,
-      onDismissed: null,
+      onDismissed: _ondismissed(),
       onDownload: null,
     );
+  }
+
+  _ondismissed() {
+    setState(() {
+      _tasks = null;
+    });
   }
 }
 
@@ -414,7 +434,6 @@ class UploadTaskListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool _isProgres = true;
     return StreamBuilder<StorageTaskEvent>(
       stream: task.events,
       builder: (BuildContext context,

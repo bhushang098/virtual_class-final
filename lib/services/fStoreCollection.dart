@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 import 'package:virtualclass/modals/teamModal.dart';
 import 'package:virtualclass/modals/userModal.dart';
@@ -139,31 +140,39 @@ class DbUserCollection {
     updateuserPostmade();
   }
 
-  Future makePostWithVideo(
-      String fileName, Uuid uuid, String caption, String uid) async {
+  Future makePostWithVideo(String fileName, Uuid uuid, String caption,
+      String uid, BuildContext context) async {
     //Whenever Stucked with Instance of Dynamic try Using var Insted Of String i Solvs
     var fileUrl;
+
     final StorageReference firebaseStorageRef =
         FirebaseStorage.instance.ref().child('videos/').child(fileName);
     fileUrl = await firebaseStorageRef.getDownloadURL();
+    if (fileUrl == null) {
+      showDialog(
+          context: context,
+          child: Dialog(
+            child: Text('Wait While Video Is Being Uploaded'),
+          ));
+    } else {
+      DocumentSnapshot snapshot =
+          await Firestore.instance.collection('users').document(uid).get();
 
-    DocumentSnapshot snapshot =
-        await Firestore.instance.collection('users').document(uid).get();
+      var userName = snapshot.data['name'];
+      var profileUrl = snapshot.data['profile_url'];
 
-    var userName = snapshot.data['name'];
-    var profileUrl = snapshot.data['profile_url'];
-
-    return await postCollection.document(fileName).setData({
-      'content': caption,
-      'image_url': fileUrl,
-      'likes': 0,
-      'post_id': fileName,
-      'time_uploaded': Timestamp.fromDate(DateTime.now()),
-      'user_id_who_posted': userName,
-      'comments': {},
-      'profile_url': profileUrl,
-      'is_image': false,
-    });
+      return await postCollection.document(fileName).setData({
+        'content': caption,
+        'image_url': fileUrl,
+        'likes': 0,
+        'post_id': fileName,
+        'time_uploaded': Timestamp.fromDate(DateTime.now()),
+        'user_id_who_posted': userName,
+        'comments': {},
+        'profile_url': profileUrl,
+        'is_image': false,
+      });
+    }
 
     //updateuserPostmade();
   }

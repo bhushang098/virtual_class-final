@@ -194,7 +194,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     dynamic userid =
                         await _auth.signIn(email, password, context);
                   } else {
-                    navToMainScreen();
+                    natoWelcomeScreen();
                     print('>>>>>>>>>>>>>>>>>>' + userid.toString());
                   }
                 }
@@ -249,8 +249,8 @@ class _SignInScreenState extends State<SignInScreen> {
     );
   }
 
-  void navToMainScreen() {
-    Navigator.of(context)
-        .pushNamedAndRemoveUntil('/MainPage', (Route<dynamic> route) => false);
+  void natoWelcomeScreen() {
+    Navigator.of(context).pushNamedAndRemoveUntil(
+        '/WelcomeScreen', (Route<dynamic> route) => false);
   }
 }

@@ -1,6 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:connectivity/connectivity.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:virtualclass/modals/userModal.dart';
 import 'package:virtualclass/screens/deawer.dart';
+import 'package:virtualclass/services/fStoreCollection.dart';
 import 'package:virtualclass/services/serchdeligate.dart';
 
 class SkillsPage extends StatefulWidget {
@@ -9,8 +14,34 @@ class SkillsPage extends StatefulWidget {
 }
 
 class _SkillsPageState extends State<SkillsPage> {
+  Myusers _myusers;
+  FirebaseUser user;
+  _showDialog(title, text) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(title),
+            content: Text(text),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('Ok'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          );
+        });
+  }
+
+  void navToprofilePage(Myusers user) {
+    Navigator.pushNamed(context, '/ProfilePage', arguments: user);
+  }
+
   @override
   Widget build(BuildContext context) {
+    user = Provider.of<FirebaseUser>(context);
     final GlobalKey<ScaffoldState> _scaffoldKey =
         new GlobalKey<ScaffoldState>();
     return Scaffold(
@@ -28,7 +59,17 @@ class _SkillsPageState extends State<SkillsPage> {
               }),
           IconButton(
               icon: Icon(Icons.person),
-              onPressed: () {
+              onPressed: () async {
+                var result = await Connectivity().checkConnectivity();
+                if (result == ConnectivityResult.none) {
+                  _showDialog(
+                      'No internet', "You're not connected to a network");
+                } else if (result == ConnectivityResult.mobile ||
+                    result == ConnectivityResult.wifi) {
+                  _myusers = await new DbUserCollection(user.uid)
+                      .getUserDeta(user.uid);
+                  navToprofilePage(_myusers);
+                }
                 print("u tapped profile");
               }),
           IconButton(
