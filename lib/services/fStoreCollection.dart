@@ -203,13 +203,32 @@ class DbUserCollection {
     });
   }
 
-  Future updateuserData1(String name, String email, String location,
+  Future updateBasicUserData(String name, String email, String location,
       String skill, String uid) async {
     return await userCollection.document(uid).updateData({
       'name': name,
       'email': email,
       'location': location,
       'skill': skill,
+    });
+  }
+
+  Future updateUserInterests(List<String> interests) async {
+    return await userCollection.document(uid).updateData({
+      'interests': interests,
+    });
+  }
+
+  Future updateRole(String role, String gender) async {
+    return await userCollection.document(uid).updateData({
+      'role': role,
+      'gender': gender == 'Male' ? true : false,
+    });
+  }
+
+  Future makeAccountPrivate() async {
+    return await userCollection.document(uid).updateData({
+      'private_account': true,
     });
   }
 }

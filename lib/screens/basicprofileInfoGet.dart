@@ -8,7 +8,6 @@ class GetBasicProfileInfo extends StatefulWidget {
 class _GetBasicProfileInfoState extends State<GetBasicProfileInfo> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-    );
+    return Scaffold();
   }
 }
