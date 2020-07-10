@@ -18,8 +18,10 @@ class HomePage extends StatefulWidget {
   _HomePageState createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage>
+    with AutomaticKeepAliveClientMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
   Myusers _myusers;
 
   var uuid = Uuid();
@@ -35,6 +37,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   Widget build(BuildContext context) {
+    super.build(context);
     final user = Provider.of<FirebaseUser>(context);
     setPostLiked(user.uid);
     return Scaffold(
@@ -316,4 +319,8 @@ class _HomePageState extends State<HomePage> {
         await Firestore.instance.collection('users').document(uid).get();
     return snapshot.data['name'];
   }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 }
