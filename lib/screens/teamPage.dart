@@ -49,6 +49,7 @@ class _TeamPageState extends State<TeamPage> {
       backgroundColor: kPrimaryColor,
       key: _scaffoldKey,
       floatingActionButton: FloatingActionButton(
+        heroTag: 'fabCreateTeam',
         backgroundColor: kPrimaryColor,
         child: Icon(Icons.add),
         onPressed: () {
