@@ -239,7 +239,6 @@ class _GetTeamDetailsState extends State<GetTeamDetails> {
                       .then((onValue) {
                     showAlertDialog(context);
                   });
-                  //TODO mae new Team In Detabase
                 }
               },
               child: Container(

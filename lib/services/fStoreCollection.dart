@@ -2,6 +2,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
+import 'package:virtualclass/modals/classModal.dart';
+import 'package:virtualclass/modals/skillModal.dart';
 import 'package:virtualclass/modals/teamModal.dart';
 import 'package:virtualclass/modals/userModal.dart';
 
@@ -19,6 +21,12 @@ class DbUserCollection {
 
   final CollectionReference teamsCollection =
       Firestore.instance.collection('teams');
+
+  final CollectionReference skillCollection =
+      Firestore.instance.collection('skills');
+
+  final CollectionReference classesCollection =
+      Firestore.instance.collection('classes');
 
   Future pushUserDeta(Myusers user) async {
     return await userCollection.document(uid).setData({
@@ -42,6 +50,8 @@ class DbUserCollection {
         'Python Programing': false,
       },
       'is_teacher': false,
+      'skills_made': [],
+      'classes_made': [],
     });
   }
 
@@ -131,6 +141,7 @@ class DbUserCollection {
 
     var userName = snapshot.data['name'];
     var profileUrl = snapshot.data['profile_url'];
+    updateuserPostmade(fileName);
 
     return await postCollection.document(fileName).setData({
       'content': caption,
@@ -143,8 +154,6 @@ class DbUserCollection {
       'profile_url': profileUrl,
       'is_image': true,
     });
-
-    updateuserPostmade();
   }
 
   Future makePostWithVideo(String fileName, Uuid uuid, String caption,
@@ -167,6 +176,7 @@ class DbUserCollection {
 
       var userName = snapshot.data['name'];
       var profileUrl = snapshot.data['profile_url'];
+      updateuserPostmade(fileName);
 
       return await postCollection.document(fileName).setData({
         'content': caption,
@@ -180,8 +190,19 @@ class DbUserCollection {
         'is_image': false,
       });
     }
+  }
 
-    //updateuserPostmade();
+  void updateuserPostmade(String postId) async {
+    // just Adding No of Post Noe AfterWord Add image Urkl to shghow In user profile Section
+    DocumentSnapshot snapshot =
+        await Firestore.instance.collection('users').document(uid).get();
+    int newNoOfPosts = snapshot.data['no_of_posts'] + 1;
+    var posts = new List(newNoOfPosts);
+    posts = snapshot.data['posts'];
+    posts.add(postId);
+    return await userCollection
+        .document(uid)
+        .updateData({'no_of_posts': newNoOfPosts, 'posts': posts});
   }
 
   Future updateuserProfilerPic(String fileName, Uuid uuid, String uid) async {
@@ -195,16 +216,6 @@ class DbUserCollection {
         .updateData({'profile_url': fileUrl});
   }
 
-  void updateuserPostmade() async {
-    // just Adding No of Post Noe AfterWord Add image Urkl to shghow In user profile Section
-    DocumentSnapshot snapshot =
-        await Firestore.instance.collection(uid).document(uid).get();
-    int newNoOfPosts = snapshot.data['no_of_posts'] + 1;
-    return await userCollection
-        .document(uid)
-        .updateData({'no_of_posts': newNoOfPosts});
-  }
-
   Future makeNewTeam(Team team) async {
     return await teamsCollection.document(team.teamId).setData({
       'team_name': team.teamName,
@@ -216,6 +227,37 @@ class DbUserCollection {
       'team_id': team.teamId,
       'user_id': team.userId,
       'members': {},
+    });
+  }
+
+  Future makeNewSkill(Skill skill) async {
+    DocumentSnapshot snapshot =
+        await Firestore.instance.collection('users').document(uid).get();
+    var userName = snapshot.data['name'];
+
+    updateuserCreatedSkills(skill.skillId);
+    return await skillCollection.document(skill.skillId).setData({
+      'skill_name': skill.skillName,
+      'about': skill.about,
+      'who_can_post': skill.whoCnaPost,
+      'who_can_see_post': skill.whoCanSeePost,
+      'who_can_send_message': skill.whoCanSendMessage,
+      'skill_id': skill.skillId,
+      'user_id': skill.userId,
+      'host': userName,
+      'fees': skill.price,
+      'members': {},
+      'time_created': Timestamp.fromDate(new DateTime.now()),
+    });
+  }
+
+  Future updateuserCreatedSkills(String skillId) async {
+    DocumentSnapshot snapshot =
+        await Firestore.instance.collection('users').document(uid).get();
+    var skillsMade = snapshot.data['skills_made'];
+    skillsMade.add(skillId);
+    return await userCollection.document(uid).updateData({
+      'skills_made': skillsMade,
     });
   }
 
@@ -250,6 +292,41 @@ class DbUserCollection {
   Future makeAccountPrivate() async {
     return await userCollection.document(uid).updateData({
       'private_account': true,
+    });
+  }
+
+  Future makeNewClass(Classes classes) async {
+    DocumentSnapshot snapshot =
+        await Firestore.instance.collection('users').document(uid).get();
+    var userName = snapshot.data['name'];
+
+    DateTime startTime = DateTime(DateTime.now().year, DateTime.now().month,
+        DateTime.now().day, classes.startTime.hour, classes.startTime.minute);
+
+    updateuserCreatedClass(classes.classId);
+    return await classesCollection.document(classes.classId).setData({
+      'class_name': classes.className,
+      'location': classes.location,
+      'start_date': classes.startDate,
+      'end_date': classes.endDate,
+      'is_daily': classes.daily,
+      'timing': startTime,
+      'about': classes.about,
+      'class_id': classes.classId,
+      'user_id': classes.userId,
+      'host': userName,
+      'fees': classes.fees,
+      'time_created': Timestamp.fromDate(new DateTime.now()),
+    });
+  }
+
+  void updateuserCreatedClass(String classId) async {
+    DocumentSnapshot snapshot =
+        await Firestore.instance.collection('users').document(uid).get();
+    var skillsMade = snapshot.data['classes_made'];
+    skillsMade.add(classId);
+    return await userCollection.document(uid).updateData({
+      'classes_made': skillsMade,
     });
   }
 }

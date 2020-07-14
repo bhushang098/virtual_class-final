@@ -2,7 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:virtualclass/screens/commentsScreen.dart';
 import 'package:virtualclass/screens/createSkillpage.dart';
-import 'package:virtualclass/screens/createWorkshop.dart';
+import 'package:virtualclass/screens/createClass.dart';
 import 'package:virtualclass/screens/editProfileScreen.dart';
 import 'package:virtualclass/screens/getTeamDetails.dart';
 import 'package:virtualclass/screens/mainScreen.dart';
@@ -53,7 +53,7 @@ class MyApp extends StatelessWidget {
           '/GetTeamDetails': (BuildContext context) => new GetTeamDetails(),
           '/EditProfile': (BuildContext context) => new EditProfileScreen(),
           '/CreateSkills': (BuildContext context) => new CreateSkills(),
-          '/CreateWorkshop': (BuildContext context) => new CreateWorkshop(),
+          '/CreateWorkshop': (BuildContext context) => new CreateClass(),
         },
         home: Wrapper(),
       ),

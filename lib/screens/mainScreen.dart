@@ -4,7 +4,7 @@ import 'package:virtualclass/screens/teamPage.dart';
 import 'package:virtualclass/screens/homeScreen.dart';
 import 'package:virtualclass/screens/skillsPage.dart';
 import 'package:virtualclass/screens/studentPage.dart';
-import 'package:virtualclass/screens/workshopPage.dart';
+import 'package:virtualclass/screens/clasesPage.dart';
 
 class MainScreen extends StatefulWidget {
   @override
@@ -20,7 +20,7 @@ class _MainScreenState extends State<MainScreen> {
     HomePage(),
     SkillsPage(),
     TeamPage(),
-    WorkshopPage(),
+    ClassesPage(),
     StudentPage()
   ];
 

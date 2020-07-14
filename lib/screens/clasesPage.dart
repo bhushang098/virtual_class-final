@@ -7,26 +7,16 @@ import 'package:virtualclass/modals/userModal.dart';
 import 'package:virtualclass/screens/deawer.dart';
 import 'package:virtualclass/services/fStoreCollection.dart';
 import 'package:virtualclass/services/serchdeligate.dart';
-import 'package:virtualclass/tabScreens/AccountgetScreen.dart';
-import 'package:virtualclass/tabScreens/InterestsGetScreen.dart';
-import 'package:virtualclass/tabScreens/RoleGetScreen.dart';
-import 'package:virtualclass/tabScreens/basicInfoGetScreen.dart';
 
 import '../constants.dart';
 
-class SkillsPage extends StatefulWidget {
+class ClassesPage extends StatefulWidget {
   @override
-  _SkillsPageState createState() => _SkillsPageState();
+  _ClassesPageState createState() => _ClassesPageState();
 }
 
-class _SkillsPageState extends State<SkillsPage> {
-//  List<Widget> childrens = [
-//    BasicinfoGetScreen(),
-//    InterestsGetScreen(),
-//    RoleGetScreen(),
-//    AccountgetScreen(),
-//  ];
-
+class _ClassesPageState extends State<ClassesPage> {
+  final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   Myusers _myusers;
   FirebaseUser user;
   _showDialog(title, text) {
@@ -52,15 +42,23 @@ class _SkillsPageState extends State<SkillsPage> {
     Navigator.pushNamed(context, '/ProfilePage', arguments: user);
   }
 
+  Future<bool> isTeacher(FirebaseUser user) async {
+    DocumentSnapshot reference =
+        await Firestore.instance.collection('users').document(user.uid).get();
+    if (reference.data['is_teacher']) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     user = Provider.of<FirebaseUser>(context);
-    final GlobalKey<ScaffoldState> _scaffoldKey =
-        new GlobalKey<ScaffoldState>();
     return Scaffold(
       key: _scaffoldKey,
       floatingActionButton: FloatingActionButton(
-        heroTag: 'fabCreateSkill',
+        heroTag: 'fabCreateWorkshop',
         backgroundColor: kPrimaryColor,
         child: Icon(Icons.add),
         onPressed: () {
@@ -74,12 +72,12 @@ class _SkillsPageState extends State<SkillsPage> {
                   return AlertDialog(
                     // Retrieve the text the that user has entered by using the
                     // TextEditingController.
-                    content: Text('students can not create Skills'),
+                    content: Text('students can not create Classes'),
                   );
                 },
               );
             } else {
-              navToCreateSkill();
+              navToCreateWorkshop();
             }
           });
           // navTpGrtPostDetails();
@@ -87,7 +85,7 @@ class _SkillsPageState extends State<SkillsPage> {
       ),
       endDrawer: MyDrawer(),
       appBar: AppBar(
-        title: Text("Skills Page"),
+        title: Text("Class Page"),
         actions: <Widget>[
           IconButton(
               icon: Icon(Icons.search),
@@ -118,28 +116,9 @@ class _SkillsPageState extends State<SkillsPage> {
                 print("u tapped menu");
               })
         ],
-//          bottom: TabBar(
-//            indicatorWeight: 3.0,
-//            indicatorColor: Colors.green,
-//            labelPadding: EdgeInsets.all(0.0),
-//            tabs: <Widget>[
-//              Tab(
-//                text: 'Basic Info',
-//              ),
-//              Tab(
-//                text: 'Interests',
-//              ),
-//              Tab(
-//                text: 'Role',
-//              ),
-//              Tab(
-//                text: 'Account',
-//              ),
-//            ],
-//          ),
       ),
       body: FutureBuilder(
-        future: getSkills(),
+        future: getClasses(),
         builder: (_, snapShot) {
           if (snapShot.connectionState == ConnectionState.waiting) {
             // ignore: missing_return
@@ -163,12 +142,12 @@ class _SkillsPageState extends State<SkillsPage> {
                         child: Column(
                           children: <Widget>[
                             SizedBox(
-                              height: 12,
+                              height: 10,
                             ),
                             Padding(
                               padding: const EdgeInsets.all(8.0),
                               child: Text(
-                                snapShot.data[index].data['skill_name'],
+                                snapShot.data[index].data['class_name'],
                                 style: TextStyle(
                                     fontSize: 26, fontWeight: FontWeight.bold),
                               ),
@@ -177,22 +156,45 @@ class _SkillsPageState extends State<SkillsPage> {
                               height: 10,
                             ),
                             Text(
-                              '     INR ${snapShot.data[index].data['fees']}      ',
-                              style: TextStyle(
-                                  backgroundColor: kPrimaryColor, fontSize: 17),
+                                ' Location : ${snapShot.data[index].data['location']} '),
+                            SizedBox(
+                              height: 8,
+                            ),
+                            snapShot.data[index].data['fees'] == null
+                                ? Text(
+                                    '    Free Class    ',
+                                    style: TextStyle(
+                                        backgroundColor: kPrimaryColor,
+                                        fontSize: 17),
+                                  )
+                                : Text(
+                                    '  INR ${snapShot.data[index].data['fees']}      ',
+                                    style: TextStyle(
+                                        backgroundColor: kPrimaryColor,
+                                        fontSize: 17),
+                                  ),
+                            SizedBox(
+                              height: 8,
+                            ),
+                            ListTile(
+                              leading: Icon(
+                                Icons.date_range,
+                                color: kPrimaryColor,
+                              ),
+                              title: Text(snapShot
+                                  .data[index].data['start_date']
+                                  .toString()),
                             ),
                             SizedBox(
                               height: 8,
                             ),
-                            Text(
-                                'Members ${snapShot.data[index].data['members'].length} '),
-                            SizedBox(
-                              height: 8,
-                            ),
-                            Text(
-                              'Hosted By :  ${snapShot.data[index].data['host']} ',
-                              style: TextStyle(
-                                  fontSize: 15, fontWeight: FontWeight.bold),
+                            ListTile(
+                              leading: Icon(
+                                Icons.access_time,
+                                color: kPrimaryColor,
+                              ),
+                              title: Text(snapShot.data[index].data['timing']
+                                  .toString()),
                             ),
                             SizedBox(
                               height: 8,
@@ -206,39 +208,16 @@ class _SkillsPageState extends State<SkillsPage> {
           }
         },
       ),
-//        body: TabBarView(
-//          children: childrens,
-//        ),
     );
   }
 
-  getSkills() async {
+  getClasses() async {
     var fireStore = Firestore.instance;
-    QuerySnapshot qn = await fireStore
-        .collection('skills')
-        .orderBy('time_created', descending: true)
-        .getDocuments();
+    QuerySnapshot qn = await fireStore.collection('classes').getDocuments();
     return qn.documents;
   }
 
-  Future<bool> isTeacher(FirebaseUser user) async {
-    DocumentSnapshot reference =
-        await Firestore.instance.collection('users').document(user.uid).get();
-    if (reference.data['is_teacher']) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-  void navToCreateSkill() {
-    Navigator.pushNamed(context, '/CreateSkills');
-  }
-
-  Future<String> getUsername(String uid) async {
-    DocumentSnapshot snapshot =
-        await Firestore.instance.collection('users').document(uid).get();
-
-    var userName = snapshot.data['name'];
+  void navToCreateWorkshop() {
+    Navigator.pushNamed(context, '/CreateWorkshop');
   }
 }

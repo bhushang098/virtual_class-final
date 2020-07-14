@@ -15,7 +15,6 @@ class EditProfileScreen extends StatefulWidget {
 }
 
 class _EditProfileScreenState extends State<EditProfileScreen> {
-
   List<Widget> childrens = [
     BasicinfoGetScreen(),
     InterestsGetScreen(),
