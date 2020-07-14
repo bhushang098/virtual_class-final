@@ -35,6 +35,13 @@ class DbUserCollection {
       'profile_url': user.profile_url,
       'no_of_posts': user.noOfPost,
       'gender': user.gender,
+      'interests': {
+        'computer Networking': false,
+        'Artificial Intelligence': false,
+        'Graphic Design': false,
+        'Python Programing': false,
+      },
+      'is_teacher': false,
     });
   }
 
@@ -228,10 +235,15 @@ class DbUserCollection {
     });
   }
 
-  Future updateRole(String role, String gender) async {
-    return await userCollection.document(uid).updateData({
-      'role': role,
-      'gender': gender == 'Male' ? true : false,
+  Future makeRoleUpdateRequest(String mail, String name) async {
+    return await Firestore.instance
+        .collection('professor_requests')
+        .document(uid)
+        .setData({
+      'email': mail,
+      'user_id': uid,
+      'request_time': Timestamp.fromDate(new DateTime.now()),
+      'name': name,
     });
   }
 

@@ -25,6 +25,7 @@ class _SignUpState extends State<SignUp> {
   bool _obscureText = true;
   int selectedRadioTile;
   bool _ShowProgress = false;
+
   void _toggle() {
     setState(() {
       _obscureText = !_obscureText;
@@ -335,7 +336,7 @@ class _SignUpState extends State<SignUp> {
                         );
                       },
                     );
-                    print('Password Not mached');
+                    print('Password Not matched');
                   }
                 }
               },
@@ -378,8 +379,8 @@ class _SignUpState extends State<SignUp> {
     _user.phone = phone;
     _user.email = mail;
     _user.noOfPost = 0;
-    _user.followers = 0;
-    _user.following = 0;
+    _user.followers = [];
+    _user.following = [];
     _user.posts = [];
     _user.images = [];
     _user.videos = [];

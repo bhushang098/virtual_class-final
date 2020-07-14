@@ -8,6 +8,8 @@ import 'package:virtualclass/screens/deawer.dart';
 import 'package:virtualclass/services/fStoreCollection.dart';
 import 'package:virtualclass/services/serchdeligate.dart';
 
+import '../constants.dart';
+
 class WorkshopPage extends StatefulWidget {
   @override
   _WorkshopPageState createState() => _WorkshopPageState();
@@ -40,11 +42,47 @@ class _WorkshopPageState extends State<WorkshopPage> {
     Navigator.pushNamed(context, '/ProfilePage', arguments: user);
   }
 
+  Future<bool> isTeacher(FirebaseUser user) async {
+    DocumentSnapshot reference =
+        await Firestore.instance.collection('users').document(user.uid).get();
+    if (reference.data['is_teacher']) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     user = Provider.of<FirebaseUser>(context);
     return Scaffold(
       key: _scaffoldKey,
+      floatingActionButton: FloatingActionButton(
+        heroTag: 'fabCreateWorkshop',
+        backgroundColor: kPrimaryColor,
+        child: Icon(Icons.add),
+        onPressed: () {
+          bool istechher = false;
+          isTeacher(user).then((value) async {
+            istechher = value;
+            if (!istechher) {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    // Retrieve the text the that user has entered by using the
+                    // TextEditingController.
+                    content: Text('students can not create Skills'),
+                  );
+                },
+              );
+            } else {
+              navToCreateWorkshop();
+            }
+          });
+          // navTpGrtPostDetails();
+        },
+      ),
       endDrawer: MyDrawer(),
       appBar: AppBar(
         title: Text("Workshop Page"),
@@ -204,5 +242,9 @@ class _WorkshopPageState extends State<WorkshopPage> {
     var fireStore = Firestore.instance;
     QuerySnapshot qn = await fireStore.collection('workshops').getDocuments();
     return qn.documents;
+  }
+
+  void navToCreateWorkshop() {
+    Navigator.pushNamed(context, '/CreateWorkshop');
   }
 }

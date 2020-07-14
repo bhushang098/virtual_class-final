@@ -44,14 +44,13 @@ class _MyDrawerState extends State<MyDrawer> {
             ),
             Padding(
               padding: const EdgeInsets.all(4.0),
-              child: GestureDetector(
-                onTap: () {
-                  print('You Tapped purchases');
-                },
+              child: InkWell(
+                onTap: () {},
+                splashColor: Colors.lightBlue[300],
                 child: ListTile(
-                  leading: Icon(Icons.shopping_cart),
+                  leading: Icon(Icons.dashboard),
                   title: Text(
-                    'menu 1',
+                    'DashBoard',
                     style: TextStyle(fontSize: 18),
                   ),
                 ),

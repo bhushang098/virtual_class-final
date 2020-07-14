@@ -1,13 +1,15 @@
 import 'dart:io';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
-import 'package:virtualclass/constants.dart';
-import 'package:virtualclass/modals/userModal.dart';
 import 'package:virtualclass/services/fStoreCollection.dart';
+
+import '../constants.dart';
 
 class ProfilePage extends StatefulWidget {
   @override
@@ -15,7 +17,7 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-  Myusers _myusers;
+  //Myusers _myusers;
   Future<File> imageFile;
   bool _showProgress = false;
   FirebaseUser user;
@@ -87,248 +89,570 @@ class _ProfilePageState extends State<ProfilePage> {
     });
   }
 
+  getPofile(String uid) async {
+    var fireStore = Firestore.instance;
+    DocumentSnapshot dsn =
+        await fireStore.collection('users').document(uid).get();
+    return dsn;
+  }
+
   @override
   Widget build(BuildContext context) {
-    _myusers = ModalRoute.of(context).settings.arguments;
+    //_myusers = ModalRoute.of(context).settings.arguments;
     user = Provider.of<FirebaseUser>(context);
     _showProgress = false;
     return Scaffold(
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Stack(
-              children: <Widget>[
-                Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height * .30,
-                  decoration: BoxDecoration(
-                    gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [kPrimaryColor, kPrimaryColor]),
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                ),
-                Container(
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height * .70,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30),
-                  ),
-                  child: Column(
-                    children: <Widget>[
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 50),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
+      body: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: FutureBuilder(
+          future: getPofile(user.uid),
+          builder: (_, snapShot) {
+            if (snapShot.connectionState == ConnectionState.waiting) {
+              // ignore: missing_return
+              return Center(
+                child: Text('Loading ....'),
+              );
+            } else {
+              return snapShot.data['is_teacher']
+                  ? SingleChildScrollView(
+                      child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Stack(
                           children: <Widget>[
-                            GestureDetector(
-                              onTap: () {
-                                Navigator.pop(context);
-                              },
-                              child: Card(
-                                child: Padding(
-                                  padding: const EdgeInsets.all(5.0),
-                                  child: Icon(Icons.arrow_back_ios),
-                                ),
-                                elevation: 5,
+                            Container(
+                              width: MediaQuery.of(context).size.width,
+                              height: MediaQuery.of(context).size.height * .36,
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                    colors: [kPrimaryColor, kPrimaryColor]),
+                                borderRadius: BorderRadius.circular(30),
                               ),
                             ),
-                            Spacer(),
-                            GestureDetector(
-                              onTap: () {
-                                pickImageFromGallery();
-                              },
-                              child: CircleAvatar(
-                                backgroundImage: NetworkImage(
-                                  _myusers.profile_url,
-                                ),
-                                radius: 40.0,
+                            Container(
+                              width: MediaQuery.of(context).size.width,
+                              height: MediaQuery.of(context).size.height * .70,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              child: Column(
+                                children: <Widget>[
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 50),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        GestureDetector(
+                                          onTap: () {
+                                            Navigator.pop(context);
+                                          },
+                                          child: Card(
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(5.0),
+                                              child: Icon(Icons.arrow_back_ios),
+                                            ),
+                                            elevation: 5,
+                                          ),
+                                        ),
+                                        Spacer(),
+                                        GestureDetector(
+                                          onTap: () {
+                                            pickImageFromGallery();
+                                          },
+                                          child: CircleAvatar(
+                                            backgroundImage: NetworkImage(
+                                              snapShot.data['profile_url'],
+                                            ),
+                                            radius: 40.0,
+                                          ),
+                                        ),
+                                        Spacer(),
+                                        GestureDetector(
+                                          onTap: () {
+                                            navToEditprofile();
+                                          },
+                                          child: Card(
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(5.0),
+                                              child: Icon(
+                                                Icons.mode_edit,
+                                                color: Colors.black,
+                                              ),
+                                            ),
+                                            elevation: 5,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    snapShot.data['name'],
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    snapShot.data['email'],
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                  RatingBar(
+                                    initialRating: 3,
+                                    minRating: 5,
+                                    direction: Axis.horizontal,
+                                    itemCount: 5,
+                                    itemPadding:
+                                        EdgeInsets.symmetric(horizontal: 2.0),
+                                    itemBuilder: (context, _) => Icon(
+                                      Icons.star,
+                                      color: Colors.green,
+                                    ),
+                                    onRatingUpdate: (rating) {
+                                      print(rating);
+                                    },
+                                  ),
+                                ],
                               ),
                             ),
-                            Spacer(),
-                            GestureDetector(
-                              onTap: () {
-                                navToEditprofile(_myusers);
-                              },
+                            Positioned(
+                              top: MediaQuery.of(context).size.height / 9,
+                              left: MediaQuery.of(context).size.width / 2,
+                              child: Icon(
+                                Icons.verified_user,
+                                color: Colors.green,
+                              ),
+                            ),
+                            Padding(
+                              padding: new EdgeInsets.only(
+                                top: MediaQuery.of(context).size.height * .28,
+                                left: 5,
+                                right: 5,
+                              ),
                               child: Card(
+                                clipBehavior: Clip.antiAlias,
+                                color: Colors.white,
+                                elevation: 5.0,
                                 child: Padding(
-                                  padding: const EdgeInsets.all(5.0),
-                                  child: Icon(
-                                    Icons.mode_edit,
-                                    color: Colors.black,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0, vertical: 22.0),
+                                  child: Row(
+                                    children: <Widget>[
+                                      Expanded(
+                                        child: Column(
+                                          children: <Widget>[
+                                            Text(
+                                              "Posts",
+                                              style: TextStyle(
+                                                fontSize: 17.0,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            Text(
+                                              snapShot.data['posts'].length
+                                                  .toString(),
+                                              style: TextStyle(
+                                                fontSize: 14.0,
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Column(
+                                          children: <Widget>[
+                                            Text(
+                                              "Followers",
+                                              style: TextStyle(
+                                                fontSize: 17.0,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            Text(
+                                              snapShot.data['followers'].length
+                                                  .toString(),
+                                              style: TextStyle(fontSize: 14.0),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Column(
+                                          children: <Widget>[
+                                            Text(
+                                              "Following",
+                                              style: TextStyle(
+                                                fontSize: 17,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            Text(
+                                              snapShot.data['following'].length
+                                                  .toString(),
+                                              style: TextStyle(fontSize: 14.0),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                elevation: 5,
                               ),
                             ),
+                            Padding(
+                              padding: new EdgeInsets.only(
+                                top: MediaQuery.of(context).size.height * .42,
+                                left: 5,
+                                right: 5,
+                              ),
+                              child: Text(
+                                'Personal Details',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 22),
+                              ),
+                            ),
+                            Padding(
+                              padding: new EdgeInsets.only(
+                                top: MediaQuery.of(context).size.height * .46,
+                                left: 5,
+                                right: 5,
+                              ),
+                              child: Text(
+                                'Phone Number  ' + snapShot.data['phone'],
+                                style: TextStyle(
+                                    fontWeight: FontWeight.normal,
+                                    fontSize: 13),
+                              ),
+                            ),
+                            Padding(
+                              padding: new EdgeInsets.only(
+                                top: MediaQuery.of(context).size.height * .49,
+                                left: 5,
+                                right: 5,
+                              ),
+                              child: snapShot.data['gender']
+                                  ? Text(
+                                      'Gender  Male',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.normal,
+                                          fontSize: 13),
+                                    )
+                                  : Text(
+                                      'Gender  Grmale',
+                                      style: TextStyle(
+                                          fontWeight: FontWeight.normal,
+                                          fontSize: 13),
+                                    ),
+                            ),
+                            Padding(
+                              padding: new EdgeInsets.only(
+                                top: MediaQuery.of(context).size.height * .50,
+                                left: 5,
+                                right: 5,
+                              ),
+                              child: Column(
+                                children: <Widget>[
+                                  ListTile(
+                                    leading: Icon(
+                                      Icons.desktop_mac,
+                                      color: Colors.black,
+                                    ),
+                                    title: Text('Skills'),
+                                  ),
+                                  ListTile(
+                                    leading: Icon(
+                                      Icons.stay_current_landscape,
+                                      color: Colors.black,
+                                    ),
+                                    title: Text('Classes'),
+                                  ),
+                                  ListTile(
+                                    leading: Icon(
+                                      Icons.group,
+                                      color: Colors.black,
+                                    ),
+                                    title: Text('Teams'),
+                                  ),
+                                  ListTile(
+                                    leading: Icon(
+                                      Icons.attach_money,
+                                      color: Colors.black,
+                                    ),
+                                    title: Text('Earnings'),
+                                  )
+                                ],
+                              ),
+                            ),
+                            _showProgress
+                                ? Center(child: CircularProgressIndicator())
+                                : Padding(
+                                    padding: const EdgeInsets.only(top: 45.0),
+                                    child: Center(child: Text('')),
+                                  ),
                           ],
                         ),
                       ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Text(
-                        _myusers.name,
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      Text(
-                        _myusers.email,
-                        style: TextStyle(color: Colors.white),
-                      ),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: new EdgeInsets.only(
-                    top: MediaQuery.of(context).size.height * .23,
-                    left: 5,
-                    right: 5,
-                  ),
-                  child: Card(
-                    clipBehavior: Clip.antiAlias,
-                    color: Colors.white,
-                    elevation: 5.0,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8.0, vertical: 22.0),
-                      child: Row(
-                        children: <Widget>[
-                          Expanded(
-                            child: Column(
-                              children: <Widget>[
-                                Text(
-                                  "Posts",
-                                  style: TextStyle(
-                                    fontSize: 17.0,
-                                    fontWeight: FontWeight.bold,
+                    )
+                  : SingleChildScrollView(
+                      child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Stack(
+                          children: <Widget>[
+                            Container(
+                              width: MediaQuery.of(context).size.width,
+                              height: MediaQuery.of(context).size.height * .30,
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                    begin: Alignment.topCenter,
+                                    end: Alignment.bottomCenter,
+                                    colors: [kPrimaryColor, kPrimaryColor]),
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                            ),
+                            Container(
+                              width: MediaQuery.of(context).size.width,
+                              height: MediaQuery.of(context).size.height * .70,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(30),
+                              ),
+                              child: Column(
+                                children: <Widget>[
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 50),
+                                    child: Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: <Widget>[
+                                        GestureDetector(
+                                          onTap: () {
+                                            Navigator.pop(context);
+                                          },
+                                          child: Card(
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(5.0),
+                                              child: Icon(Icons.arrow_back_ios),
+                                            ),
+                                            elevation: 5,
+                                          ),
+                                        ),
+                                        Spacer(),
+                                        GestureDetector(
+                                          onTap: () {
+                                            pickImageFromGallery();
+                                          },
+                                          child: CircleAvatar(
+                                            backgroundImage: NetworkImage(
+                                              snapShot.data['profile_url'],
+                                            ),
+                                            radius: 40.0,
+                                          ),
+                                        ),
+                                        Spacer(),
+                                        GestureDetector(
+                                          onTap: () {
+                                            navToEditprofile();
+                                          },
+                                          child: Card(
+                                            child: Padding(
+                                              padding:
+                                                  const EdgeInsets.all(5.0),
+                                              child: Icon(
+                                                Icons.mode_edit,
+                                                color: Colors.black,
+                                              ),
+                                            ),
+                                            elevation: 5,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    snapShot.data['name'],
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                  SizedBox(
+                                    height: 10,
+                                  ),
+                                  Text(
+                                    snapShot.data['email'],
+                                    style: TextStyle(color: Colors.white),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding: new EdgeInsets.only(
+                                top: MediaQuery.of(context).size.height * .23,
+                                left: 5,
+                                right: 5,
+                              ),
+                              child: Card(
+                                clipBehavior: Clip.antiAlias,
+                                color: Colors.white,
+                                elevation: 5.0,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8.0, vertical: 22.0),
+                                  child: Row(
+                                    children: <Widget>[
+                                      Expanded(
+                                        child: Column(
+                                          children: <Widget>[
+                                            Text(
+                                              "Posts",
+                                              style: TextStyle(
+                                                fontSize: 17.0,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            Text(
+                                              snapShot.data['posts'].length
+                                                  .toString(),
+                                              style: TextStyle(
+                                                fontSize: 14.0,
+                                              ),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Column(
+                                          children: <Widget>[
+                                            Text(
+                                              "Followers",
+                                              style: TextStyle(
+                                                fontSize: 17.0,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            Text(
+                                              snapShot.data['followers'].length
+                                                  .toString(),
+                                              style: TextStyle(fontSize: 14.0),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                      Expanded(
+                                        child: Column(
+                                          children: <Widget>[
+                                            Text(
+                                              "Following",
+                                              style: TextStyle(
+                                                fontSize: 17,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                            Text(
+                                              snapShot.data['following'].length
+                                                  .toString(),
+                                              style: TextStyle(fontSize: 14.0),
+                                            )
+                                          ],
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                 ),
-                                Text(
-                                  _myusers.noOfPost.toString(),
-                                  style: TextStyle(
-                                    fontSize: 14.0,
-                                  ),
-                                )
-                              ],
+                              ),
                             ),
-                          ),
-                          Expanded(
-                            child: Column(
-                              children: <Widget>[
-                                Text(
-                                  "Followers",
-                                  style: TextStyle(
-                                    fontSize: 17.0,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text(
-                                  _myusers.followers.toString(),
-                                  style: TextStyle(fontSize: 14.0),
-                                )
-                              ],
+                            Padding(
+                              padding: new EdgeInsets.only(
+                                top: MediaQuery.of(context).size.height * .40,
+                                left: 5,
+                                right: 5,
+                              ),
+                              child: Text(
+                                'Personal Details',
+                                style: TextStyle(
+                                    fontWeight: FontWeight.bold, fontSize: 22),
+                              ),
                             ),
-                          ),
-                          Expanded(
-                            child: Column(
-                              children: <Widget>[
-                                Text(
-                                  "Following",
-                                  style: TextStyle(
-                                    fontSize: 17,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text(
-                                  _myusers.following.toString(),
-                                  style: TextStyle(fontSize: 14.0),
-                                )
-                              ],
+                            Padding(
+                              padding: new EdgeInsets.only(
+                                top: MediaQuery.of(context).size.height * .45,
+                                left: 5,
+                                right: 5,
+                              ),
+                              child: Text(
+                                'Phone Number  ' + snapShot.data['phone'],
+                                style: TextStyle(
+                                    fontWeight: FontWeight.normal,
+                                    fontSize: 13),
+                              ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
-                Padding(
-                  padding: new EdgeInsets.only(
-                    top: MediaQuery.of(context).size.height * .40,
-                    left: 5,
-                    right: 5,
-                  ),
-                  child: Text(
-                    'Personal Details',
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 27),
-                  ),
-                ),
-                Padding(
-                  padding: new EdgeInsets.only(
-                    top: MediaQuery.of(context).size.height * .45,
-                    left: 5,
-                    right: 5,
-                  ),
-                  child: Text(
-                    'Phone Number  ' + _myusers.phone,
-                    style:
-                        TextStyle(fontWeight: FontWeight.normal, fontSize: 13),
-                  ),
-                ),
-                Padding(
-                  padding: new EdgeInsets.only(
-                    top: MediaQuery.of(context).size.height * .50,
-                    left: 5,
-                    right: 5,
-                  ),
-                  child: Column(
-                    children: <Widget>[
-                      ListTile(
-                        leading: Icon(
-                          Icons.desktop_mac,
-                          color: Colors.black,
+                            Padding(
+                              padding: new EdgeInsets.only(
+                                top: MediaQuery.of(context).size.height * .50,
+                                left: 5,
+                                right: 5,
+                              ),
+                              child: Column(
+                                children: <Widget>[
+                                  ListTile(
+                                    leading: Icon(
+                                      Icons.desktop_mac,
+                                      color: Colors.black,
+                                    ),
+                                    title: Text('Skills'),
+                                  ),
+                                  ListTile(
+                                    leading: Icon(
+                                      Icons.stay_current_landscape,
+                                      color: Colors.black,
+                                    ),
+                                    title: Text('Classes'),
+                                  ),
+                                  ListTile(
+                                    leading: Icon(
+                                      Icons.group,
+                                      color: Colors.black,
+                                    ),
+                                    title: Text('Teams'),
+                                  )
+                                ],
+                              ),
+                            ),
+                            _showProgress
+                                ? Center(child: CircularProgressIndicator())
+                                : Padding(
+                                    padding: const EdgeInsets.only(top: 45.0),
+                                    child: Center(child: Text('')),
+                                  ),
+                          ],
                         ),
-                        title: Text('Skills'),
                       ),
-                      ListTile(
-                        leading: Icon(
-                          Icons.stay_current_landscape,
-                          color: Colors.black,
-                        ),
-                        title: Text('Classes'),
-                      ),
-                      ListTile(
-                        leading: Icon(
-                          Icons.group,
-                          color: Colors.black,
-                        ),
-                        title: Text('Teams'),
-                      )
-                    ],
-                  ),
-                ),
-                _showProgress
-                    ? Center(child: CircularProgressIndicator())
-                    : Padding(
-                        padding: const EdgeInsets.only(top: 45.0),
-                        child: Center(child: Text('')),
-                      ),
-              ],
-            ),
-          ),
+                    );
+            }
+          },
         ),
       ),
     );
   }
 
-  void navToEditprofile(Myusers myusers) {
-    Navigator.pushNamed(context, '/EditProfile', arguments: myusers);
+  void navToEditprofile() {
+    Navigator.pushNamed(
+      context,
+      '/EditProfile',
+    );
   }
 }

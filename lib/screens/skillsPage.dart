@@ -8,6 +8,8 @@ import 'package:virtualclass/screens/deawer.dart';
 import 'package:virtualclass/services/fStoreCollection.dart';
 import 'package:virtualclass/services/serchdeligate.dart';
 
+import '../constants.dart';
+
 class SkillsPage extends StatefulWidget {
   @override
   _SkillsPageState createState() => _SkillsPageState();
@@ -44,8 +46,35 @@ class _SkillsPageState extends State<SkillsPage> {
     user = Provider.of<FirebaseUser>(context);
     final GlobalKey<ScaffoldState> _scaffoldKey =
         new GlobalKey<ScaffoldState>();
+
     return Scaffold(
       key: _scaffoldKey,
+      floatingActionButton: FloatingActionButton(
+        heroTag: 'fabCreateSkill',
+        backgroundColor: kPrimaryColor,
+        child: Icon(Icons.add),
+        onPressed: () {
+          bool istechher = false;
+          isTeacher(user).then((value) async {
+            istechher = value;
+            if (!istechher) {
+              showDialog(
+                context: context,
+                builder: (context) {
+                  return AlertDialog(
+                    // Retrieve the text the that user has entered by using the
+                    // TextEditingController.
+                    content: Text('students can not create Skills'),
+                  );
+                },
+              );
+            } else {
+              navToCreateSkill();
+            }
+          });
+          // navTpGrtPostDetails();
+        },
+      ),
       endDrawer: MyDrawer(),
       appBar: AppBar(
         title: Text("Skills Page"),
@@ -110,9 +139,12 @@ class _SkillsPageState extends State<SkillsPage> {
                               Container(
                                 child: Padding(
                                   padding: const EdgeInsets.all(10.0),
-                                  child: Image.network(snapShot
-                                      .data[index].data['image_url']
-                                      .toString()),
+                                  child: Image.network(
+                                    snapShot.data[index].data['image_url']
+                                        .toString(),
+                                    height:
+                                        MediaQuery.of(context).size.height / 4,
+                                  ),
                                 ),
                                 decoration: BoxDecoration(
                                   boxShadow: [
@@ -172,5 +204,19 @@ class _SkillsPageState extends State<SkillsPage> {
     var fireStore = Firestore.instance;
     QuerySnapshot qn = await fireStore.collection('skills').getDocuments();
     return qn.documents;
+  }
+
+  Future<bool> isTeacher(FirebaseUser user) async {
+    DocumentSnapshot reference =
+        await Firestore.instance.collection('users').document(user.uid).get();
+    if (reference.data['is_teacher']) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  void navToCreateSkill() {
+    Navigator.pushNamed(context, '/CreateSkills');
   }
 }

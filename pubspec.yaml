@@ -37,6 +37,7 @@ dependencies:
   connectivity: ^0.4.9
   file_picker: ^1.11.0
   image_picker: ^0.6.7+4
+  flutter_rating_bar: ^3.0.1+1
 
 
 
