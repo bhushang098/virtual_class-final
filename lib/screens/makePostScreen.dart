@@ -74,7 +74,7 @@ class _MakePostScreenState extends State<MakePostScreen> {
       print("Profile Picture uploaded");
     });
     new DbUserCollection(user.uid)
-        .makePostWithIamge(fileName, uuid, caption, user.uid)
+        .makePostWithIamge(fileName, uuid, caption, user.uid, assigedWith)
         .then((onValue) {
       setState(() {
         _showProgress = false;
@@ -137,13 +137,15 @@ class _MakePostScreenState extends State<MakePostScreen> {
   void initState() {
     // TODO: implement initState
     super.initState();
-
     _showProgress = false;
   }
+
+  String assigedWith;
 
   @override
   Widget build(BuildContext context) {
     user = Provider.of<FirebaseUser>(context);
+    assigedWith = ModalRoute.of(context).settings.arguments;
     Widget children;
     if (_tasks == null) {
     } else {
@@ -176,8 +178,8 @@ class _MakePostScreenState extends State<MakePostScreen> {
                 });
 
                 new DbUserCollection(user.uid)
-                    .makePostWithVideo(
-                        vidFileName, uuid, caption, user.uid, context)
+                    .makePostWithVideo(vidFileName, uuid, caption, user.uid,
+                        context, assigedWith)
                     .then((onValue) {
                   showAlertDialog(context);
                 });
@@ -200,8 +202,8 @@ class _MakePostScreenState extends State<MakePostScreen> {
                 });
 
                 new DbUserCollection(user.uid)
-                    .makePostWithVideo(
-                        vidFileName, uuid, caption, user.uid, context)
+                    .makePostWithVideo(vidFileName, uuid, caption, user.uid,
+                        context, assigedWith)
                     .then((onValue) {
                   showAlertDialog(context);
                 });

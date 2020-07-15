@@ -283,6 +283,7 @@ class _CreateClassState extends State<CreateClass> {
                   _class.location = location;
                   _class.startDate = startDate;
                   _class.endDate = endDate;
+                  _class.daily = _isDaily;
                   _class.fees = double.tryParse(fess);
                   _class.classId = uuid.v1();
                   _class.startTime = startTime;

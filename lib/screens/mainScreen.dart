@@ -94,7 +94,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
   @override
   Widget build(BuildContext context) {
     List<Widget> _navBarItemList = [];
-    List<String> names = ['home', 'skills', 'group', 'workshop', 'student'];
+    List<String> names = ['Home', 'Skills', 'Teams', 'Classes', 'Students'];
 
     for (var i = 0; i < _iconList.length; i++) {
       _navBarItemList.add(buildNavBarItem(_iconList[i], i, names[i]));

@@ -151,53 +151,60 @@ class _SkillsPageState extends State<SkillsPage> {
                 physics: BouncingScrollPhysics(),
                 itemCount: snapShot.data.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return Container(
-                    width: MediaQuery.of(context).size.width,
-                    child: Padding(
-                      padding: const EdgeInsets.all(5.0),
-                      child: Card(
-                        elevation: 4,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                        child: Column(
-                          children: <Widget>[
-                            SizedBox(
-                              height: 12,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                snapShot.data[index].data['skill_name'],
-                                style: TextStyle(
-                                    fontSize: 26, fontWeight: FontWeight.bold),
+                  return GestureDetector(
+                    onTap: () {
+                      navToDetailsPage(snapShot.data[index].data['skill_id']);
+                    },
+                    child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      child: Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: Card(
+                          elevation: 4,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          child: Column(
+                            children: <Widget>[
+                              SizedBox(
+                                height: 12,
                               ),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                              '     INR ${snapShot.data[index].data['fees']}      ',
-                              style: TextStyle(
-                                  backgroundColor: kPrimaryColor, fontSize: 17),
-                            ),
-                            SizedBox(
-                              height: 8,
-                            ),
-                            Text(
-                                'Members ${snapShot.data[index].data['members'].length} '),
-                            SizedBox(
-                              height: 8,
-                            ),
-                            Text(
-                              'Hosted By :  ${snapShot.data[index].data['host']} ',
-                              style: TextStyle(
-                                  fontSize: 15, fontWeight: FontWeight.bold),
-                            ),
-                            SizedBox(
-                              height: 8,
-                            ),
-                          ],
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  snapShot.data[index].data['skill_name'],
+                                  style: TextStyle(
+                                      fontSize: 26,
+                                      fontWeight: FontWeight.bold),
+                                ),
+                              ),
+                              SizedBox(
+                                height: 10,
+                              ),
+                              Text(
+                                '     INR ${snapShot.data[index].data['fees']}      ',
+                                style: TextStyle(
+                                    backgroundColor: kPrimaryColor,
+                                    fontSize: 17),
+                              ),
+                              SizedBox(
+                                height: 8,
+                              ),
+                              Text(
+                                  'Members ${snapShot.data[index].data['members'].length} '),
+                              SizedBox(
+                                height: 8,
+                              ),
+                              Text(
+                                'Hosted By :  ${snapShot.data[index].data['host']} ',
+                                style: TextStyle(
+                                    fontSize: 15, fontWeight: FontWeight.bold),
+                              ),
+                              SizedBox(
+                                height: 8,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -216,7 +223,7 @@ class _SkillsPageState extends State<SkillsPage> {
     var fireStore = Firestore.instance;
     QuerySnapshot qn = await fireStore
         .collection('skills')
-        .orderBy('time_created', descending: true)
+        .orderBy('date_created', descending: true)
         .getDocuments();
     return qn.documents;
   }
@@ -240,5 +247,9 @@ class _SkillsPageState extends State<SkillsPage> {
         await Firestore.instance.collection('users').document(uid).get();
 
     var userName = snapshot.data['name'];
+  }
+
+  void navToDetailsPage(String skillId) {
+    Navigator.pushNamed(context, '/SkillDetailsPage', arguments: skillId);
   }
 }

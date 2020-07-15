@@ -130,76 +130,119 @@ class _ClassesPageState extends State<ClassesPage> {
                 physics: BouncingScrollPhysics(),
                 itemCount: snapShot.data.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return Container(
-                    width: MediaQuery.of(context).size.width,
-                    child: Padding(
-                      padding: const EdgeInsets.all(5.0),
-                      child: Card(
-                        elevation: 4,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8.0),
-                        ),
-                        child: Column(
-                          children: <Widget>[
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Text(
-                                snapShot.data[index].data['class_name'],
-                                style: TextStyle(
-                                    fontSize: 26, fontWeight: FontWeight.bold),
+                  return GestureDetector(
+                    onTap: () {
+                      navToDetailsPage(snapShot.data[index].data['class_id']);
+                    },
+                    child: Container(
+                      width: MediaQuery.of(context).size.width,
+                      child: Padding(
+                        padding: const EdgeInsets.all(5.0),
+                        child: Card(
+                          elevation: 4,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.0),
+                          ),
+                          child: Column(
+                            children: <Widget>[
+                              SizedBox(
+                                height: 10,
                               ),
-                            ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Text(
-                                ' Location : ${snapShot.data[index].data['location']} '),
-                            SizedBox(
-                              height: 8,
-                            ),
-                            snapShot.data[index].data['fees'] == null
-                                ? Text(
-                                    '    Free Class    ',
-                                    style: TextStyle(
-                                        backgroundColor: kPrimaryColor,
-                                        fontSize: 17),
-                                  )
-                                : Text(
-                                    '  INR ${snapShot.data[index].data['fees']}      ',
-                                    style: TextStyle(
-                                        backgroundColor: kPrimaryColor,
-                                        fontSize: 17),
-                                  ),
-                            SizedBox(
-                              height: 8,
-                            ),
-                            ListTile(
-                              leading: Icon(
-                                Icons.date_range,
-                                color: kPrimaryColor,
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Text(
+                                  snapShot.data[index].data['class_name'],
+                                  style: TextStyle(
+                                      fontSize: 26,
+                                      fontWeight: FontWeight.bold),
+                                ),
                               ),
-                              title: Text(snapShot
-                                  .data[index].data['start_date']
-                                  .toString()),
-                            ),
-                            SizedBox(
-                              height: 8,
-                            ),
-                            ListTile(
-                              leading: Icon(
-                                Icons.access_time,
-                                color: kPrimaryColor,
+                              SizedBox(
+                                height: 10,
                               ),
-                              title: Text(snapShot.data[index].data['timing']
-                                  .toString()),
-                            ),
-                            SizedBox(
-                              height: 8,
-                            ),
-                          ],
+                              Text(
+                                  ' Location : ${snapShot.data[index].data['location']} '),
+                              SizedBox(
+                                height: 8,
+                              ),
+                              snapShot.data[index].data['fees'] == null
+                                  ? Text(
+                                      '    Free Class    ',
+                                      style: TextStyle(
+                                          backgroundColor: kPrimaryColor,
+                                          fontSize: 17),
+                                    )
+                                  : Text(
+                                      '  INR ${snapShot.data[index].data['fees']}      ',
+                                      style: TextStyle(
+                                          backgroundColor: kPrimaryColor,
+                                          fontSize: 17),
+                                    ),
+                              SizedBox(
+                                height: 8,
+                              ),
+                              ListTile(
+                                leading: Icon(
+                                  Icons.date_range,
+                                  color: kPrimaryColor,
+                                ),
+                                title: Text(snapShot
+                                        .data[index].data['start_date']
+                                        .toDate()
+                                        .day
+                                        .toString() +
+                                    '/' +
+                                    snapShot.data[index].data['start_date']
+                                        .toDate()
+                                        .month
+                                        .toString() +
+                                    '/' +
+                                    snapShot.data[index].data['start_date']
+                                        .toDate()
+                                        .year
+                                        .toString()),
+                              ),
+                              SizedBox(
+                                height: 8,
+                              ),
+                              snapShot.data[index].data['is_daily']
+                                  ? ListTile(
+                                      leading: Icon(
+                                        Icons.access_time,
+                                        color: kPrimaryColor,
+                                      ),
+                                      title: Text('Daily ' +
+                                          snapShot.data[index].data['timing']
+                                              .toDate()
+                                              .hour
+                                              .toString() +
+                                          ' : ' +
+                                          snapShot.data[index].data['timing']
+                                              .toDate()
+                                              .minute
+                                              .toString()),
+                                    )
+                                  : ListTile(
+                                      leading: Icon(
+                                        Icons.access_time,
+                                        color: kPrimaryColor,
+                                      ),
+                                      title: Text('At ' +
+                                          snapShot.data[index].data['timing']
+                                              .toDate()
+                                              .hour
+                                              .toString() +
+                                          ' : ' +
+                                          snapShot.data[index].data['timing']
+                                              .toDate()
+                                              .minute
+                                              .toString()),
+                                    ),
+                              SizedBox(
+                                height: 8,
+                              ),
+                            ],
+                          ),
                         ),
                       ),
                     ),
@@ -219,5 +262,9 @@ class _ClassesPageState extends State<ClassesPage> {
 
   void navToCreateWorkshop() {
     Navigator.pushNamed(context, '/CreateWorkshop');
+  }
+
+  void navToDetailsPage(String classId) {
+    Navigator.pushNamed(context, '/ClassDetailsPage', arguments: classId);
   }
 }

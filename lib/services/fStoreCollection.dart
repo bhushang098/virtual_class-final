@@ -128,8 +128,8 @@ class DbUserCollection {
     return _user;
   }
 
-  Future makePostWithIamge(
-      String fileName, Uuid uuid, String caption, String uid) async {
+  Future makePostWithIamge(String fileName, Uuid uuid, String caption,
+      String uid, String AssignedWith) async {
     //Whenever Stucked with Instance of Dynamic try Using var Insted Of String i Solvs
     var fileUrl;
     final StorageReference firebaseStorageRef =
@@ -149,15 +149,16 @@ class DbUserCollection {
       'likes': 0,
       'post_id': fileName,
       'time_uploaded': Timestamp.fromDate(DateTime.now()),
-      'user_id_who_posted': userName,
+      'user_id_who_posted': userName + '??.??' + uid,
       'comments': {},
       'profile_url': profileUrl,
       'is_image': true,
+      'assigned_with': AssignedWith,
     });
   }
 
   Future makePostWithVideo(String fileName, Uuid uuid, String caption,
-      String uid, BuildContext context) async {
+      String uid, BuildContext context, String AssignedWith) async {
     //Whenever Stucked with Instance of Dynamic try Using var Insted Of String i Solvs
     var fileUrl;
 
@@ -184,10 +185,11 @@ class DbUserCollection {
         'likes': 0,
         'post_id': fileName,
         'time_uploaded': Timestamp.fromDate(DateTime.now()),
-        'user_id_who_posted': userName,
+        'user_id_who_posted': userName + '??.??' + uid,
         'comments': {},
         'profile_url': profileUrl,
         'is_image': false,
+        'assigned_with': AssignedWith,
       });
     }
   }
@@ -235,27 +237,30 @@ class DbUserCollection {
         await Firestore.instance.collection('users').document(uid).get();
     var userName = snapshot.data['name'];
 
-    updateuserCreatedSkills(skill.skillId);
-    return await skillCollection.document(skill.skillId).setData({
+    updateuserCreatedSkills(skill.skillId, skill.skillName);
+    return await skillCollection
+        .document(skill.skillId + '??.??' + skill.skillName)
+        .setData({
       'skill_name': skill.skillName,
       'about': skill.about,
       'who_can_post': skill.whoCnaPost,
       'who_can_see_post': skill.whoCanSeePost,
       'who_can_send_message': skill.whoCanSendMessage,
-      'skill_id': skill.skillId,
+      'skill_id': skill.skillId + '??.??' + skill.skillName,
       'user_id': skill.userId,
       'host': userName,
       'fees': skill.price,
       'members': {},
-      'time_created': Timestamp.fromDate(new DateTime.now()),
+      'date_created': Timestamp.fromDate(new DateTime.now()),
+      'skill_image': ''
     });
   }
 
-  Future updateuserCreatedSkills(String skillId) async {
+  Future updateuserCreatedSkills(String skillId, String skillName) async {
     DocumentSnapshot snapshot =
         await Firestore.instance.collection('users').document(uid).get();
     var skillsMade = snapshot.data['skills_made'];
-    skillsMade.add(skillId);
+    skillsMade.add(skillId + '??.??' + skillName);
     return await userCollection.document(uid).updateData({
       'skills_made': skillsMade,
     });
@@ -303,8 +308,10 @@ class DbUserCollection {
     DateTime startTime = DateTime(DateTime.now().year, DateTime.now().month,
         DateTime.now().day, classes.startTime.hour, classes.startTime.minute);
 
-    updateuserCreatedClass(classes.classId);
-    return await classesCollection.document(classes.classId).setData({
+    updateuserCreatedClass(classes.classId, classes.className);
+    return await classesCollection
+        .document(classes.classId + '??.??' + classes.className)
+        .setData({
       'class_name': classes.className,
       'location': classes.location,
       'start_date': classes.startDate,
@@ -312,19 +319,20 @@ class DbUserCollection {
       'is_daily': classes.daily,
       'timing': startTime,
       'about': classes.about,
-      'class_id': classes.classId,
+      'class_id': classes.classId + '??.??' + classes.className,
       'user_id': classes.userId,
       'host': userName,
       'fees': classes.fees,
       'time_created': Timestamp.fromDate(new DateTime.now()),
+      'class_image': '',
     });
   }
 
-  void updateuserCreatedClass(String classId) async {
+  void updateuserCreatedClass(String classId, String className) async {
     DocumentSnapshot snapshot =
         await Firestore.instance.collection('users').document(uid).get();
     var skillsMade = snapshot.data['classes_made'];
-    skillsMade.add(classId);
+    skillsMade.add(classId + '??.??' + className);
     return await userCollection.document(uid).updateData({
       'classes_made': skillsMade,
     });

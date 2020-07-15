@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
+import 'package:virtualclass/detailsScreens/classDetailsMail.dart';
+import 'package:virtualclass/detailsScreens/skillDetailsMain.dart';
 import 'package:virtualclass/screens/commentsScreen.dart';
 import 'package:virtualclass/screens/createSkillpage.dart';
 import 'package:virtualclass/screens/createClass.dart';
@@ -8,6 +10,7 @@ import 'package:virtualclass/screens/getTeamDetails.dart';
 import 'package:virtualclass/screens/mainScreen.dart';
 import 'package:virtualclass/screens/makePostScreen.dart';
 import 'package:virtualclass/screens/profilepage.dart';
+import 'package:virtualclass/screens/showusersPost.dart';
 import 'package:virtualclass/screens/welcomeScreen.dart';
 import 'package:virtualclass/screens/wrapper.dart';
 import 'package:virtualclass/services/authentication.dart';
@@ -54,6 +57,9 @@ class MyApp extends StatelessWidget {
           '/EditProfile': (BuildContext context) => new EditProfileScreen(),
           '/CreateSkills': (BuildContext context) => new CreateSkills(),
           '/CreateWorkshop': (BuildContext context) => new CreateClass(),
+          '/SkillDetailsPage': (BuildContext context) => new SkillDetailsMain(),
+          '/ClassDetailsPage': (BuildContext context) => new ClassDetailsMain(),
+          '/ShowUsersPosts': (BuildContext context) => new ShowUsersPosts(),
         },
         home: Wrapper(),
       ),

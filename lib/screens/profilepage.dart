@@ -8,7 +8,6 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 import 'package:virtualclass/services/fStoreCollection.dart';
-
 import '../constants.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -244,24 +243,30 @@ class _ProfilePageState extends State<ProfilePage> {
                                   horizontal: 8.0, vertical: 22.0),
                               child: Row(
                                 children: <Widget>[
-                                  Expanded(
-                                    child: Column(
-                                      children: <Widget>[
-                                        Text(
-                                          "Posts",
-                                          style: TextStyle(
-                                            fontSize: 17.0,
-                                            fontWeight: FontWeight.bold,
+                                  GestureDetector(
+                                    onTap: () {
+                                      Navigator.pushNamed(
+                                          context, '/ShowUsersPosts');
+                                    },
+                                    child: Expanded(
+                                      child: Column(
+                                        children: <Widget>[
+                                          Text(
+                                            "Posts",
+                                            style: TextStyle(
+                                              fontSize: 17.0,
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
-                                        ),
-                                        Text(
-                                          snapShot.data['posts'].length
-                                              .toString(),
-                                          style: TextStyle(
-                                            fontSize: 14.0,
-                                          ),
-                                        )
-                                      ],
+                                          Text(
+                                            snapShot.data['posts'].length
+                                                .toString(),
+                                            style: TextStyle(
+                                              fontSize: 14.0,
+                                            ),
+                                          )
+                                        ],
+                                      ),
                                     ),
                                   ),
                                   Expanded(
