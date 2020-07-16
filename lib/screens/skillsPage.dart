@@ -151,7 +151,11 @@ class _SkillsPageState extends State<SkillsPage> {
                                 ),
                               ),
                               Image.network(
-                                  snapShot.data[index].data['skill_image']),
+                                snapShot.data[index].data['skill_image'],
+                                height: 150,
+                                fit: BoxFit.fill,
+                                width: MediaQuery.of(context).size.width,
+                              ),
                               SizedBox(
                                 height: 10,
                               ),

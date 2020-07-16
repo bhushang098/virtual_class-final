@@ -1,7 +1,15 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
+import 'package:uuid/uuid.dart';
 import 'package:virtualclass/constants.dart';
+import 'package:virtualclass/services/fStoreCollection.dart';
 
 class SkillDetailsScreen extends StatefulWidget {
   SkillDetailsScreen({Key key, this.title}) : super(key: key);
@@ -13,6 +21,10 @@ class SkillDetailsScreen extends StatefulWidget {
 }
 
 class _SkillDetailsScreenState extends State<SkillDetailsScreen> {
+  Future<File> imageFile;
+  bool _showProgress = false;
+  FirebaseUser user;
+
   getskillsDetails(String skillId) async {
     var fireStore = Firestore.instance;
     DocumentSnapshot dsn =
@@ -20,8 +32,76 @@ class _SkillDetailsScreenState extends State<SkillDetailsScreen> {
     return dsn;
   }
 
+  pickImageFromGallery() {
+    setState(() {
+      imageFile = ImagePicker.pickImage(source: ImageSource.gallery);
+      if (imageFile != null) {
+        _showProgress = true;
+        uploadPic(context);
+      } else {
+        _showProgress = false;
+      }
+    });
+  }
+
+  Future uploadPic(BuildContext context) async {
+    _showProgress = true;
+    String fileName;
+    File img;
+    Uuid uuid = new Uuid();
+    await imageFile.then((onValue) {
+      fileName = uuid.v1() + onValue.path.split('/').last;
+      print('>>>>>>>>>>> File NAMe' + fileName);
+      img = onValue;
+    });
+    StorageReference storageReference =
+        FirebaseStorage.instance.ref().child('images/').child(fileName);
+
+    final StorageUploadTask uploadTask = storageReference.putFile(img);
+    StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
+    setState(() {
+      print(" Skill Picture uploaded");
+    });
+    new DbUserCollection(user.uid)
+        .updateSkillPicture(fileName, uuid, widget.title)
+        .then((onValue) {
+      setState(() {
+        _showProgress = false;
+      });
+      showAlertDialog(context);
+    });
+  }
+
+  void showAlertDialog(BuildContext context) {
+    Widget okButton = FlatButton(
+      child: Text("OK"),
+      onPressed: () {
+        Navigator.of(context).pop();
+        Navigator.of(context).pop();
+      },
+    );
+
+    // Create AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("Profile Updated"),
+      content: Text('Updated Succesfully'),
+      actions: [
+        okButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
+    user = Provider.of<FirebaseUser>(context);
     return Scaffold(
       body: FutureBuilder(
         future: getskillsDetails(widget.title),
@@ -43,8 +123,7 @@ class _SkillDetailsScreenState extends State<SkillDetailsScreen> {
                           padding: const EdgeInsets.all(8.0),
                           child: Image.network(
                             snapShot.data['skill_image'],
-                            fit: BoxFit.fill,
-                            height: 200,
+                            height: 150,
                             width: MediaQuery.of(context).size.width,
                           ),
                         ),
@@ -52,6 +131,9 @@ class _SkillDetailsScreenState extends State<SkillDetailsScreen> {
                           bottom: 30,
                           right: 30,
                           child: GestureDetector(
+                            onTap: () {
+                              pickImageFromGallery();
+                            },
                             child: Icon(
                               Icons.add_a_photo,
                               color: PrimaryColor,

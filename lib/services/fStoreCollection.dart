@@ -220,6 +220,17 @@ class DbUserCollection {
         .updateData({'profile_url': fileUrl});
   }
 
+  Future updateSkillPicture(String fileName, Uuid uuid, String skillId) async {
+    var fileUrl;
+    final StorageReference firebaseStorageRef =
+        FirebaseStorage.instance.ref().child('images/').child(fileName);
+    fileUrl = await firebaseStorageRef.getDownloadURL();
+
+    return await skillCollection
+        .document(skillId)
+        .updateData({'skill_image': fileUrl});
+  }
+
   Future makeNewTeam(Team team) async {
     DocumentSnapshot snapshot =
         await Firestore.instance.collection('users').document(uid).get();
