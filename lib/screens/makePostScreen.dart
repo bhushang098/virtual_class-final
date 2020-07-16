@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:io';
 import 'package:connectivity/connectivity.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/cupertino.dart';
@@ -38,6 +37,7 @@ class _MakePostScreenState extends State<MakePostScreen> {
   pickImageFromGallery(ImageSource source) {
     videoFile = null;
     _islinkOk = false;
+    _tasks = null;
     setState(() {
       imageFile = ImagePicker.pickImage(source: source);
     });
@@ -46,6 +46,7 @@ class _MakePostScreenState extends State<MakePostScreen> {
   pickVideofromGallery(ImageSource source) async {
     imageFile = null;
     _islinkOk = false;
+    _tasks = null;
     File video = await ImagePicker.pickVideo(source: ImageSource.gallery);
 
     setState(() {
@@ -73,7 +74,7 @@ class _MakePostScreenState extends State<MakePostScreen> {
       print("Profile Picture uploaded");
     });
     new DbUserCollection(user.uid)
-        .makePostWithIamge(fileName, uuid, caption, user.uid)
+        .makePostWithIamge(fileName, uuid, caption, user.uid, assigedWith)
         .then((onValue) {
       setState(() {
         _showProgress = false;
@@ -99,17 +100,6 @@ class _MakePostScreenState extends State<MakePostScreen> {
     setState(() {
       _tasks = uploadTask;
     });
-
-//    if (uploadTask.isComplete && uploadTask.isSuccessful) {
-//      new DbUserCollection(user.uid)
-//          .makePostWithVideo(fileName, uuid, caption, user.uid)
-//          .then((onValue) {
-//        setState(() {
-//          _showProgress = false;
-//        });
-//        showAlertDialog(context);
-//      });
-//    }
   }
 
   void showAlertDialog(BuildContext context) {
@@ -144,8 +134,17 @@ class _MakePostScreenState extends State<MakePostScreen> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    _showProgress = false;
+  }
+
+  String assigedWith;
+
+  @override
   Widget build(BuildContext context) {
     user = Provider.of<FirebaseUser>(context);
+    assigedWith = ModalRoute.of(context).settings.arguments;
     Widget children;
     if (_tasks == null) {
     } else {
@@ -154,7 +153,7 @@ class _MakePostScreenState extends State<MakePostScreen> {
 
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        backgroundColor: kPrimaryColor,
+        backgroundColor: PrimaryColor,
         child: Icon(Icons.send),
         onPressed: () async {
           FocusScope.of(context).unfocus();
@@ -167,15 +166,34 @@ class _MakePostScreenState extends State<MakePostScreen> {
               _showDialog('Needed Caption', 'Share Some Thoughts');
             } else {
               if (imageFile != null) {
+                setState(() {
+                  _showProgress = true;
+                });
                 uploadPic(context);
-                //uploadVid(context);
               }
               if (videoFile != null) {
                 setState(() {
                   _showProgress = true;
                 });
+
                 new DbUserCollection(user.uid)
-                    .makePostWithVideo(vidFileName, uuid, caption, user.uid)
+                    .makePostWithVideo(vidFileName, uuid, caption, user.uid,
+                        context, assigedWith)
+                    .then((onValue) {
+                  showAlertDialog(context);
+                });
+              }
+
+              if (caption.isNotEmpty &&
+                  imageFile == null &&
+                  videoFile == null) {
+                setState(() {
+                  _showProgress = true;
+                });
+
+                new DbUserCollection(user.uid)
+                    .makwPostWithCaption(
+                        uuid, caption, user.uid, context, assigedWith)
                     .then((onValue) {
                   showAlertDialog(context);
                 });
@@ -187,11 +205,22 @@ class _MakePostScreenState extends State<MakePostScreen> {
               _showDialog('Needed Caption', 'Share Some Thoughts');
             } else {
               if (imageFile != null) {
+                setState(() {
+                  _showProgress = true;
+                });
                 uploadPic(context);
-                //uploadVid(context);
               }
               if (videoFile != null) {
-                uploadVid(context);
+                setState(() {
+                  _showProgress = true;
+                });
+
+                new DbUserCollection(user.uid)
+                    .makePostWithVideo(vidFileName, uuid, caption, user.uid,
+                        context, assigedWith)
+                    .then((onValue) {
+                  showAlertDialog(context);
+                });
               }
             }
           }
@@ -209,29 +238,47 @@ class _MakePostScreenState extends State<MakePostScreen> {
                 padding: const EdgeInsets.all(12.0),
                 child: Row(
                   children: <Widget>[
-                    GestureDetector(
-                      child: Icon(
-                        Icons.image,
-                        color: Colors.black38,
+                    InkWell(
+                      splashColor: PrimaryColor,
+                      child: Column(
+                        children: <Widget>[
+                          Icon(
+                            Icons.add_photo_alternate,
+                            color: PrimaryColor,
+                          ),
+                          Text('Select Image')
+                        ],
                       ),
                       onTap: () {
                         pickImageFromGallery(ImageSource.gallery);
                       },
                     ),
                     Spacer(),
-                    GestureDetector(
-                        child: Icon(
-                          Icons.ondemand_video,
-                          color: Colors.black38,
+                    InkWell(
+                        splashColor: PrimaryColor,
+                        child: Column(
+                          children: <Widget>[
+                            Icon(
+                              Icons.ondemand_video,
+                              color: PrimaryColor,
+                            ),
+                            Text('Select Video')
+                          ],
                         ),
                         onTap: () {
                           pickVideofromGallery(ImageSource.gallery);
                         }),
                     Spacer(),
-                    GestureDetector(
-                      child: Icon(
-                        Icons.insert_link,
-                        color: Colors.black38,
+                    InkWell(
+                      splashColor: PrimaryColor,
+                      child: Column(
+                        children: <Widget>[
+                          Icon(
+                            Icons.insert_link,
+                            color: PrimaryColor,
+                          ),
+                          Text('YouTube Link'),
+                        ],
                       ),
                       onTap: () {
                         setState(() {
@@ -304,7 +351,7 @@ class _MakePostScreenState extends State<MakePostScreen> {
               IconButton(
                 icon: Icon(
                   Icons.cancel,
-                  color: kPrimaryColor,
+                  color: PrimaryColor,
                 ),
                 onPressed: () {
                   setState(() {
@@ -341,11 +388,12 @@ class _MakePostScreenState extends State<MakePostScreen> {
                 IconButton(
                   icon: Icon(
                     Icons.cancel,
-                    color: kPrimaryColor,
+                    color: PrimaryColor,
                   ),
                   onPressed: () {
                     setState(() {
                       videoFile = null;
+                      _showProgress = false;
                     });
                   },
                 ),
@@ -375,9 +423,15 @@ class _MakePostScreenState extends State<MakePostScreen> {
   Widget getTaskDetail(StorageUploadTask tasks) {
     return UploadTaskListTile(
       task: _tasks,
-      onDismissed: null,
+      onDismissed: _ondismissed(),
       onDownload: null,
     );
+  }
+
+  _ondismissed() {
+    setState(() {
+      _tasks = null;
+    });
   }
 }
 
@@ -414,7 +468,6 @@ class UploadTaskListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    bool _isProgres = true;
     return StreamBuilder<StorageTaskEvent>(
       stream: task.events,
       builder: (BuildContext context,

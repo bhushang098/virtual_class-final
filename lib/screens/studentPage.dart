@@ -1,7 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:connectivity/connectivity.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:virtualclass/constants.dart';
+import 'package:virtualclass/modals/userModal.dart';
 import 'package:virtualclass/screens/deawer.dart';
+import 'package:virtualclass/services/fStoreCollection.dart';
 import 'package:virtualclass/services/serchdeligate.dart';
 
 class StudentPage extends StatefulWidget {
@@ -11,14 +16,41 @@ class StudentPage extends StatefulWidget {
 
 class _StudentPageState extends State<StudentPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
+  Myusers _myusers;
+  FirebaseUser user;
+  _showDialog(title, text) {
+    showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(title),
+            content: Text(text),
+            actions: <Widget>[
+              FlatButton(
+                child: Text('Ok'),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              )
+            ],
+          );
+        });
+  }
+
+  void navToprofilePage(Myusers user) {
+    Navigator.pushNamed(context, '/ProfilePage', arguments: user);
+  }
+
   @override
   Widget build(BuildContext context) {
+    user = Provider.of<FirebaseUser>(context);
     return Scaffold(
-      backgroundColor: kPrimaryColor,
+      backgroundColor: primaryLight,
       key: _scaffoldKey,
       endDrawer: MyDrawer(),
       appBar: AppBar(
-        title: Text("Students Page"),
+        title: Text("Students "),
         actions: <Widget>[
           IconButton(
               icon: Icon(Icons.search),
@@ -29,7 +61,17 @@ class _StudentPageState extends State<StudentPage> {
               }),
           IconButton(
               icon: Icon(Icons.person),
-              onPressed: () {
+              onPressed: () async {
+                var result = await Connectivity().checkConnectivity();
+                if (result == ConnectivityResult.none) {
+                  _showDialog(
+                      'No internet', "You're not connected to a network");
+                } else if (result == ConnectivityResult.mobile ||
+                    result == ConnectivityResult.wifi) {
+                  _myusers = await new DbUserCollection(user.uid)
+                      .getUserDeta(user.uid);
+                  navToprofilePage(_myusers);
+                }
                 print("u tapped profile");
               }),
           IconButton(
@@ -56,18 +98,18 @@ class _StudentPageState extends State<StudentPage> {
                   return Card(
                     elevation: 4,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20.0),
+                      borderRadius: BorderRadius.circular(10.0),
                     ),
                     child: Column(
                       children: <Widget>[
                         Padding(
-                          padding: const EdgeInsets.all(12.0),
+                          padding: const EdgeInsets.only(top: 12.0, left: 10),
                           child: Row(
                             children: <Widget>[
                               CircleAvatar(
                                 radius: 35,
                                 backgroundImage: NetworkImage(
-                                    snapShot.data[index].data['img_url']),
+                                    snapShot.data[index].data['profile_url']),
                               ),
                               SizedBox(
                                 width: 20,
@@ -86,11 +128,10 @@ class _StudentPageState extends State<StudentPage> {
                         Text(
                             'Location ${snapShot.data[index].data['location']}'),
                         SizedBox(
-                          height: 20,
+                          height: 10,
                         ),
-                        Text('Skills / Interests'),
+                        Text('Skills'),
                         Container(
-                          height: 50,
                           width: MediaQuery.of(context).size.width,
                           child: SingleChildScrollView(
                             child: skillBuilder(
@@ -124,7 +165,7 @@ class _StudentPageState extends State<StudentPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Padding(
-                padding: const EdgeInsets.all(5.0),
+                padding: const EdgeInsets.all(2.0),
                 child: Text(
                   skills[index],
                   style: TextStyle(color: Colors.green),

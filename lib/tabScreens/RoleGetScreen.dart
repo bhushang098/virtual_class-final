@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:virtualclass/modals/userModal.dart';
 import 'package:virtualclass/services/fStoreCollection.dart';
 
 import '../constants.dart';
@@ -13,9 +14,13 @@ class RoleGetScreen extends StatefulWidget {
 class _RoleGetScreenState extends State<RoleGetScreen> {
   String _role, _gender;
   FirebaseUser user;
+  Myusers _user;
   @override
   Widget build(BuildContext context) {
     user = Provider.of<FirebaseUser>(context);
+    new DbUserCollection(user.uid).getUserDeta(user.uid).then((onValue) {
+      _user = onValue;
+    });
     return Scaffold(
       body: Container(
         width: MediaQuery.of(context).size.width,
@@ -27,7 +32,7 @@ class _RoleGetScreenState extends State<RoleGetScreen> {
                 padding: const EdgeInsets.all(20.0),
                 child: Row(
                   children: <Widget>[
-                    Icon(Icons.group, color: kPrimaryColor),
+                    Icon(Icons.group, color: PrimaryColor),
                     Spacer(),
                     DropdownButton(
                       hint: Text('              Role           '),
@@ -53,45 +58,12 @@ class _RoleGetScreenState extends State<RoleGetScreen> {
                   ],
                 ),
               ),
-              Padding(
-                padding: const EdgeInsets.all(20.0),
-                child: Row(
-                  children: <Widget>[
-                    Icon(Icons.face, color: kPrimaryColor),
-                    Spacer(),
-                    DropdownButton(
-                      hint: Text('              Gender           '),
-                      value: _gender,
-                      items: <DropdownMenuItem>[
-                        DropdownMenuItem(
-                          child: Text('Male'),
-                          value: 'Male',
-                        ),
-                        DropdownMenuItem(
-                          child: Text('Female'),
-                          value: 'Female',
-                        ),
-                      ],
-                      onChanged: (value) {
-                        setState(() {
-                          _gender = value;
-                          FocusScope.of(context).unfocus();
-                        });
-                      },
-                    ),
-                    Spacer(),
-                  ],
-                ),
-              ),
               SizedBox(
                 height: 40,
               ),
               GestureDetector(
                 onTap: () {
-                  print(_gender);
-                  print(_role);
-
-                  if (_gender == null || _role == null) {
+                  if (_role == null) {
                     showDialog(
                         context: context,
                         child: Dialog(
@@ -102,7 +74,7 @@ class _RoleGetScreenState extends State<RoleGetScreen> {
                         ));
                   } else {
                     new DbUserCollection(user.uid)
-                        .updateRole(_role, _gender)
+                        .makeRoleUpdateRequest(user.email, _user.name)
                         .then((onValue) {
                       showAlertDialog(context);
                     });
@@ -113,7 +85,7 @@ class _RoleGetScreenState extends State<RoleGetScreen> {
                   padding: EdgeInsets.symmetric(horizontal: 26, vertical: 16),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(25),
-                    color: kPrimaryColor,
+                    color: PrimaryColor,
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -150,8 +122,9 @@ class _RoleGetScreenState extends State<RoleGetScreen> {
 
     // Create AlertDialog
     AlertDialog alert = AlertDialog(
-      title: Text("profile Updated"),
-      content: Text('Thanks For Sharing Your Data'),
+      title: Text("Request Made"),
+      content:
+          Text('Thanks For Your Interest Your Request will get Approved soon'),
       actions: [
         okButton,
       ],

@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:virtualclass/services/authentication.dart';
 import 'package:virtualclass/services/fStoreCollection.dart';
 
 import '../constants.dart';
@@ -14,7 +15,8 @@ class _AccountgetScreenState extends State<AccountgetScreen> {
   bool _obsCureText = true;
   bool _isPrivate = false;
   FirebaseUser user;
-
+  Auth _auth = new Auth();
+  bool CheckCurrentPassValid = true;
   String _currentpass, _newpass, _newPass2;
   TextEditingController _currentPassController = new TextEditingController();
   TextEditingController _newPassController = new TextEditingController();
@@ -41,7 +43,7 @@ class _AccountgetScreenState extends State<AccountgetScreen> {
                 children: <Widget>[
                   Text("Private Account"),
                   Checkbox(
-                    activeColor: kPrimaryColor,
+                    activeColor: PrimaryColor,
                     value: _isPrivate,
                     onChanged: (bool value) {
                       setState(() {
@@ -60,7 +62,7 @@ class _AccountgetScreenState extends State<AccountgetScreen> {
                     new DbUserCollection(user.uid)
                         .makeAccountPrivate()
                         .then((onValue) {
-                      showAlertDialog(context);
+                      showAlertDialog(context, 'Your Account Is Private Now');
                     });
                   }
                 },
@@ -69,7 +71,7 @@ class _AccountgetScreenState extends State<AccountgetScreen> {
                   padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(25),
-                    color: kPrimaryColor,
+                    color: PrimaryColor,
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -104,7 +106,7 @@ class _AccountgetScreenState extends State<AccountgetScreen> {
                       padding: const EdgeInsets.only(right: 16),
                       child: Icon(
                         Icons.account_circle,
-                        color: kPrimaryColor,
+                        color: PrimaryColor,
                       ),
                     ),
                     Expanded(
@@ -133,7 +135,7 @@ class _AccountgetScreenState extends State<AccountgetScreen> {
                       padding: const EdgeInsets.only(right: 16),
                       child: Icon(
                         Icons.lock,
-                        color: kPrimaryColor,
+                        color: PrimaryColor,
                       ),
                     ),
                     Expanded(
@@ -154,11 +156,11 @@ class _AccountgetScreenState extends State<AccountgetScreen> {
                       icon: _obsCureText
                           ? Icon(
                               Icons.visibility_off,
-                              color: kPrimaryColor,
+                              color: PrimaryColor,
                             )
                           : Icon(
                               Icons.visibility,
-                              color: kPrimaryColor,
+                              color: PrimaryColor,
                             ),
                       onPressed: _toggle,
                     )
@@ -174,7 +176,7 @@ class _AccountgetScreenState extends State<AccountgetScreen> {
                       padding: const EdgeInsets.only(right: 16),
                       child: Icon(
                         Icons.lock,
-                        color: kPrimaryColor,
+                        color: PrimaryColor,
                       ),
                     ),
                     Expanded(
@@ -195,11 +197,11 @@ class _AccountgetScreenState extends State<AccountgetScreen> {
                       icon: _obsCureText
                           ? Icon(
                               Icons.visibility_off,
-                              color: kPrimaryColor,
+                              color: PrimaryColor,
                             )
                           : Icon(
                               Icons.visibility,
-                              color: kPrimaryColor,
+                              color: PrimaryColor,
                             ),
                       onPressed: _toggle,
                     )
@@ -210,7 +212,7 @@ class _AccountgetScreenState extends State<AccountgetScreen> {
                 height: 40,
               ),
               GestureDetector(
-                onTap: () {
+                onTap: () async {
                   _currentpass = _currentPassController.text;
                   _newpass = _newPassController.text;
                   _newPass2 = _newtPassController2.text;
@@ -228,7 +230,7 @@ class _AccountgetScreenState extends State<AccountgetScreen> {
                         ));
                   } else {
                     if (_newPass2 == _newpass) {
-                      // TODo Upade user Password
+                      _changePassward(_newpass);
                     } else {
                       showDialog(
                           context: context,
@@ -246,7 +248,7 @@ class _AccountgetScreenState extends State<AccountgetScreen> {
                   padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(25),
-                    color: kPrimaryColor,
+                    color: PrimaryColor,
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -272,7 +274,7 @@ class _AccountgetScreenState extends State<AccountgetScreen> {
     );
   }
 
-  void showAlertDialog(BuildContext context) {
+  void showAlertDialog(BuildContext context, String textmess) {
     Widget okButton = FlatButton(
       child: Text("Ok"),
       onPressed: () {
@@ -283,7 +285,7 @@ class _AccountgetScreenState extends State<AccountgetScreen> {
 
     // Create AlertDialog
     AlertDialog alert = AlertDialog(
-      title: Text("Your Account Is Private Now"),
+      title: Text(textmess),
       content: Text('Thank You .. '),
       actions: [
         okButton,
@@ -297,5 +299,17 @@ class _AccountgetScreenState extends State<AccountgetScreen> {
         return alert;
       },
     );
+  }
+
+  void _changePassward(String newpass) async {
+    FirebaseUser user = await FirebaseAuth.instance.currentUser();
+
+    //Pass in the password to updatePassword.
+    user.updatePassword(newpass).then((_) {
+      showAlertDialog(context, 'Password Changed Successful');
+    }).catchError((error) {
+      showAlertDialog(context, 'Error Changing Password');
+      //This might happen, when the wrong password is in, the user isn't found, or if the user hasn't logged in recently.
+    });
   }
 }

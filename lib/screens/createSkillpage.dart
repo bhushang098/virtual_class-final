@@ -2,22 +2,23 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
-import 'package:virtualclass/constants.dart';
-import 'package:virtualclass/modals/teamModal.dart';
+import 'package:virtualclass/modals/skillModal.dart';
 import 'package:virtualclass/services/fStoreCollection.dart';
 
-class GetTeamDetails extends StatefulWidget {
+import '../constants.dart';
+
+class CreateSkills extends StatefulWidget {
   @override
-  _GetTeamDetailsState createState() => _GetTeamDetailsState();
+  _CreateSkillsState createState() => _CreateSkillsState();
 }
 
-class _GetTeamDetailsState extends State<GetTeamDetails> {
-  String teamName, classLocation, about;
-  String whoCanPostToTeam, whoCanSeePost, whoCanSeMessage;
+class _CreateSkillsState extends State<CreateSkills> {
+  String skillName, about, fess;
+  String whoCanPostToSkill, whoCanSeePost, whoCanSeMessage;
 
-  TextEditingController teamNameController = new TextEditingController();
-  TextEditingController classLocationController = new TextEditingController();
+  TextEditingController skillNameController = new TextEditingController();
   TextEditingController aboutController = new TextEditingController();
+  TextEditingController feesController = new TextEditingController();
   FirebaseUser user;
 
   @override
@@ -25,7 +26,7 @@ class _GetTeamDetailsState extends State<GetTeamDetails> {
     user = Provider.of<FirebaseUser>(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text('Make New Team'),
+        title: Text('Create Skill'),
       ),
       body: SingleChildScrollView(
         child: Column(
@@ -38,48 +39,20 @@ class _GetTeamDetailsState extends State<GetTeamDetails> {
                   Padding(
                     padding: const EdgeInsets.only(right: 16),
                     child: Icon(
-                      Icons.group_add,
+                      Icons.computer,
                       color: PrimaryColor,
                     ),
                   ),
                   Expanded(
                     child: TextField(
-                      controller: teamNameController,
+                      controller: skillNameController,
                       decoration: InputDecoration(
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.all(
                             Radius.circular(15.0),
                           ),
                         ),
-                        hintText: "Team Name",
-                      ),
-                    ),
-                  )
-                ],
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.all(20),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Padding(
-                    padding: const EdgeInsets.only(right: 16),
-                    child: Icon(
-                      Icons.location_on,
-                      color: PrimaryColor,
-                    ),
-                  ),
-                  Expanded(
-                    child: TextField(
-                      controller: classLocationController,
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.all(
-                            Radius.circular(15.0),
-                          ),
-                        ),
-                        hintText: "Class Location",
+                        hintText: "Skill Name",
                       ),
                     ),
                   )
@@ -90,11 +63,11 @@ class _GetTeamDetailsState extends State<GetTeamDetails> {
               padding: const EdgeInsets.all(20.0),
               child: Row(
                 children: <Widget>[
-                  Icon(Icons.image, color: PrimaryColor),
+                  Icon(Icons.public, color: PrimaryColor),
                   Spacer(),
                   DropdownButton(
-                    hint: Text('Who Can Post on Team'),
-                    value: whoCanPostToTeam,
+                    hint: Text('Who Can See Post to skill'),
+                    value: whoCanPostToSkill,
                     items: <DropdownMenuItem>[
                       DropdownMenuItem(
                         child: Text('Members'),
@@ -107,7 +80,7 @@ class _GetTeamDetailsState extends State<GetTeamDetails> {
                     ],
                     onChanged: (value) {
                       setState(() {
-                        whoCanPostToTeam = value;
+                        whoCanPostToSkill = value;
                         FocusScope.of(context).unfocus();
                       });
                     },
@@ -181,6 +154,35 @@ class _GetTeamDetailsState extends State<GetTeamDetails> {
               child: Row(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: <Widget>[
+                  Padding(
+                    padding: const EdgeInsets.only(right: 16),
+                    child: Icon(
+                      Icons.attach_money,
+                      color: PrimaryColor,
+                    ),
+                  ),
+                  Expanded(
+                    child: TextField(
+                      controller: feesController,
+                      keyboardType: TextInputType.numberWithOptions(),
+                      decoration: InputDecoration(
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.all(
+                              Radius.circular(15.0),
+                            ),
+                          ),
+                          hintText: "INR 0",
+                          helperText: 'Joining Fees'),
+                    ),
+                  )
+                ],
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.all(20),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: <Widget>[
                   Expanded(
                     child: TextFormField(
                       controller: aboutController,
@@ -202,21 +204,15 @@ class _GetTeamDetailsState extends State<GetTeamDetails> {
             GestureDetector(
               onTap: () {
                 about = aboutController.text;
-                teamName = teamNameController.text;
-                classLocation = classLocationController.text;
-                print(about +
-                    teamName +
-                    classLocation +
-                    whoCanSeMessage +
-                    whoCanPostToTeam +
-                    whoCanSeePost);
+                skillName = skillNameController.text;
+                fess = feesController.text;
 
                 if (about.isEmpty ||
-                    teamName.isEmpty ||
-                    classLocation.isEmpty ||
-                    whoCanPostToTeam.isEmpty ||
+                    skillName.isEmpty ||
+                    whoCanPostToSkill.isEmpty ||
                     whoCanSeePost.isEmpty ||
-                    whoCanSeMessage.isEmpty) {
+                    whoCanSeMessage.isEmpty ||
+                    fess.isEmpty) {
                   showDialog(
                       context: context,
                       child: AlertDialog(
@@ -225,17 +221,17 @@ class _GetTeamDetailsState extends State<GetTeamDetails> {
                         style: TextStyle(color: Colors.black38, fontSize: 16),
                       )));
                 } else {
-                  Team _team = new Team();
-                  _team.userId = user.uid;
-                  _team.about = about;
-                  _team.location = classLocation;
-                  _team.teamName = teamName;
-                  _team.whoCanSeePost = whoCanSeePost;
-                  _team.whoCanSendMessage = whoCanSeMessage;
-                  _team.whoCnaPost = whoCanPostToTeam;
-                  _team.teamId = new Uuid().v1();
+                  Skill _skill = new Skill();
+                  _skill.userId = user.uid;
+                  _skill.about = about;
+                  _skill.skillName = skillName;
+                  _skill.whoCanSeePost = whoCanSeePost;
+                  _skill.whoCanSendMessage = whoCanSeMessage;
+                  _skill.whoCnaPost = whoCanPostToSkill;
+                  _skill.price = double.parse(fess);
+                  _skill.skillId = new Uuid().v1();
                   new DbUserCollection(user.uid)
-                      .makeNewTeam(_team)
+                      .makeNewSkill(_skill)
                       .then((onValue) {
                     showAlertDialog(context);
                   });
@@ -252,14 +248,14 @@ class _GetTeamDetailsState extends State<GetTeamDetails> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                     Text(
-                      " Create Team",
+                      " Create Skill",
                       style: Theme.of(context).textTheme.button.copyWith(
                             color: Colors.black,
                           ),
                     ),
                     SizedBox(width: 20),
                     Icon(
-                      Icons.group_add,
+                      Icons.computer,
                       color: Colors.black,
                     )
                   ],
@@ -277,7 +273,7 @@ class _GetTeamDetailsState extends State<GetTeamDetails> {
 
   void showAlertDialog(BuildContext context) {
     Widget okButton = FlatButton(
-      child: Text("See Team"),
+      child: Text("See Skill"),
       onPressed: () {
         Navigator.of(context).pop();
         Navigator.of(context).pop();
@@ -286,8 +282,8 @@ class _GetTeamDetailsState extends State<GetTeamDetails> {
 
     // Create AlertDialog
     AlertDialog alert = AlertDialog(
-      title: Text("Team Created"),
-      content: Text('Thanks For Making Team'),
+      title: Text("Skill Created"),
+      content: Text('Thanks For Creating  Skill'),
       actions: [
         okButton,
       ],

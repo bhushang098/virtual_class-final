@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:virtualclass/constants.dart';
 import 'package:virtualclass/screens/teamPage.dart';
 import 'package:virtualclass/screens/homeScreen.dart';
 import 'package:virtualclass/screens/skillsPage.dart';
 import 'package:virtualclass/screens/studentPage.dart';
-import 'package:virtualclass/screens/workshopPage.dart';
+import 'package:virtualclass/screens/clasesPage.dart';
 
 class MainScreen extends StatefulWidget {
   @override
@@ -20,7 +21,7 @@ class _MainScreenState extends State<MainScreen> {
     HomePage(),
     SkillsPage(),
     TeamPage(),
-    WorkshopPage(),
+    ClassesPage(),
     StudentPage()
   ];
 
@@ -94,7 +95,7 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
   @override
   Widget build(BuildContext context) {
     List<Widget> _navBarItemList = [];
-    List<String> names = ['home', 'skills', 'group', 'workshop', 'student'];
+    List<String> names = ['Home', 'Skills', 'Teams', 'Classes', 'Students'];
 
     for (var i = 0; i < _iconList.length; i++) {
       _navBarItemList.add(buildNavBarItem(_iconList[i], i, names[i]));
@@ -117,22 +118,18 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
         height: 50,
         width: MediaQuery.of(context).size.width / _iconList.length,
         decoration: index == _selectedIndex
-            ? BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(width: 3, color: kPrimaryColor),
-                ),
-              )
-            : BoxDecoration(),
+            ? BoxDecoration(color: primaryLight)
+            : BoxDecoration(color: primaryLight),
         child: Column(
           children: <Widget>[
             Icon(
               icon,
-              color: index == _selectedIndex ? kPrimaryColor : Colors.grey,
+              color: index == _selectedIndex ? PrimaryColor : Colors.grey,
             ),
             Text(
               name,
               style: TextStyle(
-                  color: index == _selectedIndex ? kPrimaryColor : Colors.grey),
+                  color: index == _selectedIndex ? PrimaryColor : Colors.grey),
             ),
           ],
         ),

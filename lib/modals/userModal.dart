@@ -2,8 +2,9 @@ class Myusers {
   String _name, _email, _phone, _profile_url;
   bool _gender;
   int _noOfPost;
-  int _followers;
-  int _following;
+
+  List<dynamic> _followers;
+  List<dynamic> _following;
   List<dynamic> _posts;
   List<dynamic> _images;
   List<dynamic> _videos;
@@ -54,15 +55,9 @@ class Myusers {
     _posts = value;
   }
 
-  int get following => _following;
+  List<dynamic> get followers => _followers;
 
-  set following(int value) {
-    _following = value;
-  }
-
-  int get followers => _followers;
-
-  set followers(int value) {
+  set followers(List<dynamic> value) {
     _followers = value;
   }
 
@@ -86,5 +81,11 @@ class Myusers {
 
   set email(value) {
     _email = value;
+  }
+
+  List<dynamic> get following => _following;
+
+  set following(List<dynamic> value) {
+    _following = value;
   }
 }

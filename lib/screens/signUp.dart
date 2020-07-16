@@ -25,6 +25,7 @@ class _SignUpState extends State<SignUp> {
   bool _obscureText = true;
   int selectedRadioTile;
   bool _ShowProgress = false;
+
   void _toggle() {
     setState(() {
       _obscureText = !_obscureText;
@@ -86,7 +87,7 @@ class _SignUpState extends State<SignUp> {
                     padding: const EdgeInsets.only(right: 16),
                     child: Icon(
                       Icons.person,
-                      color: kPrimaryColor,
+                      color: PrimaryColor,
                     ),
                   ),
                   Expanded(
@@ -114,7 +115,7 @@ class _SignUpState extends State<SignUp> {
                     padding: const EdgeInsets.only(right: 16),
                     child: Icon(
                       Icons.mail,
-                      color: kPrimaryColor,
+                      color: PrimaryColor,
                     ),
                   ),
                   Expanded(
@@ -142,7 +143,7 @@ class _SignUpState extends State<SignUp> {
                     padding: const EdgeInsets.only(right: 16),
                     child: Icon(
                       Icons.phone,
-                      color: kPrimaryColor,
+                      color: PrimaryColor,
                     ),
                   ),
                   Expanded(
@@ -171,7 +172,7 @@ class _SignUpState extends State<SignUp> {
                     padding: const EdgeInsets.only(right: 16),
                     child: Icon(
                       Icons.lock,
-                      color: kPrimaryColor,
+                      color: PrimaryColor,
                     ),
                   ),
                   Expanded(
@@ -192,11 +193,11 @@ class _SignUpState extends State<SignUp> {
                     icon: _obscureText
                         ? Icon(
                             Icons.visibility_off,
-                            color: kPrimaryColor,
+                            color: PrimaryColor,
                           )
                         : Icon(
                             Icons.visibility,
-                            color: kPrimaryColor,
+                            color: PrimaryColor,
                           ),
                     onPressed: _toggle,
                   )
@@ -212,7 +213,7 @@ class _SignUpState extends State<SignUp> {
                     padding: const EdgeInsets.only(right: 16),
                     child: Icon(
                       Icons.lock,
-                      color: kPrimaryColor,
+                      color: PrimaryColor,
                     ),
                   ),
                   Expanded(
@@ -233,11 +234,11 @@ class _SignUpState extends State<SignUp> {
                     icon: _obscureText
                         ? Icon(
                             Icons.visibility_off,
-                            color: kPrimaryColor,
+                            color: PrimaryColor,
                           )
                         : Icon(
                             Icons.visibility,
-                            color: kPrimaryColor,
+                            color: PrimaryColor,
                           ),
                     onPressed: _toggle,
                   )
@@ -253,7 +254,7 @@ class _SignUpState extends State<SignUp> {
                     padding: const EdgeInsets.only(right: 16),
                     child: Icon(
                       Icons.face,
-                      color: kPrimaryColor,
+                      color: PrimaryColor,
                     ),
                   ),
                   RadioListTile(
@@ -335,7 +336,7 @@ class _SignUpState extends State<SignUp> {
                         );
                       },
                     );
-                    print('Password Not mached');
+                    print('Password Not matched');
                   }
                 }
               },
@@ -344,7 +345,7 @@ class _SignUpState extends State<SignUp> {
                 padding: EdgeInsets.symmetric(horizontal: 26, vertical: 16),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(25),
-                  color: kPrimaryColor,
+                  color: PrimaryColor,
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -378,8 +379,8 @@ class _SignUpState extends State<SignUp> {
     _user.phone = phone;
     _user.email = mail;
     _user.noOfPost = 0;
-    _user.followers = 0;
-    _user.following = 0;
+    _user.followers = [];
+    _user.following = [];
     _user.posts = [];
     _user.images = [];
     _user.videos = [];
