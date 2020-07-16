@@ -61,7 +61,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
                         backgroundImage: NetworkImage(_post.profile_url),
                       ),
                       title: Text(
-                        _post.userIdWhoPosted,
+                        _post.userIdWhoPosted.split('??.??').first,
                       ),
                       subtitle: Text(convertTimeStamp(_post.time_posted)),
                       trailing: Column(

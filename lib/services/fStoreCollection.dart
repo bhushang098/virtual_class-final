@@ -52,6 +52,8 @@ class DbUserCollection {
       'is_teacher': false,
       'skills_made': [],
       'classes_made': [],
+      'teams_made': [],
+      'location': '',
     });
   }
 
@@ -219,16 +221,25 @@ class DbUserCollection {
   }
 
   Future makeNewTeam(Team team) async {
-    return await teamsCollection.document(team.teamId).setData({
+    DocumentSnapshot snapshot =
+        await Firestore.instance.collection('users').document(uid).get();
+    var userName = snapshot.data['name'];
+
+    return await teamsCollection
+        .document(team.teamId + '??.??' + team.teamName)
+        .setData({
       'team_name': team.teamName,
       'about': team.about,
       'location': team.location,
       'who_can_post': team.whoCnaPost,
       'who_can_see_post': team.whoCanSeePost,
       'who_can_send_message': team.whoCanSendMessage,
-      'team_id': team.teamId,
+      'team_id': team.teamId + '??.??' + team.teamName,
       'user_id': team.userId,
       'members': {},
+      'host': userName,
+      'date_created': Timestamp.fromDate(new DateTime.now()),
+      'team_image': ''
     });
   }
 
@@ -335,6 +346,29 @@ class DbUserCollection {
     skillsMade.add(classId + '??.??' + className);
     return await userCollection.document(uid).updateData({
       'classes_made': skillsMade,
+    });
+  }
+
+  Future makwPostWithCaption(Uuid uuid, String caption, String uid,
+      BuildContext context, String assigedWith) async {
+    DocumentSnapshot snapshot =
+        await Firestore.instance.collection('users').document(uid).get();
+
+    var userName = snapshot.data['name'];
+    var profileUrl = snapshot.data['profile_url'];
+    updateuserPostmade(uid);
+
+    return await postCollection.document(uid).setData({
+      'content': caption,
+      'likes': 0,
+      'post_id': uid,
+      'time_uploaded': Timestamp.fromDate(DateTime.now()),
+      'user_id_who_posted': userName + '??.??' + uid,
+      'comments': {},
+      'profile_url': profileUrl,
+      'is_image': false,
+      'assigned_with': assigedWith,
+      'image_url': null,
     });
   }
 }

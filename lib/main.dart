@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:provider/provider.dart';
 import 'package:virtualclass/detailsScreens/classDetailsMail.dart';
 import 'package:virtualclass/detailsScreens/skillDetailsMain.dart';
+import 'package:virtualclass/detailsScreens/teamDetailsMain.dart';
 import 'package:virtualclass/screens/commentsScreen.dart';
 import 'package:virtualclass/screens/createSkillpage.dart';
 import 'package:virtualclass/screens/createClass.dart';
@@ -26,15 +27,16 @@ class MyApp extends StatelessWidget {
     return StreamProvider<FirebaseUser>.value(
       value: Auth().user,
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         title: 'Virtual Class',
         theme: ThemeData(
 //        brightness: Brightness.dark,
-          primaryColor: kPrimaryColor,
+          primaryColor: PrimaryColor,
 //        scaffoldBackgroundColor: kBackgroundColor,
           textTheme: TextTheme(
             display1:
                 TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
-            button: TextStyle(color: kPrimaryColor),
+            button: TextStyle(color: PrimaryColor),
             headline:
                 TextStyle(color: Colors.white, fontWeight: FontWeight.normal),
           ),
@@ -60,6 +62,7 @@ class MyApp extends StatelessWidget {
           '/SkillDetailsPage': (BuildContext context) => new SkillDetailsMain(),
           '/ClassDetailsPage': (BuildContext context) => new ClassDetailsMain(),
           '/ShowUsersPosts': (BuildContext context) => new ShowUsersPosts(),
+          '/TeamDetailsMain': (BuildContext context) => new TeamDetailsMain(),
         },
         home: Wrapper(),
       ),

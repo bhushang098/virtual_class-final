@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:virtualclass/constants.dart';
 import 'package:virtualclass/screens/teamPage.dart';
 import 'package:virtualclass/screens/homeScreen.dart';
@@ -117,22 +118,18 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
         height: 50,
         width: MediaQuery.of(context).size.width / _iconList.length,
         decoration: index == _selectedIndex
-            ? BoxDecoration(
-                border: Border(
-                  bottom: BorderSide(width: 3, color: kPrimaryColor),
-                ),
-              )
-            : BoxDecoration(),
+            ? BoxDecoration(color: primaryLight)
+            : BoxDecoration(color: primaryLight),
         child: Column(
           children: <Widget>[
             Icon(
               icon,
-              color: index == _selectedIndex ? kPrimaryColor : Colors.grey,
+              color: index == _selectedIndex ? PrimaryColor : Colors.grey,
             ),
             Text(
               name,
               style: TextStyle(
-                  color: index == _selectedIndex ? kPrimaryColor : Colors.grey),
+                  color: index == _selectedIndex ? PrimaryColor : Colors.grey),
             ),
           ],
         ),

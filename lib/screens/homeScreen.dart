@@ -61,12 +61,13 @@ class _HomePageState extends State<HomePage>
     final user = Provider.of<FirebaseUser>(context);
     setPostLiked(user.uid);
     return Scaffold(
+      backgroundColor: primaryLight,
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           Navigator.pushNamed(context, '/MakePostScreen', arguments: 'ALL');
         },
         tooltip: 'Make New Post',
-        backgroundColor: kPrimaryColor,
+        backgroundColor: PrimaryColor,
         child: Icon(Icons.image),
       ),
       key: _scaffoldKey,
@@ -139,7 +140,9 @@ class _HomePageState extends State<HomePage>
                                             .data[index].data['profile_url']),
                                       ),
                                       title: Text(snapShot.data[index]
-                                          .data['user_id_who_posted']),
+                                          .data['user_id_who_posted']
+                                          .split('??.??')
+                                          .first),
                                       subtitle: Text(convertTimeStamp(snapShot
                                           .data[index].data['time_uploaded'])),
                                       trailing: _liked_Posts.contains(snapShot
@@ -230,21 +233,27 @@ class _HomePageState extends State<HomePage>
                                               alignment: Alignment.center,
                                             ),
                                           )
-                                        : Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Container(
-                                              height: MediaQuery.of(context)
+                                        : snapShot.data[index]
+                                                    .data['image_url'] ==
+                                                null
+                                            ? Text('')
+                                            : Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Container(
+                                                  height: MediaQuery.of(context)
+                                                          .size
+                                                          .height /
+                                                      3,
+                                                  width: MediaQuery.of(context)
                                                       .size
-                                                      .height /
-                                                  3,
-                                              width: MediaQuery.of(context)
-                                                  .size
-                                                  .width,
-                                              child: NetworkPlayer(snapShot
-                                                  .data[index].data['image_url']
-                                                  .toString()),
-                                            ),
-                                          ),
+                                                      .width,
+                                                  child: NetworkPlayer(snapShot
+                                                      .data[index]
+                                                      .data['image_url']
+                                                      .toString()),
+                                                ),
+                                              ),
                                     SizedBox(
                                       height: 5,
                                     ),

@@ -46,11 +46,11 @@ class _StudentPageState extends State<StudentPage> {
   Widget build(BuildContext context) {
     user = Provider.of<FirebaseUser>(context);
     return Scaffold(
-      backgroundColor: kPrimaryColor,
+      backgroundColor: primaryLight,
       key: _scaffoldKey,
       endDrawer: MyDrawer(),
       appBar: AppBar(
-        title: Text("Students Page"),
+        title: Text("Students "),
         actions: <Widget>[
           IconButton(
               icon: Icon(Icons.search),
@@ -98,18 +98,18 @@ class _StudentPageState extends State<StudentPage> {
                   return Card(
                     elevation: 4,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20.0),
+                      borderRadius: BorderRadius.circular(10.0),
                     ),
                     child: Column(
                       children: <Widget>[
                         Padding(
-                          padding: const EdgeInsets.all(12.0),
+                          padding: const EdgeInsets.only(top: 12.0, left: 10),
                           child: Row(
                             children: <Widget>[
                               CircleAvatar(
                                 radius: 35,
                                 backgroundImage: NetworkImage(
-                                    snapShot.data[index].data['img_url']),
+                                    snapShot.data[index].data['profile_url']),
                               ),
                               SizedBox(
                                 width: 20,
@@ -128,11 +128,10 @@ class _StudentPageState extends State<StudentPage> {
                         Text(
                             'Location ${snapShot.data[index].data['location']}'),
                         SizedBox(
-                          height: 20,
+                          height: 10,
                         ),
-                        Text('Skills / Interests'),
+                        Text('Skills'),
                         Container(
-                          height: 50,
                           width: MediaQuery.of(context).size.width,
                           child: SingleChildScrollView(
                             child: skillBuilder(
@@ -166,7 +165,7 @@ class _StudentPageState extends State<StudentPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Padding(
-                padding: const EdgeInsets.all(5.0),
+                padding: const EdgeInsets.all(2.0),
                 child: Text(
                   skills[index],
                   style: TextStyle(color: Colors.green),

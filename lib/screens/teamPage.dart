@@ -46,12 +46,12 @@ class _TeamPageState extends State<TeamPage> {
   Widget build(BuildContext context) {
     user = Provider.of<FirebaseUser>(context);
     return Scaffold(
-      backgroundColor: kPrimaryColor,
+      backgroundColor: primaryLight,
       key: _scaffoldKey,
       floatingActionButton: FloatingActionButton(
         heroTag: 'fabCreateTeam',
-        backgroundColor: kPrimaryColor,
-        child: Icon(Icons.add),
+        backgroundColor: PrimaryColor,
+        child: Icon(Icons.group_add),
         onPressed: () {
           navTpGrtPostDetails();
         },
@@ -91,7 +91,7 @@ class _TeamPageState extends State<TeamPage> {
         ],
       ),
       body: Padding(
-        padding: const EdgeInsets.all(10.0),
+        padding: const EdgeInsets.all(2.0),
         child: FutureBuilder(
           future: getTeams(),
           builder: (_, snapShot) {
@@ -105,73 +105,82 @@ class _TeamPageState extends State<TeamPage> {
                   physics: BouncingScrollPhysics(),
                   itemCount: snapShot.data.length,
                   itemBuilder: (BuildContext context, int index) {
-                    return Card(
-                      elevation: 4,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20.0),
-                      ),
-                      child: Column(
-                        children: <Widget>[
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Text(
-                            snapShot.data[index].data['team_name'],
-                            style: TextStyle(
-                                fontWeight: FontWeight.bold, fontSize: 21.0),
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          Text(
-                            '${snapShot.data[index].data['members'].length} Members',
-                            style: TextStyle(
-                                fontWeight: FontWeight.normal,
-                                fontSize: 16.0,
-                                fontStyle: FontStyle.italic),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: <Widget>[
-                              Icon(
-                                Icons.location_on,
-                                color: Colors.black,
-                              ),
-                              SizedBox(width: 10),
-                              Text(snapShot.data[index].data['location']),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 20,
-                          ),
-                          RichText(
-                            textAlign: TextAlign.center,
-                            text: TextSpan(
-                              children: [
-                                TextSpan(
-                                  text: "Hosted By   ",
-                                  style: TextStyle(
-                                    fontSize: 16.0,
-                                    color: Colors.black,
-                                  ),
+                    return InkWell(
+                      onTap: () {
+                        Navigator.pushNamed(context, '/TeamDetailsMain',
+                            arguments: snapShot.data[index].data['team_id']);
+                      },
+                      child: Card(
+                        elevation: 4,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10.0),
+                        ),
+                        child: Column(
+                          children: <Widget>[
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Text(
+                              snapShot.data[index].data['team_name'],
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 24.0),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Image.network(
+                                snapShot.data[index].data['team_image']),
+                            Text(
+                              '${snapShot.data[index].data['members'].length} Members',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.normal,
+                                  color: PrimaryColor,
+                                  fontStyle: FontStyle.italic),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: <Widget>[
+                                Icon(
+                                  Icons.location_on,
+                                  color: Colors.black,
+                                  size: 15,
                                 ),
-                                TextSpan(
-                                  text: 'Virtual Skill',
-                                  style: TextStyle(
-                                      color: Colors.black,
-                                      fontSize: 21,
-                                      fontWeight: FontWeight.bold),
-                                )
+                                SizedBox(width: 10),
+                                Text(snapShot.data[index].data['location']),
                               ],
                             ),
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                        ],
+                            SizedBox(
+                              height: 20,
+                            ),
+                            RichText(
+                              textAlign: TextAlign.center,
+                              text: TextSpan(
+                                children: [
+                                  TextSpan(
+                                    text: "Hosted By  : ",
+                                    style: TextStyle(
+                                      fontSize: 14.0,
+                                      color: Colors.black,
+                                    ),
+                                  ),
+                                  TextSpan(
+                                    text: snapShot.data[index].data['host'],
+                                    style: TextStyle(
+                                        color: Colors.black,
+                                        fontSize: 17,
+                                        fontWeight: FontWeight.bold),
+                                  )
+                                ],
+                              ),
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                          ],
+                        ),
                       ),
                     );
                   });

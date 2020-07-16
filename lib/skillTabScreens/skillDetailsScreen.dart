@@ -54,7 +54,7 @@ class _SkillDetailsScreenState extends State<SkillDetailsScreen> {
                           child: GestureDetector(
                             child: Icon(
                               Icons.add_a_photo,
-                              color: kPrimaryColor,
+                              color: PrimaryColor,
                             ),
                           ),
                         )
@@ -74,7 +74,7 @@ class _SkillDetailsScreenState extends State<SkillDetailsScreen> {
                   Text('   Fees : ' + snapShot.data['fees'].toString() + '    ',
                       style: TextStyle(
                           fontWeight: FontWeight.normal,
-                          backgroundColor: kPrimaryColor)),
+                          backgroundColor: PrimaryColor)),
                   SizedBox(
                     height: 10,
                   ),

@@ -56,7 +56,7 @@ class _CreateClassState extends State<CreateClass> {
                     padding: const EdgeInsets.only(right: 16),
                     child: Icon(
                       Icons.supervised_user_circle,
-                      color: kPrimaryColor,
+                      color: PrimaryColor,
                     ),
                   ),
                   Expanded(
@@ -84,7 +84,7 @@ class _CreateClassState extends State<CreateClass> {
                     padding: const EdgeInsets.only(right: 16),
                     child: Icon(
                       Icons.location_on,
-                      color: kPrimaryColor,
+                      color: PrimaryColor,
                     ),
                   ),
                   Expanded(
@@ -110,7 +110,7 @@ class _CreateClassState extends State<CreateClass> {
                     " :  ${startDate.day} / ${startDate.month} / ${startDate.year}"),
                 trailing: Icon(
                   Icons.date_range,
-                  color: kPrimaryColor,
+                  color: PrimaryColor,
                 ),
                 onTap: _pickStartDate,
               ),
@@ -123,7 +123,7 @@ class _CreateClassState extends State<CreateClass> {
                     " :  ${endDate.day} / ${endDate.month} / ${endDate.year}"),
                 trailing: Icon(
                   Icons.date_range,
-                  color: kPrimaryColor,
+                  color: PrimaryColor,
                 ),
                 onTap: _pickEndDate,
               ),
@@ -135,7 +135,7 @@ class _CreateClassState extends State<CreateClass> {
                 title: Text(" : ${startTime.format(context)}"),
                 trailing: Icon(
                   Icons.access_time,
-                  color: kPrimaryColor,
+                  color: PrimaryColor,
                 ),
                 onTap: _pickStartTime,
               ),
@@ -149,7 +149,7 @@ class _CreateClassState extends State<CreateClass> {
                     padding: const EdgeInsets.only(right: 16),
                     child: Icon(
                       Icons.timelapse,
-                      color: kPrimaryColor,
+                      color: PrimaryColor,
                     ),
                   ),
                   Expanded(
@@ -174,7 +174,7 @@ class _CreateClassState extends State<CreateClass> {
                 children: <Widget>[
                   Text("Daily Recurring Class"),
                   Checkbox(
-                    activeColor: kPrimaryColor,
+                    activeColor: PrimaryColor,
                     value: _isDaily,
                     onChanged: (bool value) {
                       setState(() {
@@ -214,7 +214,7 @@ class _CreateClassState extends State<CreateClass> {
                 children: <Widget>[
                   Text("Free Class"),
                   Checkbox(
-                    activeColor: kPrimaryColor,
+                    activeColor: PrimaryColor,
                     value: _isFree,
                     onChanged: (bool value) {
                       setState(() {
@@ -236,7 +236,7 @@ class _CreateClassState extends State<CreateClass> {
                           padding: const EdgeInsets.only(right: 16),
                           child: Icon(
                             Icons.attach_money,
-                            color: kPrimaryColor,
+                            color: PrimaryColor,
                           ),
                         ),
                         Expanded(
@@ -299,7 +299,7 @@ class _CreateClassState extends State<CreateClass> {
                 padding: EdgeInsets.symmetric(horizontal: 26, vertical: 16),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(25),
-                  color: kPrimaryColor,
+                  color: PrimaryColor,
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,

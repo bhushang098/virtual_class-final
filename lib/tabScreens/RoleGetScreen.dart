@@ -32,7 +32,7 @@ class _RoleGetScreenState extends State<RoleGetScreen> {
                 padding: const EdgeInsets.all(20.0),
                 child: Row(
                   children: <Widget>[
-                    Icon(Icons.group, color: kPrimaryColor),
+                    Icon(Icons.group, color: PrimaryColor),
                     Spacer(),
                     DropdownButton(
                       hint: Text('              Role           '),
@@ -85,7 +85,7 @@ class _RoleGetScreenState extends State<RoleGetScreen> {
                   padding: EdgeInsets.symmetric(horizontal: 26, vertical: 16),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(25),
-                    color: kPrimaryColor,
+                    color: PrimaryColor,
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,

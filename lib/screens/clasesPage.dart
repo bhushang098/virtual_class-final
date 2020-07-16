@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:virtualclass/modals/userModal.dart';
@@ -56,10 +57,11 @@ class _ClassesPageState extends State<ClassesPage> {
   Widget build(BuildContext context) {
     user = Provider.of<FirebaseUser>(context);
     return Scaffold(
+      backgroundColor: primaryLight,
       key: _scaffoldKey,
       floatingActionButton: FloatingActionButton(
         heroTag: 'fabCreateWorkshop',
-        backgroundColor: kPrimaryColor,
+        backgroundColor: PrimaryColor,
         child: Icon(Icons.add),
         onPressed: () {
           bool istechher = false;
@@ -146,7 +148,7 @@ class _ClassesPageState extends State<ClassesPage> {
                           child: Column(
                             children: <Widget>[
                               SizedBox(
-                                height: 10,
+                                height: 5,
                               ),
                               Padding(
                                 padding: const EdgeInsets.all(8.0),
@@ -158,7 +160,12 @@ class _ClassesPageState extends State<ClassesPage> {
                                 ),
                               ),
                               SizedBox(
-                                height: 10,
+                                height: 5,
+                              ),
+                              Image.network(
+                                  snapShot.data[index].data['class_image']),
+                              SizedBox(
+                                height: 5,
                               ),
                               Text(
                                   ' Location : ${snapShot.data[index].data['location']} '),
@@ -169,22 +176,22 @@ class _ClassesPageState extends State<ClassesPage> {
                                   ? Text(
                                       '    Free Class    ',
                                       style: TextStyle(
-                                          backgroundColor: kPrimaryColor,
+                                          backgroundColor: PrimaryColor,
                                           fontSize: 17),
                                     )
                                   : Text(
-                                      '  INR ${snapShot.data[index].data['fees']}      ',
+                                      '   INR ${snapShot.data[index].data['fees']}   ',
                                       style: TextStyle(
-                                          backgroundColor: kPrimaryColor,
+                                          backgroundColor: PrimaryColor,
                                           fontSize: 17),
                                     ),
                               SizedBox(
-                                height: 8,
+                                height: 5,
                               ),
                               ListTile(
                                 leading: Icon(
                                   Icons.date_range,
-                                  color: kPrimaryColor,
+                                  color: PrimaryColor,
                                 ),
                                 title: Text(snapShot
                                         .data[index].data['start_date']
@@ -202,14 +209,11 @@ class _ClassesPageState extends State<ClassesPage> {
                                         .year
                                         .toString()),
                               ),
-                              SizedBox(
-                                height: 8,
-                              ),
                               snapShot.data[index].data['is_daily']
                                   ? ListTile(
                                       leading: Icon(
                                         Icons.access_time,
-                                        color: kPrimaryColor,
+                                        color: PrimaryColor,
                                       ),
                                       title: Text('Daily ' +
                                           snapShot.data[index].data['timing']
@@ -225,7 +229,7 @@ class _ClassesPageState extends State<ClassesPage> {
                                   : ListTile(
                                       leading: Icon(
                                         Icons.access_time,
-                                        color: kPrimaryColor,
+                                        color: PrimaryColor,
                                       ),
                                       title: Text('At ' +
                                           snapShot.data[index].data['timing']
@@ -239,7 +243,7 @@ class _ClassesPageState extends State<ClassesPage> {
                                               .toString()),
                                     ),
                               SizedBox(
-                                height: 8,
+                                height: 5,
                               ),
                             ],
                           ),

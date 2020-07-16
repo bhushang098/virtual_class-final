@@ -13,7 +13,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: kBackgroundColor,
+      backgroundColor: DarkBackgroundColor,
       body: Column(
         children: <Widget>[
           Expanded(
@@ -46,7 +46,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         TextSpan(
                           text: "Learn Skills",
                           style: TextStyle(
-                            color: kPrimaryColor,
+                            color: amberColor,
                             fontSize: 22,
                           ),
                         ),
@@ -72,7 +72,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                             EdgeInsets.symmetric(horizontal: 26, vertical: 16),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(25),
-                          color: kPrimaryColor,
+                          color: amberColor,
                         ),
                         child: Row(
                           children: <Widget>[

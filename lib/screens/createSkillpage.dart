@@ -40,7 +40,7 @@ class _CreateSkillsState extends State<CreateSkills> {
                     padding: const EdgeInsets.only(right: 16),
                     child: Icon(
                       Icons.computer,
-                      color: kPrimaryColor,
+                      color: PrimaryColor,
                     ),
                   ),
                   Expanded(
@@ -63,7 +63,7 @@ class _CreateSkillsState extends State<CreateSkills> {
               padding: const EdgeInsets.all(20.0),
               child: Row(
                 children: <Widget>[
-                  Icon(Icons.public, color: kPrimaryColor),
+                  Icon(Icons.public, color: PrimaryColor),
                   Spacer(),
                   DropdownButton(
                     hint: Text('Who Can See Post to skill'),
@@ -93,7 +93,7 @@ class _CreateSkillsState extends State<CreateSkills> {
               padding: const EdgeInsets.all(20.0),
               child: Row(
                 children: <Widget>[
-                  Icon(Icons.public, color: kPrimaryColor),
+                  Icon(Icons.public, color: PrimaryColor),
                   Spacer(),
                   DropdownButton(
                     hint: Text('Who Can See Post'),
@@ -123,7 +123,7 @@ class _CreateSkillsState extends State<CreateSkills> {
               padding: const EdgeInsets.all(20.0),
               child: Row(
                 children: <Widget>[
-                  Icon(Icons.message, color: kPrimaryColor),
+                  Icon(Icons.message, color: PrimaryColor),
                   Spacer(),
                   DropdownButton(
                     hint: Text('Who Can Send Messages'),
@@ -158,7 +158,7 @@ class _CreateSkillsState extends State<CreateSkills> {
                     padding: const EdgeInsets.only(right: 16),
                     child: Icon(
                       Icons.attach_money,
-                      color: kPrimaryColor,
+                      color: PrimaryColor,
                     ),
                   ),
                   Expanded(
@@ -242,7 +242,7 @@ class _CreateSkillsState extends State<CreateSkills> {
                 padding: EdgeInsets.symmetric(horizontal: 26, vertical: 16),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(25),
-                  color: kPrimaryColor,
+                  color: PrimaryColor,
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,

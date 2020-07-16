@@ -43,7 +43,7 @@ class _AccountgetScreenState extends State<AccountgetScreen> {
                 children: <Widget>[
                   Text("Private Account"),
                   Checkbox(
-                    activeColor: kPrimaryColor,
+                    activeColor: PrimaryColor,
                     value: _isPrivate,
                     onChanged: (bool value) {
                       setState(() {
@@ -71,7 +71,7 @@ class _AccountgetScreenState extends State<AccountgetScreen> {
                   padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(25),
-                    color: kPrimaryColor,
+                    color: PrimaryColor,
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -106,7 +106,7 @@ class _AccountgetScreenState extends State<AccountgetScreen> {
                       padding: const EdgeInsets.only(right: 16),
                       child: Icon(
                         Icons.account_circle,
-                        color: kPrimaryColor,
+                        color: PrimaryColor,
                       ),
                     ),
                     Expanded(
@@ -135,7 +135,7 @@ class _AccountgetScreenState extends State<AccountgetScreen> {
                       padding: const EdgeInsets.only(right: 16),
                       child: Icon(
                         Icons.lock,
-                        color: kPrimaryColor,
+                        color: PrimaryColor,
                       ),
                     ),
                     Expanded(
@@ -156,11 +156,11 @@ class _AccountgetScreenState extends State<AccountgetScreen> {
                       icon: _obsCureText
                           ? Icon(
                               Icons.visibility_off,
-                              color: kPrimaryColor,
+                              color: PrimaryColor,
                             )
                           : Icon(
                               Icons.visibility,
-                              color: kPrimaryColor,
+                              color: PrimaryColor,
                             ),
                       onPressed: _toggle,
                     )
@@ -176,7 +176,7 @@ class _AccountgetScreenState extends State<AccountgetScreen> {
                       padding: const EdgeInsets.only(right: 16),
                       child: Icon(
                         Icons.lock,
-                        color: kPrimaryColor,
+                        color: PrimaryColor,
                       ),
                     ),
                     Expanded(
@@ -197,11 +197,11 @@ class _AccountgetScreenState extends State<AccountgetScreen> {
                       icon: _obsCureText
                           ? Icon(
                               Icons.visibility_off,
-                              color: kPrimaryColor,
+                              color: PrimaryColor,
                             )
                           : Icon(
                               Icons.visibility,
-                              color: kPrimaryColor,
+                              color: PrimaryColor,
                             ),
                       onPressed: _toggle,
                     )
@@ -248,7 +248,7 @@ class _AccountgetScreenState extends State<AccountgetScreen> {
                   padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(25),
-                    color: kPrimaryColor,
+                    color: PrimaryColor,
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,

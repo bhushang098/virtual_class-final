@@ -87,7 +87,7 @@ class _SignUpState extends State<SignUp> {
                     padding: const EdgeInsets.only(right: 16),
                     child: Icon(
                       Icons.person,
-                      color: kPrimaryColor,
+                      color: PrimaryColor,
                     ),
                   ),
                   Expanded(
@@ -115,7 +115,7 @@ class _SignUpState extends State<SignUp> {
                     padding: const EdgeInsets.only(right: 16),
                     child: Icon(
                       Icons.mail,
-                      color: kPrimaryColor,
+                      color: PrimaryColor,
                     ),
                   ),
                   Expanded(
@@ -143,7 +143,7 @@ class _SignUpState extends State<SignUp> {
                     padding: const EdgeInsets.only(right: 16),
                     child: Icon(
                       Icons.phone,
-                      color: kPrimaryColor,
+                      color: PrimaryColor,
                     ),
                   ),
                   Expanded(
@@ -172,7 +172,7 @@ class _SignUpState extends State<SignUp> {
                     padding: const EdgeInsets.only(right: 16),
                     child: Icon(
                       Icons.lock,
-                      color: kPrimaryColor,
+                      color: PrimaryColor,
                     ),
                   ),
                   Expanded(
@@ -193,11 +193,11 @@ class _SignUpState extends State<SignUp> {
                     icon: _obscureText
                         ? Icon(
                             Icons.visibility_off,
-                            color: kPrimaryColor,
+                            color: PrimaryColor,
                           )
                         : Icon(
                             Icons.visibility,
-                            color: kPrimaryColor,
+                            color: PrimaryColor,
                           ),
                     onPressed: _toggle,
                   )
@@ -213,7 +213,7 @@ class _SignUpState extends State<SignUp> {
                     padding: const EdgeInsets.only(right: 16),
                     child: Icon(
                       Icons.lock,
-                      color: kPrimaryColor,
+                      color: PrimaryColor,
                     ),
                   ),
                   Expanded(
@@ -234,11 +234,11 @@ class _SignUpState extends State<SignUp> {
                     icon: _obscureText
                         ? Icon(
                             Icons.visibility_off,
-                            color: kPrimaryColor,
+                            color: PrimaryColor,
                           )
                         : Icon(
                             Icons.visibility,
-                            color: kPrimaryColor,
+                            color: PrimaryColor,
                           ),
                     onPressed: _toggle,
                   )
@@ -254,7 +254,7 @@ class _SignUpState extends State<SignUp> {
                     padding: const EdgeInsets.only(right: 16),
                     child: Icon(
                       Icons.face,
-                      color: kPrimaryColor,
+                      color: PrimaryColor,
                     ),
                   ),
                   RadioListTile(
@@ -345,7 +345,7 @@ class _SignUpState extends State<SignUp> {
                 padding: EdgeInsets.symmetric(horizontal: 26, vertical: 16),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(25),
-                  color: kPrimaryColor,
+                  color: PrimaryColor,
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,

@@ -56,7 +56,7 @@ class _BasicinfoGetScreenState extends State<BasicinfoGetScreen> {
                             padding: const EdgeInsets.only(right: 16),
                             child: Icon(
                               Icons.account_circle,
-                              color: kPrimaryColor,
+                              color: PrimaryColor,
                             ),
                           ),
                           Expanded(
@@ -85,7 +85,7 @@ class _BasicinfoGetScreenState extends State<BasicinfoGetScreen> {
                             padding: const EdgeInsets.only(right: 16),
                             child: Icon(
                               Icons.email,
-                              color: kPrimaryColor,
+                              color: PrimaryColor,
                             ),
                           ),
                           Expanded(
@@ -114,7 +114,7 @@ class _BasicinfoGetScreenState extends State<BasicinfoGetScreen> {
                             padding: const EdgeInsets.only(right: 16),
                             child: Icon(
                               Icons.location_on,
-                              color: kPrimaryColor,
+                              color: PrimaryColor,
                             ),
                           ),
                           Expanded(
@@ -143,7 +143,7 @@ class _BasicinfoGetScreenState extends State<BasicinfoGetScreen> {
                             padding: const EdgeInsets.only(right: 16),
                             child: Icon(
                               Icons.view_compact,
-                              color: kPrimaryColor,
+                              color: PrimaryColor,
                             ),
                           ),
                           Expanded(
@@ -209,7 +209,7 @@ class _BasicinfoGetScreenState extends State<BasicinfoGetScreen> {
                             EdgeInsets.symmetric(horizontal: 26, vertical: 16),
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(25),
-                          color: kPrimaryColor,
+                          color: PrimaryColor,
                         ),
                         child: Row(
                           mainAxisAlignment: MainAxisAlignment.center,

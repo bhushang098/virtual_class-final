@@ -135,7 +135,6 @@ class _MakePostScreenState extends State<MakePostScreen> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _showProgress = false;
   }
@@ -154,7 +153,7 @@ class _MakePostScreenState extends State<MakePostScreen> {
 
     return Scaffold(
       floatingActionButton: FloatingActionButton(
-        backgroundColor: kPrimaryColor,
+        backgroundColor: PrimaryColor,
         child: Icon(Icons.send),
         onPressed: () async {
           FocusScope.of(context).unfocus();
@@ -180,6 +179,21 @@ class _MakePostScreenState extends State<MakePostScreen> {
                 new DbUserCollection(user.uid)
                     .makePostWithVideo(vidFileName, uuid, caption, user.uid,
                         context, assigedWith)
+                    .then((onValue) {
+                  showAlertDialog(context);
+                });
+              }
+
+              if (caption.isNotEmpty &&
+                  imageFile == null &&
+                  videoFile == null) {
+                setState(() {
+                  _showProgress = true;
+                });
+
+                new DbUserCollection(user.uid)
+                    .makwPostWithCaption(
+                        uuid, caption, user.uid, context, assigedWith)
                     .then((onValue) {
                   showAlertDialog(context);
                 });
@@ -224,29 +238,47 @@ class _MakePostScreenState extends State<MakePostScreen> {
                 padding: const EdgeInsets.all(12.0),
                 child: Row(
                   children: <Widget>[
-                    GestureDetector(
-                      child: Icon(
-                        Icons.image,
-                        color: Colors.black38,
+                    InkWell(
+                      splashColor: PrimaryColor,
+                      child: Column(
+                        children: <Widget>[
+                          Icon(
+                            Icons.add_photo_alternate,
+                            color: PrimaryColor,
+                          ),
+                          Text('Select Image')
+                        ],
                       ),
                       onTap: () {
                         pickImageFromGallery(ImageSource.gallery);
                       },
                     ),
                     Spacer(),
-                    GestureDetector(
-                        child: Icon(
-                          Icons.ondemand_video,
-                          color: Colors.black38,
+                    InkWell(
+                        splashColor: PrimaryColor,
+                        child: Column(
+                          children: <Widget>[
+                            Icon(
+                              Icons.ondemand_video,
+                              color: PrimaryColor,
+                            ),
+                            Text('Select Video')
+                          ],
                         ),
                         onTap: () {
                           pickVideofromGallery(ImageSource.gallery);
                         }),
                     Spacer(),
-                    GestureDetector(
-                      child: Icon(
-                        Icons.insert_link,
-                        color: Colors.black38,
+                    InkWell(
+                      splashColor: PrimaryColor,
+                      child: Column(
+                        children: <Widget>[
+                          Icon(
+                            Icons.insert_link,
+                            color: PrimaryColor,
+                          ),
+                          Text('YouTube Link'),
+                        ],
                       ),
                       onTap: () {
                         setState(() {
@@ -319,7 +351,7 @@ class _MakePostScreenState extends State<MakePostScreen> {
               IconButton(
                 icon: Icon(
                   Icons.cancel,
-                  color: kPrimaryColor,
+                  color: PrimaryColor,
                 ),
                 onPressed: () {
                   setState(() {
@@ -356,7 +388,7 @@ class _MakePostScreenState extends State<MakePostScreen> {
                 IconButton(
                   icon: Icon(
                     Icons.cancel,
-                    color: kPrimaryColor,
+                    color: PrimaryColor,
                   ),
                   onPressed: () {
                     setState(() {

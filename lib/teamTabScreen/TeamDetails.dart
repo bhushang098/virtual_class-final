@@ -4,19 +4,19 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 
 import '../constants.dart';
 
-class ClassDetails extends StatefulWidget {
-  ClassDetails({Key key, this.title}) : super(key: key);
+class TeamDetails extends StatefulWidget {
+  TeamDetails({Key key, this.title}) : super(key: key);
 
   final String title;
   @override
-  _ClassDetailsState createState() => _ClassDetailsState();
+  _TeamDetailsState createState() => _TeamDetailsState();
 }
 
-class _ClassDetailsState extends State<ClassDetails> {
+class _TeamDetailsState extends State<TeamDetails> {
   getClassesDetails(String skillId) async {
     var fireStore = Firestore.instance;
     DocumentSnapshot dsn =
-        await fireStore.collection('classes').document(skillId).get();
+        await fireStore.collection('teams').document(skillId).get();
     return dsn;
   }
 
@@ -42,7 +42,7 @@ class _ClassDetailsState extends State<ClassDetails> {
                         Padding(
                           padding: const EdgeInsets.all(8.0),
                           child: Image.network(
-                            snapShot.data['class_image'],
+                            snapShot.data['team_image'],
                             fit: BoxFit.fill,
                             height: 200,
                             width: MediaQuery.of(context).size.width,
@@ -65,7 +65,7 @@ class _ClassDetailsState extends State<ClassDetails> {
                     height: 10,
                   ),
                   Text(
-                    snapShot.data['class_name'],
+                    snapShot.data['team_name'],
                     style: TextStyle(fontWeight: FontWeight.bold, fontSize: 22),
                   ),
                   SizedBox(
@@ -80,34 +80,24 @@ class _ClassDetailsState extends State<ClassDetails> {
                   SizedBox(
                     height: 10,
                   ),
-                  Text('   Fees : ' + snapShot.data['fees'].toString() + '    ',
-                      style: TextStyle(
-                          fontWeight: FontWeight.normal,
-                          backgroundColor: PrimaryColor)),
+                  Text(
+                    '   Members : ' +
+                        snapShot.data['members'].length.toString() +
+                        '    ',
+                    style: TextStyle(fontSize: 15, color: Colors.blue),
+                  ),
                   SizedBox(
                     height: 10,
                   ),
-                  ListTile(
-                    leading: Icon(Icons.date_range),
-                    title: Text(snapShot.data['start_date']
-                            .toDate()
-                            .day
-                            .toString() +
-                        '/' +
-                        snapShot.data['start_date'].toDate().month.toString() +
-                        '/' +
-                        snapShot.data['start_date'].toDate().year.toString()),
+                  Text(
+                    '   Hosted By : ' +
+                        snapShot.data['host'].toString() +
+                        '    ',
+                    style: TextStyle(fontSize: 15),
                   ),
-                  snapShot.data['is_daily'] == null
-                      ? ListTile(
-                          leading: Icon(Icons.access_time),
-                          title: Text('At : ' +
-                              snapShot.data['timing'].toDate().toString()),
-                        )
-                      : Text('Hosted By  : ' + snapShot.data['host'].toString(),
-                          style: TextStyle(
-                            fontWeight: FontWeight.normal,
-                          )),
+                  SizedBox(
+                    height: 10,
+                  ),
                   ListTile(
                     leading: Icon(Icons.info),
                     title: Text(snapShot.data['about']),

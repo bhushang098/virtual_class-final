@@ -5,18 +5,22 @@ import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 import 'package:virtualclass/modals/postsmodal.dart';
 import 'package:virtualclass/modals/userModal.dart';
+import 'package:virtualclass/screens/networkVidScreen.dart';
 import 'package:virtualclass/screens/timeService.dart';
 import 'package:virtualclass/services/fStoreCollection.dart';
-import 'networkVidScreen.dart';
 
-class ShowUsersPosts extends StatefulWidget {
+import '../constants.dart';
+
+class TeamPosts extends StatefulWidget {
+  TeamPosts({Key key, this.title}) : super(key: key);
+
+  final String title;
   @override
-  _ShowUsersPostsState createState() => _ShowUsersPostsState();
+  _TeamPostsState createState() => _TeamPostsState();
 }
 
-class _ShowUsersPostsState extends State<ShowUsersPosts> {
+class _TeamPostsState extends State<TeamPosts> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-
   Myusers _myusers;
 
   var uuid = Uuid();
@@ -25,19 +29,36 @@ class _ShowUsersPostsState extends State<ShowUsersPosts> {
 
   @override
   void initState() {
+    // TODO: implement initState
     super.initState();
     _liked_Posts = new Set();
+  }
+
+  getpostsmadeInClass(String skillId) async {
+    var fireStore = Firestore.instance;
+    QuerySnapshot qn = await fireStore
+        .collection('posts')
+        .orderBy('time_uploaded', descending: true)
+        .getDocuments();
+    return qn.documents;
   }
 
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<FirebaseUser>(context);
+    setPostLiked(user.uid);
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Your Posts'),
+      floatingActionButton: FloatingActionButton(
+        tooltip: 'Make New Post',
+        onPressed: () {
+          Navigator.pushNamed(context, '/MakePostScreen',
+              arguments: widget.title);
+        },
+        backgroundColor: PrimaryColor,
+        child: Icon(Icons.image),
       ),
       body: FutureBuilder(
-        future: getpostsmadebyuser(user.uid),
+        future: getpostsmadeInClass(widget.title),
         builder: (_, snapShot) {
           if (snapShot.connectionState == ConnectionState.waiting) {
             // ignore: missing_return
@@ -49,10 +70,8 @@ class _ShowUsersPostsState extends State<ShowUsersPosts> {
                 physics: BouncingScrollPhysics(),
                 itemCount: snapShot.data.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return snapShot.data[index].data['user_id_who_posted']
-                              .split('??.??')
-                              .last ==
-                          user.uid
+                  return snapShot.data[index].data['assigned_with'] ==
+                          widget.title
                       ? Column(
                           children: <Widget>[
                             SizedBox(
@@ -255,21 +274,12 @@ class _ShowUsersPostsState extends State<ShowUsersPosts> {
                             ),
                           ],
                         )
-                      : Text('');
+                      : Container();
                 });
           }
         },
       ),
     );
-  }
-
-  getpostsmadebyuser(String userId) async {
-    var fireStore = Firestore.instance;
-    QuerySnapshot qn = await fireStore
-        .collection('posts')
-        .orderBy('time_uploaded', descending: true)
-        .getDocuments();
-    return qn.documents;
   }
 
   String convertTimeStamp(var timeStamp) {

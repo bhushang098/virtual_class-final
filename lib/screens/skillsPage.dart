@@ -2,15 +2,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:virtualclass/modals/userModal.dart';
 import 'package:virtualclass/screens/deawer.dart';
 import 'package:virtualclass/services/fStoreCollection.dart';
 import 'package:virtualclass/services/serchdeligate.dart';
-import 'package:virtualclass/tabScreens/AccountgetScreen.dart';
-import 'package:virtualclass/tabScreens/InterestsGetScreen.dart';
-import 'package:virtualclass/tabScreens/RoleGetScreen.dart';
-import 'package:virtualclass/tabScreens/basicInfoGetScreen.dart';
 
 import '../constants.dart';
 
@@ -20,13 +17,6 @@ class SkillsPage extends StatefulWidget {
 }
 
 class _SkillsPageState extends State<SkillsPage> {
-//  List<Widget> childrens = [
-//    BasicinfoGetScreen(),
-//    InterestsGetScreen(),
-//    RoleGetScreen(),
-//    AccountgetScreen(),
-//  ];
-
   Myusers _myusers;
   FirebaseUser user;
   _showDialog(title, text) {
@@ -58,10 +48,11 @@ class _SkillsPageState extends State<SkillsPage> {
     final GlobalKey<ScaffoldState> _scaffoldKey =
         new GlobalKey<ScaffoldState>();
     return Scaffold(
+      backgroundColor: primaryLight,
       key: _scaffoldKey,
       floatingActionButton: FloatingActionButton(
         heroTag: 'fabCreateSkill',
-        backgroundColor: kPrimaryColor,
+        backgroundColor: PrimaryColor,
         child: Icon(Icons.add),
         onPressed: () {
           bool istechher = false;
@@ -118,25 +109,6 @@ class _SkillsPageState extends State<SkillsPage> {
                 print("u tapped menu");
               })
         ],
-//          bottom: TabBar(
-//            indicatorWeight: 3.0,
-//            indicatorColor: Colors.green,
-//            labelPadding: EdgeInsets.all(0.0),
-//            tabs: <Widget>[
-//              Tab(
-//                text: 'Basic Info',
-//              ),
-//              Tab(
-//                text: 'Interests',
-//              ),
-//              Tab(
-//                text: 'Role',
-//              ),
-//              Tab(
-//                text: 'Account',
-//              ),
-//            ],
-//          ),
       ),
       body: FutureBuilder(
         future: getSkills(),
@@ -178,14 +150,17 @@ class _SkillsPageState extends State<SkillsPage> {
                                       fontWeight: FontWeight.bold),
                                 ),
                               ),
+                              Image.network(
+                                  snapShot.data[index].data['skill_image']),
                               SizedBox(
                                 height: 10,
                               ),
                               Text(
                                 '     INR ${snapShot.data[index].data['fees']}      ',
                                 style: TextStyle(
-                                    backgroundColor: kPrimaryColor,
-                                    fontSize: 17),
+                                    backgroundColor: primaryDark,
+                                    fontSize: 17,
+                                    color: Colors.white),
                               ),
                               SizedBox(
                                 height: 8,

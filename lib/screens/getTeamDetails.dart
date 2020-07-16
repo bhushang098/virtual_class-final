@@ -39,7 +39,7 @@ class _GetTeamDetailsState extends State<GetTeamDetails> {
                     padding: const EdgeInsets.only(right: 16),
                     child: Icon(
                       Icons.group_add,
-                      color: kPrimaryColor,
+                      color: PrimaryColor,
                     ),
                   ),
                   Expanded(
@@ -67,7 +67,7 @@ class _GetTeamDetailsState extends State<GetTeamDetails> {
                     padding: const EdgeInsets.only(right: 16),
                     child: Icon(
                       Icons.location_on,
-                      color: kPrimaryColor,
+                      color: PrimaryColor,
                     ),
                   ),
                   Expanded(
@@ -90,7 +90,7 @@ class _GetTeamDetailsState extends State<GetTeamDetails> {
               padding: const EdgeInsets.all(20.0),
               child: Row(
                 children: <Widget>[
-                  Icon(Icons.image, color: kPrimaryColor),
+                  Icon(Icons.image, color: PrimaryColor),
                   Spacer(),
                   DropdownButton(
                     hint: Text('Who Can Post on Team'),
@@ -120,7 +120,7 @@ class _GetTeamDetailsState extends State<GetTeamDetails> {
               padding: const EdgeInsets.all(20.0),
               child: Row(
                 children: <Widget>[
-                  Icon(Icons.public, color: kPrimaryColor),
+                  Icon(Icons.public, color: PrimaryColor),
                   Spacer(),
                   DropdownButton(
                     hint: Text('Who Can See Post'),
@@ -150,7 +150,7 @@ class _GetTeamDetailsState extends State<GetTeamDetails> {
               padding: const EdgeInsets.all(20.0),
               child: Row(
                 children: <Widget>[
-                  Icon(Icons.message, color: kPrimaryColor),
+                  Icon(Icons.message, color: PrimaryColor),
                   Spacer(),
                   DropdownButton(
                     hint: Text('Who Can Send Messages'),
@@ -246,7 +246,7 @@ class _GetTeamDetailsState extends State<GetTeamDetails> {
                 padding: EdgeInsets.symmetric(horizontal: 26, vertical: 16),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(25),
-                  color: kPrimaryColor,
+                  color: PrimaryColor,
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,

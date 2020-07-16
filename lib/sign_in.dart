@@ -1,8 +1,4 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:provider/provider.dart';
-import 'package:virtualclass/main.dart';
-import 'package:virtualclass/screens/mainScreen.dart';
 import 'package:virtualclass/screens/signUp.dart';
 import 'package:virtualclass/services/authentication.dart';
 import 'constants.dart';
@@ -32,6 +28,7 @@ class _SignInScreenState extends State<SignInScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: primaryLight,
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[
@@ -87,12 +84,27 @@ class _SignInScreenState extends State<SignInScreen> {
                         },
                       ));
                     },
-                    child: Text(
-                      "SIGN UP",
-                      style: TextStyle(
-                          color: Colors.blue,
-                          fontWeight: FontWeight.bold,
-                          fontSize: 18),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 5, vertical: 5),
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(25),
+                        color: PrimaryColor,
+                      ),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
+                          Text(
+                            "Sign Up",
+                            style: Theme.of(context).textTheme.button.copyWith(
+                                  color: Colors.black,
+                                ),
+                          ),
+                          Icon(
+                            Icons.arrow_forward,
+                            color: Colors.black,
+                          )
+                        ],
+                      ),
                     ),
                   ),
                 ],
@@ -107,7 +119,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     padding: const EdgeInsets.only(right: 16),
                     child: Icon(
                       Icons.mail,
-                      color: kPrimaryColor,
+                      color: PrimaryColor,
                     ),
                   ),
                   Expanded(
@@ -135,7 +147,7 @@ class _SignInScreenState extends State<SignInScreen> {
                     padding: const EdgeInsets.only(right: 16),
                     child: Icon(
                       Icons.lock,
-                      color: kPrimaryColor,
+                      color: PrimaryColor,
                     ),
                   ),
                   Expanded(
@@ -156,11 +168,11 @@ class _SignInScreenState extends State<SignInScreen> {
                     icon: _obscureText
                         ? Icon(
                             Icons.visibility_off,
-                            color: kPrimaryColor,
+                            color: PrimaryColor,
                           )
                         : Icon(
                             Icons.visibility,
-                            color: kPrimaryColor,
+                            color: PrimaryColor,
                           ),
                     onPressed: _toggle,
                   )
@@ -204,7 +216,7 @@ class _SignInScreenState extends State<SignInScreen> {
                 padding: EdgeInsets.symmetric(horizontal: 26, vertical: 16),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(25),
-                  color: kPrimaryColor,
+                  color: PrimaryColor,
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,

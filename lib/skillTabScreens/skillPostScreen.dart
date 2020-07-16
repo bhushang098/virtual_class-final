@@ -38,6 +38,7 @@ class _SkillPostScreenState extends State<SkillPostScreen> {
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<FirebaseUser>(context);
+    setPostLiked(user.uid);
     return Scaffold(
       floatingActionButton: FloatingActionButton(
         tooltip: 'Make New Post',
@@ -46,7 +47,7 @@ class _SkillPostScreenState extends State<SkillPostScreen> {
               arguments: widget.title);
           //TODO : make Post In Ski8ll
         },
-        backgroundColor: kPrimaryColor,
+        backgroundColor: PrimaryColor,
         child: Icon(Icons.image),
       ),
       body: FutureBuilder(
@@ -85,7 +86,9 @@ class _SkillPostScreenState extends State<SkillPostScreen> {
                                             .data[index].data['profile_url']),
                                       ),
                                       title: Text(snapShot.data[index]
-                                          .data['user_id_who_posted']),
+                                          .data['user_id_who_posted']
+                                          .split('??.??')
+                                          .first),
                                       subtitle: Text(convertTimeStamp(snapShot
                                           .data[index].data['time_uploaded'])),
                                       trailing: _liked_Posts.contains(snapShot
@@ -176,21 +179,27 @@ class _SkillPostScreenState extends State<SkillPostScreen> {
                                               alignment: Alignment.center,
                                             ),
                                           )
-                                        : Padding(
-                                            padding: const EdgeInsets.all(8.0),
-                                            child: Container(
-                                              height: MediaQuery.of(context)
+                                        : snapShot.data[index]
+                                                    .data['image_url'] ==
+                                                null
+                                            ? Text('')
+                                            : Padding(
+                                                padding:
+                                                    const EdgeInsets.all(8.0),
+                                                child: Container(
+                                                  height: MediaQuery.of(context)
+                                                          .size
+                                                          .height /
+                                                      3,
+                                                  width: MediaQuery.of(context)
                                                       .size
-                                                      .height /
-                                                  3,
-                                              width: MediaQuery.of(context)
-                                                  .size
-                                                  .width,
-                                              child: NetworkPlayer(snapShot
-                                                  .data[index].data['image_url']
-                                                  .toString()),
-                                            ),
-                                          ),
+                                                      .width,
+                                                  child: NetworkPlayer(snapShot
+                                                      .data[index]
+                                                      .data['image_url']
+                                                      .toString()),
+                                                ),
+                                              ),
                                     SizedBox(
                                       height: 5,
                                     ),
@@ -258,7 +267,7 @@ class _SkillPostScreenState extends State<SkillPostScreen> {
                             ),
                           ],
                         )
-                      : Text('');
+                      : Container();
                 });
           }
         },

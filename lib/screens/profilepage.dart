@@ -96,7 +96,6 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    //_myusers = ModalRoute.of(context).settings.arguments;
     user = Provider.of<FirebaseUser>(context);
     _showProgress = false;
     return Scaffold(
@@ -114,7 +113,7 @@ class _ProfilePageState extends State<ProfilePage> {
               if (snapShot.data['is_teacher']) {
                 return SingleChildScrollView(
                   child: Padding(
-                    padding: const EdgeInsets.all(12.0),
+                    padding: const EdgeInsets.all(2.0),
                     child: Stack(
                       children: <Widget>[
                         Container(
@@ -124,8 +123,8 @@ class _ProfilePageState extends State<ProfilePage> {
                             gradient: LinearGradient(
                                 begin: Alignment.topCenter,
                                 end: Alignment.bottomCenter,
-                                colors: [kPrimaryColor, kPrimaryColor]),
-                            borderRadius: BorderRadius.circular(30),
+                                colors: [PrimaryColor, PrimaryColor]),
+                            borderRadius: BorderRadius.circular(15),
                           ),
                         ),
                         Container(
@@ -243,30 +242,30 @@ class _ProfilePageState extends State<ProfilePage> {
                                   horizontal: 8.0, vertical: 22.0),
                               child: Row(
                                 children: <Widget>[
-                                  GestureDetector(
-                                    onTap: () {
-                                      Navigator.pushNamed(
-                                          context, '/ShowUsersPosts');
-                                    },
-                                    child: Expanded(
-                                      child: Column(
-                                        children: <Widget>[
-                                          Text(
+                                  Expanded(
+                                    child: Column(
+                                      children: <Widget>[
+                                        GestureDetector(
+                                          onTap: () {
+                                            Navigator.pushNamed(
+                                                context, '/ShowUsersPosts');
+                                          },
+                                          child: Text(
                                             "Posts",
                                             style: TextStyle(
                                               fontSize: 17.0,
                                               fontWeight: FontWeight.bold,
                                             ),
                                           ),
-                                          Text(
-                                            snapShot.data['posts'].length
-                                                .toString(),
-                                            style: TextStyle(
-                                              fontSize: 14.0,
-                                            ),
-                                          )
-                                        ],
-                                      ),
+                                        ),
+                                        Text(
+                                          snapShot.data['posts'].length
+                                              .toString(),
+                                          style: TextStyle(
+                                            fontSize: 14.0,
+                                          ),
+                                        )
+                                      ],
                                     ),
                                   ),
                                   Expanded(
@@ -356,7 +355,19 @@ class _ProfilePageState extends State<ProfilePage> {
                         ),
                         Padding(
                           padding: new EdgeInsets.only(
-                            top: MediaQuery.of(context).size.height * .50,
+                            top: MediaQuery.of(context).size.height * .52,
+                            left: 5,
+                            right: 5,
+                          ),
+                          child: Text(
+                            'Location : ' + snapShot.data['location'],
+                            style: TextStyle(
+                                fontWeight: FontWeight.normal, fontSize: 13),
+                          ),
+                        ),
+                        Padding(
+                          padding: new EdgeInsets.only(
+                            top: MediaQuery.of(context).size.height * .53,
                             left: 5,
                             right: 5,
                           ),
@@ -375,14 +386,16 @@ class _ProfilePageState extends State<ProfilePage> {
                                   Icons.stay_current_landscape,
                                   color: Colors.black,
                                 ),
-                                title: Text('Classes Made '),
+                                title: Text(
+                                    'classes Made  ${snapShot.data['classes_made'].length}'),
                               ),
                               ListTile(
                                 leading: Icon(
                                   Icons.group,
                                   color: Colors.black,
                                 ),
-                                title: Text('Teams Made '),
+                                title: Text(
+                                    'Teams Made  ${snapShot.data['teams_made'].length}'),
                               ),
                               ListTile(
                                 leading: Icon(
@@ -391,579 +404,6 @@ class _ProfilePageState extends State<ProfilePage> {
                                 ),
                                 title: Text('Earnings'),
                               ),
-//                              Row(
-//                                mainAxisSize: MainAxisSize.min,
-//                                children: <Widget>[
-//                                  Text('Posts'),
-//                                  Text('likes')
-//                                ],
-//                              ),
-//                              Container(
-//                                width: 400,
-//                                height: 400,
-//                                child: GridView.count(
-//                                  primary: false,
-//                                  padding: const EdgeInsets.all(4),
-//                                  crossAxisSpacing: 4,
-//                                  mainAxisSpacing: 4,
-//                                  crossAxisCount: 2,
-//                                  children: [
-//                                    Padding(
-//                                      padding: const EdgeInsets.all(8.0),
-//                                      child: Container(
-//                                        padding: const EdgeInsets.all(2),
-//                                        child: Center(
-//                                          child: Card(
-//                                            color: Colors.blue,
-//                                            elevation: 6,
-//                                            child: Column(
-//                                              children: <Widget>[
-//                                                SizedBox(
-//                                                  height: 20,
-//                                                ),
-//                                                Text(
-//                                                  '30 K',
-//                                                  style: TextStyle(
-//                                                      fontSize: 30,
-//                                                      color: Colors.white,
-//                                                      fontWeight:
-//                                                          FontWeight.bold),
-//                                                ),
-//                                                SizedBox(
-//                                                  height: 20,
-//                                                ),
-//                                                Text(
-//                                                  'Total Users',
-//                                                  style: TextStyle(
-//                                                      fontSize: 18,
-//                                                      color: Colors.white),
-//                                                ),
-//                                                Padding(
-//                                                  padding:
-//                                                      const EdgeInsets.only(
-//                                                          top: 16.0,
-//                                                          right: 5,
-//                                                          left: 5),
-//                                                  child: Container(
-//                                                    color: Colors.blue[300],
-//                                                    child: Row(
-//                                                      mainAxisAlignment:
-//                                                          MainAxisAlignment
-//                                                              .center,
-//                                                      children: <Widget>[
-//                                                        Text(
-//                                                          'More Info',
-//                                                          style: TextStyle(
-//                                                              fontSize: 12,
-//                                                              color:
-//                                                                  Colors.white),
-//                                                        ),
-//                                                        SizedBox(
-//                                                          width: 10,
-//                                                        ),
-//                                                        Icon(
-//                                                          Icons
-//                                                              .arrow_forward_ios,
-//                                                          color: Colors.white,
-//                                                          size: 12,
-//                                                        ),
-//                                                      ],
-//                                                    ),
-//                                                  ),
-//                                                )
-//                                              ],
-//                                            ),
-//                                          ),
-//                                        ),
-//                                      ),
-//                                    ),
-//                                    Padding(
-//                                      padding: const EdgeInsets.all(8.0),
-//                                      child: Container(
-//                                        padding: const EdgeInsets.all(2),
-//                                        child: Center(
-//                                          child: Card(
-//                                            color: Colors.green,
-//                                            elevation: 6,
-//                                            child: Column(
-//                                              children: <Widget>[
-//                                                SizedBox(
-//                                                  height: 20,
-//                                                ),
-//                                                Text(
-//                                                  '200',
-//                                                  style: TextStyle(
-//                                                      fontSize: 30,
-//                                                      color: Colors.white,
-//                                                      fontWeight:
-//                                                          FontWeight.bold),
-//                                                ),
-//                                                SizedBox(
-//                                                  height: 20,
-//                                                ),
-//                                                Text(
-//                                                  'Total Classes',
-//                                                  style: TextStyle(
-//                                                      fontSize: 18,
-//                                                      color: Colors.white),
-//                                                ),
-//                                                Padding(
-//                                                  padding:
-//                                                      const EdgeInsets.only(
-//                                                          top: 16.0,
-//                                                          right: 5,
-//                                                          left: 5),
-//                                                  child: Container(
-//                                                    color: Colors.green[300],
-//                                                    child: Row(
-//                                                      mainAxisAlignment:
-//                                                          MainAxisAlignment
-//                                                              .center,
-//                                                      children: <Widget>[
-//                                                        Text(
-//                                                          'More Info',
-//                                                          style: TextStyle(
-//                                                              fontSize: 12,
-//                                                              color:
-//                                                                  Colors.white),
-//                                                        ),
-//                                                        SizedBox(
-//                                                          width: 10,
-//                                                        ),
-//                                                        Icon(
-//                                                          Icons
-//                                                              .arrow_forward_ios,
-//                                                          color: Colors.white,
-//                                                          size: 12,
-//                                                        ),
-//                                                      ],
-//                                                    ),
-//                                                  ),
-//                                                )
-//                                              ],
-//                                            ),
-//                                          ),
-//                                        ),
-//                                      ),
-//                                    ),
-//                                    Padding(
-//                                      padding: const EdgeInsets.all(8.0),
-//                                      child: Container(
-//                                        padding: const EdgeInsets.all(2),
-//                                        child: Center(
-//                                          child: Card(
-//                                            color: Colors.amber,
-//                                            elevation: 6,
-//                                            child: Column(
-//                                              children: <Widget>[
-//                                                SizedBox(
-//                                                  height: 20,
-//                                                ),
-//                                                Text(
-//                                                  '127',
-//                                                  style: TextStyle(
-//                                                      fontSize: 30,
-//                                                      color: Colors.white,
-//                                                      fontWeight:
-//                                                          FontWeight.bold),
-//                                                ),
-//                                                SizedBox(
-//                                                  height: 20,
-//                                                ),
-//                                                Text(
-//                                                  'Total Skills',
-//                                                  style: TextStyle(
-//                                                      fontSize: 18,
-//                                                      color: Colors.white),
-//                                                ),
-//                                                Padding(
-//                                                  padding:
-//                                                      const EdgeInsets.only(
-//                                                          top: 16.0,
-//                                                          right: 5,
-//                                                          left: 5),
-//                                                  child: Container(
-//                                                    color: Colors.amber[300],
-//                                                    child: Row(
-//                                                      mainAxisAlignment:
-//                                                          MainAxisAlignment
-//                                                              .center,
-//                                                      children: <Widget>[
-//                                                        Text(
-//                                                          'More Info',
-//                                                          style: TextStyle(
-//                                                              fontSize: 12,
-//                                                              color:
-//                                                                  Colors.white),
-//                                                        ),
-//                                                        SizedBox(
-//                                                          width: 10,
-//                                                        ),
-//                                                        Icon(
-//                                                          Icons
-//                                                              .arrow_forward_ios,
-//                                                          color: Colors.white,
-//                                                          size: 12,
-//                                                        ),
-//                                                      ],
-//                                                    ),
-//                                                  ),
-//                                                )
-//                                              ],
-//                                            ),
-//                                          ),
-//                                        ),
-//                                      ),
-//                                    ),
-//                                    Padding(
-//                                      padding: const EdgeInsets.all(8.0),
-//                                      child: Container(
-//                                        padding: const EdgeInsets.all(2),
-//                                        child: Center(
-//                                          child: Card(
-//                                            color: Colors.deepOrange,
-//                                            elevation: 6,
-//                                            child: Column(
-//                                              children: <Widget>[
-//                                                SizedBox(
-//                                                  height: 20,
-//                                                ),
-//                                                Text(
-//                                                  '20 ',
-//                                                  style: TextStyle(
-//                                                      fontSize: 30,
-//                                                      color: Colors.white,
-//                                                      fontWeight:
-//                                                          FontWeight.bold),
-//                                                ),
-//                                                SizedBox(
-//                                                  height: 20,
-//                                                ),
-//                                                Text(
-//                                                  'Total Teams',
-//                                                  style: TextStyle(
-//                                                      fontSize: 18,
-//                                                      color: Colors.white),
-//                                                ),
-//                                                Padding(
-//                                                  padding:
-//                                                      const EdgeInsets.only(
-//                                                          top: 16.0,
-//                                                          right: 5,
-//                                                          left: 5),
-//                                                  child: Container(
-//                                                    color:
-//                                                        Colors.deepOrange[300],
-//                                                    child: Row(
-//                                                      mainAxisAlignment:
-//                                                          MainAxisAlignment
-//                                                              .center,
-//                                                      children: <Widget>[
-//                                                        Text(
-//                                                          'More Info',
-//                                                          style: TextStyle(
-//                                                              fontSize: 12,
-//                                                              color:
-//                                                                  Colors.white),
-//                                                        ),
-//                                                        SizedBox(
-//                                                          width: 10,
-//                                                        ),
-//                                                        Icon(
-//                                                          Icons
-//                                                              .arrow_forward_ios,
-//                                                          color: Colors.white,
-//                                                          size: 12,
-//                                                        ),
-//                                                      ],
-//                                                    ),
-//                                                  ),
-//                                                )
-//                                              ],
-//                                            ),
-//                                          ),
-//                                        ),
-//                                      ),
-//                                    ),
-//                                    Padding(
-//                                      padding: const EdgeInsets.all(8.0),
-//                                      child: Container(
-//                                        padding: const EdgeInsets.all(2),
-//                                        child: Center(
-//                                          child: Card(
-//                                            color: Colors.blue,
-//                                            elevation: 6,
-//                                            child: Column(
-//                                              children: <Widget>[
-//                                                SizedBox(
-//                                                  height: 20,
-//                                                ),
-//                                                Text(
-//                                                  '30K',
-//                                                  style: TextStyle(
-//                                                      fontSize: 30,
-//                                                      color: Colors.white,
-//                                                      fontWeight:
-//                                                          FontWeight.bold),
-//                                                ),
-//                                                SizedBox(
-//                                                  height: 20,
-//                                                ),
-//                                                Text(
-//                                                  'Total Users',
-//                                                  style: TextStyle(
-//                                                      fontSize: 18,
-//                                                      color: Colors.white),
-//                                                ),
-//                                                Padding(
-//                                                  padding:
-//                                                      const EdgeInsets.only(
-//                                                          top: 16.0,
-//                                                          right: 5,
-//                                                          left: 5),
-//                                                  child: Container(
-//                                                    color: Colors.blue[300],
-//                                                    child: Row(
-//                                                      mainAxisAlignment:
-//                                                          MainAxisAlignment
-//                                                              .center,
-//                                                      children: <Widget>[
-//                                                        Text(
-//                                                          'More Info',
-//                                                          style: TextStyle(
-//                                                              fontSize: 12,
-//                                                              color:
-//                                                                  Colors.white),
-//                                                        ),
-//                                                        SizedBox(
-//                                                          width: 10,
-//                                                        ),
-//                                                        Icon(
-//                                                          Icons
-//                                                              .arrow_forward_ios,
-//                                                          color: Colors.white,
-//                                                          size: 12,
-//                                                        ),
-//                                                      ],
-//                                                    ),
-//                                                  ),
-//                                                )
-//                                              ],
-//                                            ),
-//                                          ),
-//                                        ),
-//                                      ),
-//                                    ),
-//                                    Padding(
-//                                      padding: const EdgeInsets.all(8.0),
-//                                      child: Container(
-//                                        padding: const EdgeInsets.all(2),
-//                                        child: Center(
-//                                          child: Card(
-//                                            color: Colors.blue,
-//                                            elevation: 6,
-//                                            child: Column(
-//                                              children: <Widget>[
-//                                                SizedBox(
-//                                                  height: 20,
-//                                                ),
-//                                                Text(
-//                                                  '30K',
-//                                                  style: TextStyle(
-//                                                      fontSize: 30,
-//                                                      color: Colors.white,
-//                                                      fontWeight:
-//                                                          FontWeight.bold),
-//                                                ),
-//                                                SizedBox(
-//                                                  height: 20,
-//                                                ),
-//                                                Text(
-//                                                  'Total Users',
-//                                                  style: TextStyle(
-//                                                      fontSize: 18,
-//                                                      color: Colors.white),
-//                                                ),
-//                                                Padding(
-//                                                  padding:
-//                                                      const EdgeInsets.only(
-//                                                          top: 16.0,
-//                                                          right: 5,
-//                                                          left: 5),
-//                                                  child: Container(
-//                                                    color: Colors.blue[300],
-//                                                    child: Row(
-//                                                      mainAxisAlignment:
-//                                                          MainAxisAlignment
-//                                                              .center,
-//                                                      children: <Widget>[
-//                                                        Text(
-//                                                          'More Info',
-//                                                          style: TextStyle(
-//                                                              fontSize: 12,
-//                                                              color:
-//                                                                  Colors.white),
-//                                                        ),
-//                                                        SizedBox(
-//                                                          width: 10,
-//                                                        ),
-//                                                        Icon(
-//                                                          Icons
-//                                                              .arrow_forward_ios,
-//                                                          color: Colors.white,
-//                                                          size: 12,
-//                                                        ),
-//                                                      ],
-//                                                    ),
-//                                                  ),
-//                                                )
-//                                              ],
-//                                            ),
-//                                          ),
-//                                        ),
-//                                      ),
-//                                    ),
-//                                    Padding(
-//                                      padding: const EdgeInsets.all(8.0),
-//                                      child: Container(
-//                                        padding: const EdgeInsets.all(2),
-//                                        child: Center(
-//                                          child: Card(
-//                                            color: Colors.blue,
-//                                            elevation: 6,
-//                                            child: Column(
-//                                              children: <Widget>[
-//                                                SizedBox(
-//                                                  height: 20,
-//                                                ),
-//                                                Text(
-//                                                  '30K',
-//                                                  style: TextStyle(
-//                                                      fontSize: 30,
-//                                                      color: Colors.white,
-//                                                      fontWeight:
-//                                                          FontWeight.bold),
-//                                                ),
-//                                                SizedBox(
-//                                                  height: 20,
-//                                                ),
-//                                                Text(
-//                                                  'Total Users',
-//                                                  style: TextStyle(
-//                                                      fontSize: 18,
-//                                                      color: Colors.white),
-//                                                ),
-//                                                Padding(
-//                                                  padding:
-//                                                      const EdgeInsets.only(
-//                                                          top: 16.0,
-//                                                          right: 5,
-//                                                          left: 5),
-//                                                  child: Container(
-//                                                    color: Colors.blue[300],
-//                                                    child: Row(
-//                                                      mainAxisAlignment:
-//                                                          MainAxisAlignment
-//                                                              .center,
-//                                                      children: <Widget>[
-//                                                        Text(
-//                                                          'More Info',
-//                                                          style: TextStyle(
-//                                                              fontSize: 12,
-//                                                              color:
-//                                                                  Colors.white),
-//                                                        ),
-//                                                        SizedBox(
-//                                                          width: 10,
-//                                                        ),
-//                                                        Icon(
-//                                                          Icons
-//                                                              .arrow_forward_ios,
-//                                                          color: Colors.white,
-//                                                          size: 12,
-//                                                        ),
-//                                                      ],
-//                                                    ),
-//                                                  ),
-//                                                )
-//                                              ],
-//                                            ),
-//                                          ),
-//                                        ),
-//                                      ),
-//                                    ),
-//                                    Padding(
-//                                      padding: const EdgeInsets.all(8.0),
-//                                      child: Container(
-//                                        padding: const EdgeInsets.all(2),
-//                                        child: Center(
-//                                          child: Card(
-//                                            color: Colors.blue,
-//                                            elevation: 6,
-//                                            child: Column(
-//                                              children: <Widget>[
-//                                                SizedBox(
-//                                                  height: 20,
-//                                                ),
-//                                                Text(
-//                                                  '30K',
-//                                                  style: TextStyle(
-//                                                      fontSize: 30,
-//                                                      color: Colors.white,
-//                                                      fontWeight:
-//                                                          FontWeight.bold),
-//                                                ),
-//                                                SizedBox(
-//                                                  height: 20,
-//                                                ),
-//                                                Text(
-//                                                  'Total Users',
-//                                                  style: TextStyle(
-//                                                      fontSize: 18,
-//                                                      color: Colors.white),
-//                                                ),
-//                                                Padding(
-//                                                  padding:
-//                                                      const EdgeInsets.only(
-//                                                          top: 16.0,
-//                                                          right: 5,
-//                                                          left: 5),
-//                                                  child: Container(
-//                                                    color: Colors.blue[300],
-//                                                    child: Row(
-//                                                      mainAxisAlignment:
-//                                                          MainAxisAlignment
-//                                                              .center,
-//                                                      children: <Widget>[
-//                                                        Text(
-//                                                          'More Info',
-//                                                          style: TextStyle(
-//                                                              fontSize: 12,
-//                                                              color:
-//                                                                  Colors.white),
-//                                                        ),
-//                                                        SizedBox(
-//                                                          width: 10,
-//                                                        ),
-//                                                        Icon(
-//                                                          Icons
-//                                                              .arrow_forward_ios,
-//                                                          color: Colors.white,
-//                                                          size: 12,
-//                                                        ),
-//                                                      ],
-//                                                    ),
-//                                                  ),
-//                                                )
-//                                              ],
-//                                            ),
-//                                          ),
-//                                        ),
-//                                      ),
-//                                    ),
-//                                  ],
-//                                ),
-//                              ),
                             ],
                           ),
                         ),
@@ -990,7 +430,7 @@ class _ProfilePageState extends State<ProfilePage> {
                             gradient: LinearGradient(
                                 begin: Alignment.topCenter,
                                 end: Alignment.bottomCenter,
-                                colors: [kPrimaryColor, kPrimaryColor]),
+                                colors: [PrimaryColor, PrimaryColor]),
                             borderRadius: BorderRadius.circular(30),
                           ),
                         ),

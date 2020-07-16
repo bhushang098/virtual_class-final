@@ -33,7 +33,7 @@ class _InterestsGetScreenState extends State<InterestsGetScreen> {
                 children: <Widget>[
                   Text("Graphic Design"),
                   Checkbox(
-                    activeColor: kPrimaryColor,
+                    activeColor: PrimaryColor,
                     value: _graphicDesign,
                     onChanged: (bool value) {
                       setState(() {
@@ -48,7 +48,7 @@ class _InterestsGetScreenState extends State<InterestsGetScreen> {
                 children: <Widget>[
                   Text("Artificial Intelligence"),
                   Checkbox(
-                    activeColor: kPrimaryColor,
+                    activeColor: PrimaryColor,
                     value: _AI,
                     onChanged: (bool value) {
                       setState(() {
@@ -63,7 +63,7 @@ class _InterestsGetScreenState extends State<InterestsGetScreen> {
                 children: <Widget>[
                   Text("Computer Networking"),
                   Checkbox(
-                    activeColor: kPrimaryColor,
+                    activeColor: PrimaryColor,
                     value: _computerNetwork,
                     onChanged: (bool value) {
                       setState(() {
@@ -78,7 +78,7 @@ class _InterestsGetScreenState extends State<InterestsGetScreen> {
                 children: <Widget>[
                   Text("Python programing"),
                   Checkbox(
-                    activeColor: kPrimaryColor,
+                    activeColor: PrimaryColor,
                     value: _python,
                     onChanged: (bool value) {
                       setState(() {
@@ -114,7 +114,7 @@ class _InterestsGetScreenState extends State<InterestsGetScreen> {
                   padding: EdgeInsets.symmetric(horizontal: 26, vertical: 16),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(25),
-                    color: kPrimaryColor,
+                    color: PrimaryColor,
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
