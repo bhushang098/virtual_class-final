@@ -1,10 +1,8 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
@@ -128,20 +126,29 @@ class _ClassDetailsState extends State<ClassDetails> {
                             width: MediaQuery.of(context).size.width,
                           ),
                         ),
-                        Positioned(
-                          bottom: 30,
-                          right: 30,
-                          child: InkWell(
-                            splashColor: PrimaryColor,
-                            onTap: () {
-                              pickImageFromGallery();
-                            },
-                            child: Icon(
-                              Icons.add_a_photo,
-                              color: PrimaryColor,
-                            ),
-                          ),
-                        )
+                        snapShot.data['user_id'] == user.uid
+                            ? Positioned(
+                                bottom: 30,
+                                right: 30,
+                                child: InkWell(
+                                  splashColor: PrimaryColor,
+                                  onTap: () {
+                                    pickImageFromGallery();
+                                  },
+                                  child: Icon(
+                                    Icons.add_a_photo,
+                                    color: PrimaryColor,
+                                  ),
+                                ),
+                              )
+                            : Positioned(
+                                bottom: 30,
+                                right: 30,
+                                child: RaisedButton(
+                                  child: Text('Join'),
+                                  color: PrimaryColor,
+                                  onPressed: () {},
+                                ))
                       ],
                     ),
                   ),

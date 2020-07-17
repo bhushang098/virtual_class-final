@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -130,19 +129,31 @@ class _SkillDetailsScreenState extends State<SkillDetailsScreen> {
                         _showProgress
                             ? Center(child: CircularProgressIndicator())
                             : Container(),
-                        Positioned(
-                          bottom: 30,
-                          right: 30,
-                          child: GestureDetector(
-                            onTap: () {
-                              pickImageFromGallery();
-                            },
-                            child: Icon(
-                              Icons.add_a_photo,
-                              color: PrimaryColor,
-                            ),
-                          ),
-                        )
+                        snapShot.data['user_id'] == user.uid
+                            ? Positioned(
+                                bottom: 30,
+                                right: 30,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    pickImageFromGallery();
+                                  },
+                                  child: Icon(
+                                    Icons.add_a_photo,
+                                    color: PrimaryColor,
+                                  ),
+                                ),
+                              )
+                            : Positioned(
+                                bottom: 30,
+                                right: 30,
+                                child: RaisedButton(
+                                  color: PrimaryColor,
+                                  child: Text('Join'),
+                                  onPressed: () {
+                                    showAlertDialog(context);
+                                  },
+                                ),
+                              ),
                       ],
                     ),
                   ),

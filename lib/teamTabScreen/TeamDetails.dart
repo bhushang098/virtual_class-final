@@ -128,19 +128,28 @@ class _TeamDetailsState extends State<TeamDetails> {
                             width: MediaQuery.of(context).size.width,
                           ),
                         ),
-                        Positioned(
-                          bottom: 30,
-                          right: 30,
-                          child: InkWell(
-                            onTap: () {
-                              pickImageFromGallery();
-                            },
-                            child: Icon(
-                              Icons.add_a_photo,
-                              color: PrimaryColor,
-                            ),
-                          ),
-                        )
+                        snapShot.data['user_id'] == user.uid
+                            ? Positioned(
+                                bottom: 30,
+                                right: 30,
+                                child: InkWell(
+                                  onTap: () {
+                                    pickImageFromGallery();
+                                  },
+                                  child: Icon(
+                                    Icons.add_a_photo,
+                                    color: PrimaryColor,
+                                  ),
+                                ),
+                              )
+                            : Positioned(
+                                bottom: 30,
+                                right: 30,
+                                child: RaisedButton(
+                                  color: PrimaryColor,
+                                  child: Text('Join'),
+                                  onPressed: () {},
+                                ))
                       ],
                     ),
                   ),
