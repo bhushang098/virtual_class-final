@@ -66,10 +66,14 @@ class _CommentsScreenState extends State<CommentsScreen> {
                       subtitle: Text(convertTimeStamp(_post.time_posted)),
                       trailing: Column(
                         children: <Widget>[
-                          Icon(
-                            Icons.favorite,
-                            color: Colors.red,
-                          ),
+                          _post.likes == 0
+                              ? Icon(
+                                  Icons.favorite_border,
+                                )
+                              : Icon(
+                                  Icons.favorite,
+                                  color: Colors.red,
+                                ),
                           Text(_post.likes.toString()),
                         ],
                       ),
@@ -80,14 +84,17 @@ class _CommentsScreenState extends State<CommentsScreen> {
                     ),
                     _post.isImage
                         ? Image.network(_post.imageUrl)
-                        : Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Container(
-                              height: MediaQuery.of(context).size.height / 3,
-                              width: MediaQuery.of(context).size.width,
-                              child: NetworkPlayer(_post.imageUrl),
-                            ),
-                          ),
+                        : _post.imageUrl == null
+                            ? Text('')
+                            : Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Container(
+                                  height:
+                                      MediaQuery.of(context).size.height / 3,
+                                  width: MediaQuery.of(context).size.width,
+                                  child: NetworkPlayer(_post.imageUrl),
+                                ),
+                              ),
                     SizedBox(
                       height: 5,
                     ),

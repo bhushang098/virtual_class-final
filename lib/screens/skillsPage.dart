@@ -192,9 +192,6 @@ class _SkillsPageState extends State<SkillsPage> {
           }
         },
       ),
-//        body: TabBarView(
-//          children: childrens,
-//        ),
     );
   }
 

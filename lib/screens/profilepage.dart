@@ -8,6 +8,9 @@ import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 import 'package:virtualclass/services/fStoreCollection.dart';
+import 'package:virtualclass/services/teamArgs.dart';
+import 'package:virtualclass/services/userClassesArgs.dart';
+import 'package:virtualclass/services/userSkillsArgs.dart';
 import '../constants.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -373,29 +376,69 @@ class _ProfilePageState extends State<ProfilePage> {
                           ),
                           child: Column(
                             children: <Widget>[
-                              ListTile(
-                                leading: Icon(
-                                  Icons.desktop_mac,
-                                  color: Colors.black,
+                              InkWell(
+                                onTap: () {
+                                  UserSkillsArgs skillArgs =
+                                      new UserSkillsArgs();
+
+                                  skillArgs.hostedSkills =
+                                      snapShot.data['skills_made'];
+                                  skillArgs.joinedSkills =
+                                      snapShot.data['skills_joined'];
+                                  //Show Skills made
+                                  Navigator.pushNamed(
+                                      context, '/ShowUserMadeSkillsMain',
+                                      arguments: skillArgs);
+                                },
+                                child: ListTile(
+                                  leading: Icon(
+                                    Icons.desktop_mac,
+                                    color: Colors.black,
+                                  ),
+                                  title: Text('Skills '),
                                 ),
-                                title: Text(
-                                    'Skills Made  ${snapShot.data['skills_made'].length}'),
                               ),
-                              ListTile(
-                                leading: Icon(
-                                  Icons.stay_current_landscape,
-                                  color: Colors.black,
+                              InkWell(
+                                onTap: () {
+                                  UserClassesArgs classArgs =
+                                      new UserClassesArgs();
+                                  classArgs.joinedClasses =
+                                      snapShot.data['classes_joined'];
+                                  classArgs.hostedClasses =
+                                      snapShot.data['classes_made'];
+                                  //Show Skills made
+                                  Navigator.pushNamed(
+                                      context, '/ShowUserMadeClassesMain',
+                                      arguments: classArgs);
+                                },
+                                child: ListTile(
+                                  leading: Icon(
+                                    Icons.stay_current_landscape,
+                                    color: Colors.black,
+                                  ),
+                                  title: Text('classes '),
                                 ),
-                                title: Text(
-                                    'classes Made  ${snapShot.data['classes_made'].length}'),
                               ),
-                              ListTile(
-                                leading: Icon(
-                                  Icons.group,
-                                  color: Colors.black,
+                              InkWell(
+                                onTap: () {
+                                  UserTeamArgs teamArgs = new UserTeamArgs();
+
+                                  teamArgs.joinedTeam =
+                                      snapShot.data['teams_joined'];
+                                  teamArgs.hostedTeams =
+                                      snapShot.data['teams_made'];
+
+                                  Navigator.pushNamed(
+                                      context, '/ShowUserMadeTeamsMain',
+                                      arguments: teamArgs);
+                                },
+                                child: ListTile(
+                                  leading: Icon(
+                                    Icons.group,
+                                    color: Colors.black,
+                                  ),
+                                  title: Text(' Teams '),
                                 ),
-                                title: Text(
-                                    'Teams Made  ${snapShot.data['teams_made'].length}'),
                               ),
                               ListTile(
                                 leading: Icon(

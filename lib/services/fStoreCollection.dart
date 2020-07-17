@@ -54,6 +54,9 @@ class DbUserCollection {
       'classes_made': [],
       'teams_made': [],
       'location': '',
+      'skills_joined': [],
+      'classes_joined': [],
+      'teams_joined': [],
     });
   }
 
@@ -231,10 +234,34 @@ class DbUserCollection {
         .updateData({'skill_image': fileUrl});
   }
 
+  Future updateclassPicture(String fileName, Uuid uuid, String skillId) async {
+    var fileUrl;
+    final StorageReference firebaseStorageRef =
+        FirebaseStorage.instance.ref().child('images/').child(fileName);
+    fileUrl = await firebaseStorageRef.getDownloadURL();
+
+    return await classesCollection
+        .document(skillId)
+        .updateData({'class_image': fileUrl});
+  }
+
+  Future updateTeamsPicture(String fileName, Uuid uuid, String teamId) async {
+    var fileUrl;
+    final StorageReference firebaseStorageRef =
+        FirebaseStorage.instance.ref().child('images/').child(fileName);
+    fileUrl = await firebaseStorageRef.getDownloadURL();
+
+    return await teamsCollection
+        .document(teamId)
+        .updateData({'team_image': fileUrl});
+  }
+
   Future makeNewTeam(Team team) async {
     DocumentSnapshot snapshot =
         await Firestore.instance.collection('users').document(uid).get();
     var userName = snapshot.data['name'];
+
+    updateUserTeamsMade(team.teamId, team.teamName);
 
     return await teamsCollection
         .document(team.teamId + '??.??' + team.teamName)
@@ -251,6 +278,16 @@ class DbUserCollection {
       'host': userName,
       'date_created': Timestamp.fromDate(new DateTime.now()),
       'team_image': ''
+    });
+  }
+
+  Future updateUserTeamsMade(String teamId, String teamName) async {
+    DocumentSnapshot snapshot =
+        await Firestore.instance.collection('users').document(uid).get();
+    var teamsMade = snapshot.data['teams_made'];
+    teamsMade.add(teamId + '??.??' + teamName);
+    return await userCollection.document(uid).updateData({
+      'teams_made': teamsMade,
     });
   }
 
@@ -368,11 +405,12 @@ class DbUserCollection {
     var userName = snapshot.data['name'];
     var profileUrl = snapshot.data['profile_url'];
     updateuserPostmade(uid);
+    String uniquePostId = uuid.v1();
 
-    return await postCollection.document(uid).setData({
+    return await postCollection.document(uniquePostId).setData({
       'content': caption,
       'likes': 0,
-      'post_id': uid,
+      'post_id': uniquePostId,
       'time_uploaded': Timestamp.fromDate(DateTime.now()),
       'user_id_who_posted': userName + '??.??' + uid,
       'comments': {},

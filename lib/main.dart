@@ -3,15 +3,21 @@ import 'package:provider/provider.dart';
 import 'package:virtualclass/detailsScreens/classDetailsMail.dart';
 import 'package:virtualclass/detailsScreens/skillDetailsMain.dart';
 import 'package:virtualclass/detailsScreens/teamDetailsMain.dart';
+import 'package:virtualclass/personalUserScreens/showUSerMadeSkills.dart';
+import 'package:virtualclass/personalUserScreens/showUserMadeTeamsMain.dart';
+import 'package:virtualclass/personalUserScreens/showUsermadeClassesMain.dart';
+import 'package:virtualclass/personalUserScreens/showUsermadeSkillsMain.dart';
+import 'package:virtualclass/personalUserScreens/showuserMadeTeams.dart';
 import 'package:virtualclass/screens/commentsScreen.dart';
 import 'package:virtualclass/screens/createSkillpage.dart';
 import 'package:virtualclass/screens/createClass.dart';
 import 'package:virtualclass/screens/editProfileScreen.dart';
-import 'package:virtualclass/screens/getTeamDetails.dart';
+import 'package:virtualclass/screens/createTeamPage.dart';
 import 'package:virtualclass/screens/mainScreen.dart';
 import 'package:virtualclass/screens/makePostScreen.dart';
 import 'package:virtualclass/screens/profilepage.dart';
 import 'package:virtualclass/screens/showusersPost.dart';
+import 'package:virtualclass/screens/skillsPage.dart';
 import 'package:virtualclass/screens/welcomeScreen.dart';
 import 'package:virtualclass/screens/wrapper.dart';
 import 'package:virtualclass/services/authentication.dart';
@@ -55,7 +61,7 @@ class MyApp extends StatelessWidget {
           '/CommentScreen': (BuildContext context) => new CommentsScreen(),
           '/MakePostScreen': (BuildContext context) => new MakePostScreen(),
           '/WelcomeScreen': (BuildContext context) => new WelcomeScreen(),
-          '/GetTeamDetails': (BuildContext context) => new GetTeamDetails(),
+          '/GetTeamDetails': (BuildContext context) => new CreateTeamPage(),
           '/EditProfile': (BuildContext context) => new EditProfileScreen(),
           '/CreateSkills': (BuildContext context) => new CreateSkills(),
           '/CreateWorkshop': (BuildContext context) => new CreateClass(),
@@ -63,6 +69,13 @@ class MyApp extends StatelessWidget {
           '/ClassDetailsPage': (BuildContext context) => new ClassDetailsMain(),
           '/ShowUsersPosts': (BuildContext context) => new ShowUsersPosts(),
           '/TeamDetailsMain': (BuildContext context) => new TeamDetailsMain(),
+          '/SkillsPage': (BuildContext context) => new SkillsPage(),
+          '/ShowUserMadeClassesMain': (BuildContext context) =>
+              new ShowUserMadeClassesMain(),
+          '/ShowUserMadeSkillsMain': (BuildContext context) =>
+              new ShowUserMadeSkillsMain(),
+          '/ShowUserMadeTeamsMain': (BuildContext context) =>
+              new ShowUserMadeTeamsMain(),
         },
         home: Wrapper(),
       ),

@@ -31,7 +31,6 @@ class _HomePageState extends State<HomePage>
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _liked_Posts = new Set();
   }
@@ -321,7 +320,7 @@ class _HomePageState extends State<HomePage>
                             ),
                           ],
                         )
-                      : Text('');
+                      : Container();
                 });
           }
         },

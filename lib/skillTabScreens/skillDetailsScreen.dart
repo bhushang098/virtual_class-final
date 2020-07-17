@@ -36,10 +36,11 @@ class _SkillDetailsScreenState extends State<SkillDetailsScreen> {
     setState(() {
       imageFile = ImagePicker.pickImage(source: ImageSource.gallery);
       if (imageFile != null) {
-        _showProgress = true;
         uploadPic(context);
       } else {
-        _showProgress = false;
+        setState(() {
+          _showProgress = false;
+        });
       }
     });
   }
@@ -77,14 +78,13 @@ class _SkillDetailsScreenState extends State<SkillDetailsScreen> {
       child: Text("OK"),
       onPressed: () {
         Navigator.of(context).pop();
-        Navigator.of(context).pop();
       },
     );
 
     // Create AlertDialog
     AlertDialog alert = AlertDialog(
-      title: Text("Profile Updated"),
-      content: Text('Updated Succesfully'),
+      title: Text("Skill Image Updated "),
+      content: Text('Updated Successfully'),
       actions: [
         okButton,
       ],
@@ -127,6 +127,9 @@ class _SkillDetailsScreenState extends State<SkillDetailsScreen> {
                             width: MediaQuery.of(context).size.width,
                           ),
                         ),
+                        _showProgress
+                            ? Center(child: CircularProgressIndicator())
+                            : Container(),
                         Positioned(
                           bottom: 30,
                           right: 30,

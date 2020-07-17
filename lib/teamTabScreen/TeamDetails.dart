@@ -1,6 +1,14 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
+import 'package:uuid/uuid.dart';
+import 'package:virtualclass/services/fStoreCollection.dart';
 
 import '../constants.dart';
 
@@ -13,6 +21,77 @@ class TeamDetails extends StatefulWidget {
 }
 
 class _TeamDetailsState extends State<TeamDetails> {
+  Future<File> imageFile;
+  bool _showProgress = false;
+  FirebaseUser user;
+
+  pickImageFromGallery() {
+    setState(() {
+      imageFile = ImagePicker.pickImage(source: ImageSource.gallery);
+      if (imageFile != null) {
+        uploadPic(context);
+      } else {
+        setState(() {
+          _showProgress = false;
+        });
+      }
+    });
+  }
+
+  Future uploadPic(BuildContext context) async {
+    _showProgress = true;
+    String fileName;
+    File img;
+    Uuid uuid = new Uuid();
+    await imageFile.then((onValue) {
+      fileName = uuid.v1() + onValue.path.split('/').last;
+      print('>>>>>>>>>>> File NAMe' + fileName);
+      img = onValue;
+    });
+    StorageReference storageReference =
+        FirebaseStorage.instance.ref().child('images/').child(fileName);
+
+    final StorageUploadTask uploadTask = storageReference.putFile(img);
+    StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
+    setState(() {
+      print(" Team Picture uploaded");
+    });
+    new DbUserCollection(user.uid)
+        .updateTeamsPicture(fileName, uuid, widget.title)
+        .then((onValue) {
+      setState(() {
+        _showProgress = false;
+      });
+      showAlertDialog(context);
+    });
+  }
+
+  void showAlertDialog(BuildContext context) {
+    Widget okButton = FlatButton(
+      child: Text("OK"),
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
+    );
+
+    // Create AlertDialog
+    AlertDialog alert = AlertDialog(
+      title: Text("Team Image Updated "),
+      content: Text('Updated Successfully'),
+      actions: [
+        okButton,
+      ],
+    );
+
+    // show the dialog
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return alert;
+      },
+    );
+  }
+
   getClassesDetails(String skillId) async {
     var fireStore = Firestore.instance;
     DocumentSnapshot dsn =
@@ -22,6 +101,7 @@ class _TeamDetailsState extends State<TeamDetails> {
 
   @override
   Widget build(BuildContext context) {
+    user = Provider.of<FirebaseUser>(context);
     return Scaffold(
       body: FutureBuilder(
         future: getClassesDetails(widget.title),
@@ -51,7 +131,10 @@ class _TeamDetailsState extends State<TeamDetails> {
                         Positioned(
                           bottom: 30,
                           right: 30,
-                          child: GestureDetector(
+                          child: InkWell(
+                            onTap: () {
+                              pickImageFromGallery();
+                            },
                             child: Icon(
                               Icons.add_a_photo,
                               color: PrimaryColor,

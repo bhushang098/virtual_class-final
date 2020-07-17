@@ -53,7 +53,7 @@ class _TeamPageState extends State<TeamPage> {
         backgroundColor: PrimaryColor,
         child: Icon(Icons.group_add),
         onPressed: () {
-          navTpGrtPostDetails();
+          navToMakenewTeams();
         },
       ),
       endDrawer: MyDrawer(),
@@ -129,7 +129,9 @@ class _TeamPageState extends State<TeamPage> {
                               height: 10,
                             ),
                             Image.network(
-                                snapShot.data[index].data['team_image']),
+                              snapShot.data[index].data['team_image'],
+                              height: MediaQuery.of(context).size.height / 5,
+                            ),
                             Text(
                               '${snapShot.data[index].data['members'].length} Members',
                               style: TextStyle(
@@ -197,7 +199,7 @@ class _TeamPageState extends State<TeamPage> {
     return qn.documents;
   }
 
-  void navTpGrtPostDetails() {
+  void navToMakenewTeams() {
     Navigator.pushNamed(context, '/GetTeamDetails');
   }
 }
