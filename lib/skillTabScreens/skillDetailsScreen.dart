@@ -28,6 +28,9 @@ class _SkillDetailsScreenState extends State<SkillDetailsScreen> {
     var fireStore = Firestore.instance;
     DocumentSnapshot dsn =
         await fireStore.collection('skills').document(skillId).get();
+    for (var uid in dsn.data['members'].keys) {
+      _members.add(uid);
+    }
     return dsn;
   }
 
@@ -98,6 +101,8 @@ class _SkillDetailsScreenState extends State<SkillDetailsScreen> {
     );
   }
 
+  List<String> _members = [];
+
   @override
   Widget build(BuildContext context) {
     user = Provider.of<FirebaseUser>(context);
@@ -143,17 +148,32 @@ class _SkillDetailsScreenState extends State<SkillDetailsScreen> {
                                   ),
                                 ),
                               )
-                            : Positioned(
-                                bottom: 30,
-                                right: 30,
-                                child: RaisedButton(
-                                  color: PrimaryColor,
-                                  child: Text('Join'),
-                                  onPressed: () {
-                                    showAlertDialog(context);
-                                  },
-                                ),
-                              ),
+                            : _members.contains(user.uid)
+                                ? Positioned(
+                                    bottom: 30,
+                                    right: 30,
+                                    child: RaisedButton(
+                                      color: PrimaryColor,
+                                      child: Text('Leave'),
+                                      onPressed: () {},
+                                    ),
+                                  )
+                                : Positioned(
+                                    bottom: 30,
+                                    right: 30,
+                                    child: RaisedButton(
+                                      color: PrimaryColor,
+                                      child: Text('Join'),
+                                      onPressed: () {
+                                        new DbUserCollection(user.uid)
+                                            .makeSkillsMember(
+                                                snapShot.data['skill_id'])
+                                            .then((onValue) {
+                                          showAlertDialog(context);
+                                        });
+                                      },
+                                    ),
+                                  ),
                       ],
                     ),
                   ),

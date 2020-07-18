@@ -57,6 +57,7 @@ class DbUserCollection {
       'skills_joined': [],
       'classes_joined': [],
       'teams_joined': [],
+      'skills': [],
     });
   }
 
@@ -418,6 +419,16 @@ class DbUserCollection {
       'is_image': false,
       'assigned_with': assigedWith,
       'image_url': null,
+    });
+  }
+
+  Future makeSkillsMember(String skillId) async {
+    DocumentSnapshot snapshot =
+        await Firestore.instance.collection('skills').document(skillId).get();
+    Map<String, dynamic> members = snapshot.data['members'];
+    members.putIfAbsent(uid, () => uid);
+    return await skillCollection.document(skillId).updateData({
+      'members': members,
     });
   }
 }

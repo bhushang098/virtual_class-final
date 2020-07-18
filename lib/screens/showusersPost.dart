@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
 import 'package:virtualclass/modals/postsmodal.dart';
-import 'package:virtualclass/modals/userModal.dart';
 import 'package:virtualclass/screens/timeService.dart';
 import 'package:virtualclass/services/fStoreCollection.dart';
 import 'networkVidScreen.dart';
@@ -16,8 +15,6 @@ class ShowUsersPosts extends StatefulWidget {
 
 class _ShowUsersPostsState extends State<ShowUsersPosts> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
-
-  Myusers _myusers;
 
   var uuid = Uuid();
   Set<String> _liked_Posts;
@@ -31,13 +28,14 @@ class _ShowUsersPostsState extends State<ShowUsersPosts> {
 
   @override
   Widget build(BuildContext context) {
+    final userId = ModalRoute.of(context).settings.arguments;
     final user = Provider.of<FirebaseUser>(context);
     return Scaffold(
       appBar: AppBar(
-        title: Text('Your Posts'),
+        title: Text(' Posts'),
       ),
       body: FutureBuilder(
-        future: getpostsmadebyuser(user.uid),
+        future: getpostsmadebyuser(userId),
         builder: (_, snapShot) {
           if (snapShot.connectionState == ConnectionState.waiting) {
             // ignore: missing_return
@@ -52,7 +50,7 @@ class _ShowUsersPostsState extends State<ShowUsersPosts> {
                   return snapShot.data[index].data['user_id_who_posted']
                               .split('??.??')
                               .last ==
-                          user.uid
+                          userId
                       ? Column(
                           children: <Widget>[
                             SizedBox(

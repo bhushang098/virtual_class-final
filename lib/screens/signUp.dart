@@ -321,9 +321,12 @@ class _SignUpState extends State<SignUp> {
                     if (user != null) {
                       // Push Deta To fireStore
                       setUserInitialDeta();
-                      new DbUserCollection(user).pushUserDeta(_user);
-                      Navigator.of(context).pushNamedAndRemoveUntil(
-                          '/WelcomeScreen', (Route<dynamic> route) => false);
+                      new DbUserCollection(user)
+                          .pushUserDeta(_user)
+                          .then((onValue) {
+                        Navigator.of(context).pushNamedAndRemoveUntil(
+                            '/WelcomeScreen', (Route<dynamic> route) => false);
+                      });
                     }
                   } else {
                     showDialog(
