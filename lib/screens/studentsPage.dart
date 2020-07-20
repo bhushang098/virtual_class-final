@@ -31,61 +31,62 @@ class _StudentsPageState extends State<StudentsPage> {
                       ? Container()
                       : user.uid == snapShot.data[index].documentID
                           ? Container()
-                          : Card(
-                              elevation: 4,
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                              ),
-                              child: Column(
-                                children: <Widget>[
-                                  Padding(
-                                    padding: const EdgeInsets.only(
-                                        top: 12.0, left: 10),
-                                    child: Row(
-                                      children: <Widget>[
-                                        CircleAvatar(
-                                          radius: 35,
-                                          backgroundImage: NetworkImage(snapShot
-                                              .data[index].data['profile_url']),
-                                        ),
-                                        SizedBox(
-                                          width: 20,
-                                        ),
-                                        GestureDetector(
-                                          onTap: () {
-                                            Navigator.pushNamed(
-                                                context, '/OtherUserProfile',
-                                                arguments: snapShot
-                                                    .data[index].documentID);
-                                          },
-                                          child: Text(
+                          : InkWell(
+                              onTap: () {
+                                Navigator.pushNamed(
+                                    context, '/OtherUserProfile',
+                                    arguments: snapShot.data[index].documentID);
+                              },
+                              splashColor: PrimaryColor,
+                              child: Card(
+                                elevation: 4,
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                                child: Column(
+                                  children: <Widget>[
+                                    Padding(
+                                      padding: const EdgeInsets.only(
+                                          top: 12.0, left: 10),
+                                      child: Row(
+                                        children: <Widget>[
+                                          CircleAvatar(
+                                            radius: 35,
+                                            backgroundImage: NetworkImage(
+                                                snapShot.data[index]
+                                                    .data['profile_url']),
+                                          ),
+                                          SizedBox(
+                                            width: 20,
+                                          ),
+                                          Text(
                                             snapShot.data[index].data['name'],
                                             style: TextStyle(
                                                 fontWeight: FontWeight.bold,
                                                 fontSize: 20,
                                                 color: PrimaryColor),
                                           ),
-                                        ),
-                                        SizedBox(
-                                          width: 20,
-                                        ),
-                                      ],
+                                          SizedBox(
+                                            width: 20,
+                                          ),
+                                        ],
+                                      ),
                                     ),
-                                  ),
-                                  Text(
-                                      'Location ${snapShot.data[index].data['location']}'),
-                                  SizedBox(
-                                    height: 10,
-                                  ),
-                                  Text('Skills'),
-                                  Container(
-                                    width: MediaQuery.of(context).size.width,
-                                    child: SingleChildScrollView(
-                                      child: skillBuilder(
-                                          snapShot.data[index].data['skills']),
+                                    Text(
+                                        'Location ${snapShot.data[index].data['location']}'),
+                                    SizedBox(
+                                      height: 10,
                                     ),
-                                  ),
-                                ],
+                                    Text('Skills'),
+                                    Container(
+                                      width: MediaQuery.of(context).size.width,
+                                      child: SingleChildScrollView(
+                                        child: skillBuilder(snapShot
+                                            .data[index].data['skills']),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             );
                 });

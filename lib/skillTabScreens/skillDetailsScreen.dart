@@ -71,11 +71,12 @@ class _SkillDetailsScreenState extends State<SkillDetailsScreen> {
       setState(() {
         _showProgress = false;
       });
-      showAlertDialog(context);
+      showAlertDialog(context, 'Picture Changed',
+          'BackGround sKill Image Changed Successfully');
     });
   }
 
-  void showAlertDialog(BuildContext context) {
+  void showAlertDialog(BuildContext context, String title, String mess) {
     Widget okButton = FlatButton(
       child: Text("OK"),
       onPressed: () {
@@ -85,8 +86,8 @@ class _SkillDetailsScreenState extends State<SkillDetailsScreen> {
 
     // Create AlertDialog
     AlertDialog alert = AlertDialog(
-      title: Text("Skill Image Updated "),
-      content: Text('Updated Successfully'),
+      title: Text(title),
+      content: Text(mess),
       actions: [
         okButton,
       ],
@@ -104,7 +105,14 @@ class _SkillDetailsScreenState extends State<SkillDetailsScreen> {
   List<String> _members = [];
 
   @override
+  void dispose() {
+    // TODO: implement dispose
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final snackBar = SnackBar(content: Text('Leaved Skill'));
     user = Provider.of<FirebaseUser>(context);
     return Scaffold(
       body: FutureBuilder(
@@ -155,7 +163,21 @@ class _SkillDetailsScreenState extends State<SkillDetailsScreen> {
                                     child: RaisedButton(
                                       color: PrimaryColor,
                                       child: Text('Leave'),
-                                      onPressed: () {},
+                                      onPressed: () {
+                                        new DbUserCollection(user.uid)
+                                            .updateUserLeavedSkills(
+                                                snapShot.data['skill_id'])
+                                            .then((onValue) {
+                                          Scaffold.of(context)
+                                              .showSnackBar(snackBar);
+                                          Future.delayed(
+                                                  Duration(milliseconds: 500))
+                                              .then((onValue) {
+                                            Navigator.pop(context);
+                                          });
+                                          //Navigator.pop(context);
+                                        });
+                                      },
                                     ),
                                   )
                                 : Positioned(
@@ -169,7 +191,11 @@ class _SkillDetailsScreenState extends State<SkillDetailsScreen> {
                                             .makeSkillsMember(
                                                 snapShot.data['skill_id'])
                                             .then((onValue) {
-                                          showAlertDialog(context);
+                                          setState(() {});
+                                          showAlertDialog(
+                                              context,
+                                              'Congratulations !!',
+                                              'You Are Now member Of  ${snapShot.data['skill_name']}');
                                         });
                                       },
                                     ),

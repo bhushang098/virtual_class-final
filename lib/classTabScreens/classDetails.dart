@@ -22,6 +22,7 @@ class _ClassDetailsState extends State<ClassDetails> {
   Future<File> imageFile;
   bool _showProgress = false;
   FirebaseUser user;
+  List<String> _members = [];
 
   pickImageFromGallery() {
     setState(() {
@@ -60,11 +61,12 @@ class _ClassDetailsState extends State<ClassDetails> {
       setState(() {
         _showProgress = false;
       });
-      showAlertDialog(context);
+      showAlertDialog(context, 'Picture Updated',
+          'Class Background Picture Updated Successfully');
     });
   }
 
-  void showAlertDialog(BuildContext context) {
+  void showAlertDialog(BuildContext context, String title, String mess) {
     Widget okButton = FlatButton(
       child: Text("OK"),
       onPressed: () {
@@ -74,8 +76,8 @@ class _ClassDetailsState extends State<ClassDetails> {
 
     // Create AlertDialog
     AlertDialog alert = AlertDialog(
-      title: Text(" Class Image Updated "),
-      content: Text('Updated Successfully'),
+      title: Text(title),
+      content: Text(mess),
       actions: [
         okButton,
       ],
@@ -90,16 +92,20 @@ class _ClassDetailsState extends State<ClassDetails> {
     );
   }
 
-  getClassesDetails(String skillId) async {
+  getClassesDetails(String classId) async {
     var fireStore = Firestore.instance;
     DocumentSnapshot dsn =
-        await fireStore.collection('classes').document(skillId).get();
+        await fireStore.collection('classes').document(classId).get();
+    for (var uid in dsn.data['members'].keys) {
+      _members.add(uid);
+    }
     return dsn;
   }
 
   @override
   Widget build(BuildContext context) {
     user = Provider.of<FirebaseUser>(context);
+    final snackBar = SnackBar(content: Text('You Left Class'));
     return Scaffold(
       body: FutureBuilder(
         future: getClassesDetails(widget.title),
@@ -121,17 +127,18 @@ class _ClassDetailsState extends State<ClassDetails> {
                           padding: const EdgeInsets.all(8.0),
                           child: Image.network(
                             snapShot.data['class_image'],
-                            fit: BoxFit.fill,
-                            height: 200,
+                            height: 150,
                             width: MediaQuery.of(context).size.width,
                           ),
                         ),
+                        _showProgress
+                            ? Center(child: CircularProgressIndicator())
+                            : Container(),
                         snapShot.data['user_id'] == user.uid
                             ? Positioned(
                                 bottom: 30,
                                 right: 30,
-                                child: InkWell(
-                                  splashColor: PrimaryColor,
+                                child: GestureDetector(
                                   onTap: () {
                                     pickImageFromGallery();
                                   },
@@ -141,14 +148,50 @@ class _ClassDetailsState extends State<ClassDetails> {
                                   ),
                                 ),
                               )
-                            : Positioned(
-                                bottom: 30,
-                                right: 30,
-                                child: RaisedButton(
-                                  child: Text('Join'),
-                                  color: PrimaryColor,
-                                  onPressed: () {},
-                                ))
+                            : _members.contains(user.uid)
+                                ? Positioned(
+                                    bottom: 30,
+                                    right: 30,
+                                    child: RaisedButton(
+                                      color: PrimaryColor,
+                                      child: Text('Leave'),
+                                      onPressed: () {
+                                        new DbUserCollection(user.uid)
+                                            .updateUserLeavedClasses(
+                                                snapShot.data['class_id'])
+                                            .then((onValue) {
+                                          Scaffold.of(context)
+                                              .showSnackBar(snackBar);
+                                          Future.delayed(
+                                                  Duration(milliseconds: 500))
+                                              .then((onValue) {
+                                            Navigator.pop(context);
+                                          });
+                                          //Navigator.pop(context);
+                                        });
+                                      },
+                                    ),
+                                  )
+                                : Positioned(
+                                    bottom: 30,
+                                    right: 30,
+                                    child: RaisedButton(
+                                      color: PrimaryColor,
+                                      child: Text('Join'),
+                                      onPressed: () {
+                                        new DbUserCollection(user.uid)
+                                            .makeClassMember(
+                                                snapShot.data['class_id'])
+                                            .then((onValue) {
+                                          setState(() {});
+                                          showAlertDialog(
+                                              context,
+                                              'Congratulations !!',
+                                              'You Are Now member of  ${snapShot.data['class_name']}');
+                                        });
+                                      },
+                                    ),
+                                  ),
                       ],
                     ),
                   ),

@@ -253,7 +253,7 @@ class _ShowUsersPostsState extends State<ShowUsersPosts> {
                             ),
                           ],
                         )
-                      : Text('');
+                      : Container();
                 });
           }
         },

@@ -47,7 +47,7 @@ class _ShowUserMadeTeamsMainState extends State<ShowUserMadeTeamsMain>
     teamArgs = ModalRoute.of(context).settings.arguments;
     return Scaffold(
       appBar: AppBar(
-        title: Text('Classes'),
+        title: Text('Teams'),
         bottom: TabBar(
           controller: _controller,
           indicatorWeight: 3.0,

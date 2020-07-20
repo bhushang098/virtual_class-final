@@ -262,7 +262,10 @@ class _ClassesPageState extends State<ClassesPage> {
 
   getClasses() async {
     var fireStore = Firestore.instance;
-    QuerySnapshot qn = await fireStore.collection('classes').getDocuments();
+    QuerySnapshot qn = await fireStore
+        .collection('classes')
+        .orderBy('time_created', descending: true)
+        .getDocuments();
     return qn.documents;
   }
 

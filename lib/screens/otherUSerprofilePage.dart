@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:provider/provider.dart';
+import 'package:virtualclass/services/fStoreCollection.dart';
 import 'package:virtualclass/services/teamArgs.dart';
 import 'package:virtualclass/services/userClassesArgs.dart';
 import 'package:virtualclass/services/userSkillsArgs.dart';
@@ -18,6 +19,8 @@ class _OtherUserProfileState extends State<OtherUserProfile> {
   Future<File> imageFile;
   bool _showProgress = false;
   String userid;
+  var followers = [];
+  var following = [];
 
   void showAlertDialog(BuildContext context) {
     Widget okButton = FlatButton(
@@ -56,6 +59,7 @@ class _OtherUserProfileState extends State<OtherUserProfile> {
   @override
   Widget build(BuildContext context) {
     userid = ModalRoute.of(context).settings.arguments;
+    setFollwersAndFollwing(userid);
     final user = Provider.of<FirebaseUser>(context);
     _showProgress = false;
     return Scaffold(
@@ -132,7 +136,7 @@ class _OtherUserProfileState extends State<OtherUserProfile> {
                                     userid == user.uid
                                         ? GestureDetector(
                                             onTap: () {
-                                              navToEditprofile();
+                                              //navToEditprofile();
                                             },
                                             child: Card(
                                               child: Padding(
@@ -146,19 +150,51 @@ class _OtherUserProfileState extends State<OtherUserProfile> {
                                               elevation: 5,
                                             ),
                                           )
-                                        : GestureDetector(
-                                            onTap: () {
-                                              // Follow People
-                                            },
-                                            child: Card(
-                                              child: Padding(
-                                                padding:
-                                                    const EdgeInsets.all(5.0),
-                                                child: Text('Follow'),
+                                        : followers.contains(user.uid)
+                                            ? GestureDetector(
+                                                onTap: () {
+                                                  new DbUserCollection(user.uid)
+                                                      .unFollowUser(userid)
+                                                      .then((onValue) {
+                                                    setState(() {});
+                                                  });
+                                                },
+                                                child: Card(
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            5.0),
+                                                    child: Text(
+                                                      'UnFollow',
+                                                      style: TextStyle(
+                                                          color: Colors.red),
+                                                    ),
+                                                  ),
+                                                  elevation: 5,
+                                                ),
+                                              )
+                                            : GestureDetector(
+                                                onTap: () {
+                                                  new DbUserCollection(user.uid)
+                                                      .followUser(userid)
+                                                      .then((onValue) {
+                                                    setState(() {});
+                                                  });
+                                                },
+                                                child: Card(
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            5.0),
+                                                    child: Text(
+                                                      'Follow',
+                                                      style: TextStyle(
+                                                          color: Colors.green),
+                                                    ),
+                                                  ),
+                                                  elevation: 5,
+                                                ),
                                               ),
-                                              elevation: 5,
-                                            ),
-                                          ),
                                   ],
                                 ),
                               ),
@@ -496,12 +532,49 @@ class _OtherUserProfileState extends State<OtherUserProfile> {
                                       onTap: () {
                                         navToEditprofile();
                                       },
-                                      child: Card(
-                                        child: Padding(
-                                            padding: const EdgeInsets.all(5.0),
-                                            child: Text('Follow')),
-                                        elevation: 5,
-                                      ),
+                                      child: followers.contains(user.uid)
+                                          ? GestureDetector(
+                                              onTap: () {
+                                                new DbUserCollection(user.uid)
+                                                    .unFollowUser(userid)
+                                                    .then((onValue) {
+                                                  setState(() {});
+                                                });
+                                              },
+                                              child: Card(
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(5.0),
+                                                  child: Text(
+                                                    'UnFollow',
+                                                    style: TextStyle(
+                                                        color: Colors.red),
+                                                  ),
+                                                ),
+                                                elevation: 5,
+                                              ),
+                                            )
+                                          : GestureDetector(
+                                              onTap: () {
+                                                new DbUserCollection(user.uid)
+                                                    .followUser(userid)
+                                                    .then((onValue) {
+                                                  setState(() {});
+                                                });
+                                              },
+                                              child: Card(
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(5.0),
+                                                  child: Text(
+                                                    'Follow',
+                                                    style: TextStyle(
+                                                        color: Colors.green),
+                                                  ),
+                                                ),
+                                                elevation: 5,
+                                              ),
+                                            ),
                                     ),
                                   ],
                                 ),
@@ -541,11 +614,13 @@ class _OtherUserProfileState extends State<OtherUserProfile> {
                                   Expanded(
                                     child: Column(
                                       children: <Widget>[
-                                        GestureDetector(
+                                        InkWell(
                                           onTap: () {
                                             Navigator.pushNamed(
-                                                context, '/ShowUsersPosts');
+                                                context, '/ShowUsersPosts',
+                                                arguments: userid);
                                           },
+                                          splashColor: PrimaryColor,
                                           child: Text(
                                             "Posts",
                                             style: TextStyle(
@@ -759,5 +834,14 @@ class _OtherUserProfileState extends State<OtherUserProfile> {
       context,
       '/EditProfile',
     );
+  }
+
+  void setFollwersAndFollwing(String otherUsersId) async {
+    DocumentSnapshot dnsp = await Firestore.instance
+        .collection('users')
+        .document(otherUsersId)
+        .get();
+    followers = dnsp.data['followers'];
+    following = dnsp.data['following'];
   }
 }

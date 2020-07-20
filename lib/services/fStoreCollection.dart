@@ -385,6 +385,7 @@ class DbUserCollection {
       'fees': classes.fees,
       'time_created': Timestamp.fromDate(new DateTime.now()),
       'class_image': '',
+      'members': {},
     });
   }
 
@@ -427,8 +428,173 @@ class DbUserCollection {
         await Firestore.instance.collection('skills').document(skillId).get();
     Map<String, dynamic> members = snapshot.data['members'];
     members.putIfAbsent(uid, () => uid);
+    updateUserJoinedSkills(skillId);
     return await skillCollection.document(skillId).updateData({
       'members': members,
+    });
+  }
+
+  Future updateUserJoinedSkills(String skillId) async {
+    DocumentSnapshot snapshot =
+        await Firestore.instance.collection('users').document(uid).get();
+    var skillsJoined = snapshot.data['skills_joined'];
+    skillsJoined.add(skillId);
+
+    return await userCollection.document(uid).updateData({
+      'skills_joined': skillsJoined,
+    });
+  }
+
+  Future updateUserLeavedSkills(String skillId) async {
+    DocumentSnapshot snapshot =
+        await Firestore.instance.collection('users').document(uid).get();
+    var skillsJoined = snapshot.data['skills_joined'];
+    skillsJoined.remove(skillId);
+    removememberfromSkill(skillId);
+    return await userCollection.document(uid).updateData({
+      'skills_joined': skillsJoined,
+    });
+  }
+
+  Future removememberfromSkill(String skillId) async {
+    DocumentSnapshot snapshot =
+        await Firestore.instance.collection('skills').document(skillId).get();
+    Map<String, dynamic> members = snapshot.data['members'];
+    members.remove(uid);
+
+    return await skillCollection.document(skillId).updateData({
+      'members': members,
+    });
+  }
+
+  Future makeTeamMember(String teamId) async {
+    DocumentSnapshot snapshot =
+        await Firestore.instance.collection('teams').document(teamId).get();
+    Map<String, dynamic> members = snapshot.data['members'];
+    members.putIfAbsent(uid, () => uid);
+    updateUserJoinedTeams(teamId);
+    return await teamsCollection.document(teamId).updateData({
+      'members': members,
+    });
+  }
+
+  Future updateUserJoinedTeams(String teamId) async {
+    DocumentSnapshot snapshot =
+        await Firestore.instance.collection('users').document(uid).get();
+    var teamsJoined = snapshot.data['teams_joined'];
+    teamsJoined.add(teamId);
+
+    return await userCollection.document(uid).updateData({
+      'teams_joined': teamsJoined,
+    });
+  }
+
+  Future updateUserLeavedTeams(String teamId) async {
+    DocumentSnapshot snapshot =
+        await Firestore.instance.collection('users').document(uid).get();
+    var teamsJoined = snapshot.data['teams_joined'];
+    teamsJoined.remove(teamId);
+    removememberfromTeam(teamId);
+    return await userCollection.document(uid).updateData({
+      'teams_joined': teamsJoined,
+    });
+  }
+
+  Future removememberfromTeam(String teamId) async {
+    DocumentSnapshot snapshot =
+        await Firestore.instance.collection('teams').document(teamId).get();
+    Map<String, dynamic> members = snapshot.data['members'];
+    members.remove(uid);
+
+    return await teamsCollection.document(teamId).updateData({
+      'members': members,
+    });
+  }
+
+  Future makeClassMember(String classId) async {
+    DocumentSnapshot snapshot =
+        await Firestore.instance.collection('classes').document(classId).get();
+    Map<String, dynamic> members = snapshot.data['members'];
+    members.putIfAbsent(uid, () => uid);
+    updateUserJoinedClasses(classId);
+    return await classesCollection.document(classId).updateData({
+      'members': members,
+    });
+  }
+
+  Future updateUserJoinedClasses(String classId) async {
+    DocumentSnapshot snapshot =
+        await Firestore.instance.collection('users').document(uid).get();
+    var classJoined = snapshot.data['classes_joined'];
+    classJoined.add(classId);
+
+    return await userCollection.document(uid).updateData({
+      'classes_joined': classJoined,
+    });
+  }
+
+  Future updateUserLeavedClasses(String classId) async {
+    DocumentSnapshot snapshot =
+        await Firestore.instance.collection('users').document(uid).get();
+    var classesJoined = snapshot.data['classes_joined'];
+    classesJoined.remove(classId);
+    removememberfromClass(classId);
+    return await userCollection.document(uid).updateData({
+      'classes_joined': classesJoined,
+    });
+  }
+
+  Future removememberfromClass(String classId) async {
+    DocumentSnapshot snapshot =
+        await Firestore.instance.collection('classes').document(classId).get();
+    Map<String, dynamic> members = snapshot.data['members'];
+    members.remove(uid);
+
+    return await classesCollection.document(classId).updateData({
+      'members': members,
+    });
+  }
+
+  Future followUser(String otherUser) async {
+    DocumentSnapshot snapshot =
+        await Firestore.instance.collection('users').document(uid).get();
+    var following = snapshot.data['following'];
+    following.add(otherUser);
+    updateOtherUsersFollowers(otherUser);
+    return await userCollection.document(uid).updateData({
+      'following': following,
+    });
+  }
+
+  Future updateOtherUsersFollowers(String otherUser) async {
+    DocumentSnapshot snp =
+        await Firestore.instance.collection('users').document(otherUser).get();
+    var followers = snp.data['followers'];
+    followers.add(uid);
+
+    return await userCollection.document(otherUser).updateData({
+      'followers': followers,
+    });
+  }
+
+  Future unFollowUser(String otherUser) async {
+    DocumentSnapshot snapshot =
+        await Firestore.instance.collection('users').document(otherUser).get();
+    var followers = snapshot.data['followers'];
+    followers.remove(uid);
+    removeFromFolllowing(otherUser);
+    return await userCollection.document(otherUser).updateData({
+      'followers': followers,
+    });
+  }
+
+  Future removeFromFolllowing(String otherUser) async {
+    DocumentSnapshot snapshot =
+        await Firestore.instance.collection('users').document(uid).get();
+    var following = snapshot.data['following'];
+    following.remove(otherUser);
+    return await userCollection.document(otherUser).updateData({
+      'following': following,
     });
   }
 }

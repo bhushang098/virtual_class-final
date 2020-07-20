@@ -24,6 +24,7 @@ class _TeamDetailsState extends State<TeamDetails> {
   Future<File> imageFile;
   bool _showProgress = false;
   FirebaseUser user;
+  List<String> _members = [];
 
   pickImageFromGallery() {
     setState(() {
@@ -62,11 +63,12 @@ class _TeamDetailsState extends State<TeamDetails> {
       setState(() {
         _showProgress = false;
       });
-      showAlertDialog(context);
+      showAlertDialog(context, 'Picture Updated',
+          'Teams Background Picture Updated Successfully');
     });
   }
 
-  void showAlertDialog(BuildContext context) {
+  void showAlertDialog(BuildContext context, String title, String mess) {
     Widget okButton = FlatButton(
       child: Text("OK"),
       onPressed: () {
@@ -76,8 +78,8 @@ class _TeamDetailsState extends State<TeamDetails> {
 
     // Create AlertDialog
     AlertDialog alert = AlertDialog(
-      title: Text("Team Image Updated "),
-      content: Text('Updated Successfully'),
+      title: Text(title),
+      content: Text(mess),
       actions: [
         okButton,
       ],
@@ -92,19 +94,23 @@ class _TeamDetailsState extends State<TeamDetails> {
     );
   }
 
-  getClassesDetails(String skillId) async {
+  getTeamDetails(String teamIdId) async {
     var fireStore = Firestore.instance;
     DocumentSnapshot dsn =
-        await fireStore.collection('teams').document(skillId).get();
+        await fireStore.collection('teams').document(teamIdId).get();
+    for (var uid in dsn.data['members'].keys) {
+      _members.add(uid);
+    }
     return dsn;
   }
 
   @override
   Widget build(BuildContext context) {
     user = Provider.of<FirebaseUser>(context);
+    final snackBar = SnackBar(content: Text('You Left Team'));
     return Scaffold(
       body: FutureBuilder(
-        future: getClassesDetails(widget.title),
+        future: getTeamDetails(widget.title),
         builder: (_, snapShot) {
           if (snapShot.connectionState == ConnectionState.waiting) {
             // ignore: missing_return
@@ -123,16 +129,18 @@ class _TeamDetailsState extends State<TeamDetails> {
                           padding: const EdgeInsets.all(8.0),
                           child: Image.network(
                             snapShot.data['team_image'],
-                            fit: BoxFit.fill,
-                            height: 200,
+                            height: 150,
                             width: MediaQuery.of(context).size.width,
                           ),
                         ),
+                        _showProgress
+                            ? Center(child: CircularProgressIndicator())
+                            : Container(),
                         snapShot.data['user_id'] == user.uid
                             ? Positioned(
                                 bottom: 30,
                                 right: 30,
-                                child: InkWell(
+                                child: GestureDetector(
                                   onTap: () {
                                     pickImageFromGallery();
                                   },
@@ -142,14 +150,50 @@ class _TeamDetailsState extends State<TeamDetails> {
                                   ),
                                 ),
                               )
-                            : Positioned(
-                                bottom: 30,
-                                right: 30,
-                                child: RaisedButton(
-                                  color: PrimaryColor,
-                                  child: Text('Join'),
-                                  onPressed: () {},
-                                ))
+                            : _members.contains(user.uid)
+                                ? Positioned(
+                                    bottom: 30,
+                                    right: 30,
+                                    child: RaisedButton(
+                                      color: PrimaryColor,
+                                      child: Text('Leave'),
+                                      onPressed: () {
+                                        new DbUserCollection(user.uid)
+                                            .updateUserLeavedTeams(
+                                                snapShot.data['team_id'])
+                                            .then((onValue) {
+                                          Scaffold.of(context)
+                                              .showSnackBar(snackBar);
+                                          Future.delayed(
+                                                  Duration(milliseconds: 500))
+                                              .then((onValue) {
+                                            Navigator.pop(context);
+                                          });
+                                          //Navigator.pop(context);
+                                        });
+                                      },
+                                    ),
+                                  )
+                                : Positioned(
+                                    bottom: 30,
+                                    right: 30,
+                                    child: RaisedButton(
+                                      color: PrimaryColor,
+                                      child: Text('Join'),
+                                      onPressed: () {
+                                        new DbUserCollection(user.uid)
+                                            .makeTeamMember(
+                                                snapShot.data['team_id'])
+                                            .then((onValue) {
+                                          setState(() {});
+                                          showAlertDialog(
+                                              context,
+                                              'Congratulations !!',
+                                              'You Are Now member of  ${snapShot.data['team_name']}');
+                                        });
+                                      },
+                                    ),
+                                  ),
                       ],
                     ),
                   ),
