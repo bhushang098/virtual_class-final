@@ -144,7 +144,11 @@ class _ShowUsersPostsState extends State<ShowUsersPosts> {
                                               ]),
                                             ),
                                     ),
-                                    Text(snapShot.data[index].data['content']),
+                                    Padding(
+                                      padding: const EdgeInsets.all(20.0),
+                                      child: Text(
+                                          snapShot.data[index].data['content']),
+                                    ),
                                     SizedBox(
                                       height: 5,
                                     ),

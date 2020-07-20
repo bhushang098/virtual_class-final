@@ -251,7 +251,8 @@ class _ProfilePageState extends State<ProfilePage> {
                                         GestureDetector(
                                           onTap: () {
                                             Navigator.pushNamed(
-                                                context, '/ShowUsersPosts');
+                                                context, '/ShowUsersPosts',
+                                                arguments: user.uid);
                                           },
                                           child: Text(
                                             "Posts",

@@ -593,7 +593,7 @@ class DbUserCollection {
         await Firestore.instance.collection('users').document(uid).get();
     var following = snapshot.data['following'];
     following.remove(otherUser);
-    return await userCollection.document(otherUser).updateData({
+    return await userCollection.document(uid).updateData({
       'following': following,
     });
   }

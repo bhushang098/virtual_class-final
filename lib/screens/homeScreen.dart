@@ -211,7 +211,11 @@ class _HomePageState extends State<HomePage>
                                               ]),
                                             ),
                                     ),
-                                    Text(snapShot.data[index].data['content']),
+                                    Padding(
+                                      padding: const EdgeInsets.all(20.0),
+                                      child: Text(
+                                          snapShot.data[index].data['content']),
+                                    ),
                                     SizedBox(
                                       height: 5,
                                     ),

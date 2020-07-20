@@ -78,12 +78,18 @@ class _CommentsScreenState extends State<CommentsScreen> {
                         ],
                       ),
                     ),
-                    Text(_post.content),
+                    Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Text(_post.content),
+                    ),
                     SizedBox(
                       height: 5.0,
                     ),
                     _post.isImage
-                        ? Image.network(_post.imageUrl)
+                        ? Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Image.network(_post.imageUrl),
+                          )
                         : _post.imageUrl == null
                             ? Text('')
                             : Padding(
@@ -116,7 +122,6 @@ class _CommentsScreenState extends State<CommentsScreen> {
                                 decoration:
                                     InputDecoration(hintText: 'Write Comment')),
                           ),
-                          Spacer(),
                           GestureDetector(
                               child: Icon(
                                 Icons.send,
