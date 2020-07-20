@@ -35,6 +35,12 @@ class _HomePageState extends State<HomePage>
     _liked_Posts = new Set();
   }
 
+  @override
+  void dispose() {
+    super.dispose();
+    print('>>>>>>>>>>>>>>>>>>>>>>>>>>> Disposing.. Homw');
+  }
+
   _showDialog(title, text) {
     showDialog(
         context: context,

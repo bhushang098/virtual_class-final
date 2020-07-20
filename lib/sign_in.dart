@@ -28,7 +28,6 @@ class _SignInScreenState extends State<SignInScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: primaryLight,
       body: SingleChildScrollView(
         child: Column(
           children: <Widget>[

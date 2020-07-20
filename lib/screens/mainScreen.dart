@@ -29,6 +29,11 @@ class _MainScreenState extends State<MainScreen> {
   Icon actionIcon = new Icon(Icons.search);
 
   @override
+  void dispose() {
+    print('>>>>>>>>>>>>>>>>>>>>>>> Disposing >>>>>>>>>>');
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
@@ -115,23 +120,39 @@ class _CustomBottomNavigationBarState extends State<CustomBottomNavigationBar> {
         });
       },
       child: Container(
-        height: 50,
+        height: 55,
         width: MediaQuery.of(context).size.width / _iconList.length,
         decoration: index == _selectedIndex
-            ? BoxDecoration(color: primaryLight)
-            : BoxDecoration(color: primaryLight),
-        child: Column(
-          children: <Widget>[
-            Icon(
-              icon,
-              color: index == _selectedIndex ? PrimaryColor : Colors.grey,
-            ),
-            Text(
-              name,
-              style: TextStyle(
-                  color: index == _selectedIndex ? PrimaryColor : Colors.grey),
-            ),
-          ],
+            ? BoxDecoration(
+                color: Colors.white,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.5),
+                    spreadRadius: 5,
+                    blurRadius: 7,
+                    offset: Offset(5, 0), // changes position of shadow
+                  ),
+                ],
+              )
+            : BoxDecoration(
+                color: Colors.white,
+              ),
+        child: Padding(
+          padding: const EdgeInsets.all(4.0),
+          child: Column(
+            children: <Widget>[
+              Icon(
+                icon,
+                color: index == _selectedIndex ? PrimaryColor : Colors.grey,
+              ),
+              Text(
+                name,
+                style: TextStyle(
+                    color:
+                        index == _selectedIndex ? PrimaryColor : Colors.grey),
+              ),
+            ],
+          ),
         ),
       ),
     );

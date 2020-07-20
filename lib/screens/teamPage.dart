@@ -43,6 +43,12 @@ class _TeamPageState extends State<TeamPage> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    print('>>>>>>>>>>>>>>>>>>>>>>>>>>> Disposing.. Team');
+  }
+
+  @override
   Widget build(BuildContext context) {
     user = Provider.of<FirebaseUser>(context);
     return Scaffold(
