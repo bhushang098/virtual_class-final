@@ -163,7 +163,9 @@ class _ClassesPageState extends State<ClassesPage> {
                                 height: 5,
                               ),
                               Image.network(
-                                  snapShot.data[index].data['class_image']),
+                                snapShot.data[index].data['class_image'],
+                                height: MediaQuery.of(context).size.height / 5,
+                              ),
                               SizedBox(
                                 height: 5,
                               ),
@@ -260,7 +262,10 @@ class _ClassesPageState extends State<ClassesPage> {
 
   getClasses() async {
     var fireStore = Firestore.instance;
-    QuerySnapshot qn = await fireStore.collection('classes').getDocuments();
+    QuerySnapshot qn = await fireStore
+        .collection('classes')
+        .orderBy('time_created', descending: true)
+        .getDocuments();
     return qn.documents;
   }
 

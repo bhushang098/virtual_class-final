@@ -66,28 +66,41 @@ class _CommentsScreenState extends State<CommentsScreen> {
                       subtitle: Text(convertTimeStamp(_post.time_posted)),
                       trailing: Column(
                         children: <Widget>[
-                          Icon(
-                            Icons.favorite,
-                            color: Colors.red,
-                          ),
+                          _post.likes == 0
+                              ? Icon(
+                                  Icons.favorite_border,
+                                )
+                              : Icon(
+                                  Icons.favorite,
+                                  color: Colors.red,
+                                ),
                           Text(_post.likes.toString()),
                         ],
                       ),
                     ),
-                    Text(_post.content),
+                    Padding(
+                      padding: const EdgeInsets.all(20.0),
+                      child: Text(_post.content),
+                    ),
                     SizedBox(
                       height: 5.0,
                     ),
                     _post.isImage
-                        ? Image.network(_post.imageUrl)
-                        : Padding(
+                        ? Padding(
                             padding: const EdgeInsets.all(8.0),
-                            child: Container(
-                              height: MediaQuery.of(context).size.height / 3,
-                              width: MediaQuery.of(context).size.width,
-                              child: NetworkPlayer(_post.imageUrl),
-                            ),
-                          ),
+                            child: Image.network(_post.imageUrl),
+                          )
+                        : _post.imageUrl == null
+                            ? Text('')
+                            : Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Container(
+                                  height:
+                                      MediaQuery.of(context).size.height / 3,
+                                  width: MediaQuery.of(context).size.width,
+                                  child: NetworkPlayer(_post.imageUrl),
+                                ),
+                              ),
                     SizedBox(
                       height: 5,
                     ),
@@ -109,7 +122,6 @@ class _CommentsScreenState extends State<CommentsScreen> {
                                 decoration:
                                     InputDecoration(hintText: 'Write Comment')),
                           ),
-                          Spacer(),
                           GestureDetector(
                               child: Icon(
                                 Icons.send,

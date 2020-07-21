@@ -6,12 +6,12 @@ import 'package:virtualclass/constants.dart';
 import 'package:virtualclass/modals/teamModal.dart';
 import 'package:virtualclass/services/fStoreCollection.dart';
 
-class GetTeamDetails extends StatefulWidget {
+class CreateTeamPage extends StatefulWidget {
   @override
-  _GetTeamDetailsState createState() => _GetTeamDetailsState();
+  _CreateTeamPageState createState() => _CreateTeamPageState();
 }
 
-class _GetTeamDetailsState extends State<GetTeamDetails> {
+class _CreateTeamPageState extends State<CreateTeamPage> {
   String teamName, classLocation, about;
   String whoCanPostToTeam, whoCanSeePost, whoCanSeMessage;
 

@@ -31,9 +31,14 @@ class _HomePageState extends State<HomePage>
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _liked_Posts = new Set();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    print('>>>>>>>>>>>>>>>>>>>>>>>>>>> Disposing.. Homw');
   }
 
   _showDialog(title, text) {
@@ -212,7 +217,11 @@ class _HomePageState extends State<HomePage>
                                               ]),
                                             ),
                                     ),
-                                    Text(snapShot.data[index].data['content']),
+                                    Padding(
+                                      padding: const EdgeInsets.all(20.0),
+                                      child: Text(
+                                          snapShot.data[index].data['content']),
+                                    ),
                                     SizedBox(
                                       height: 5,
                                     ),
@@ -321,7 +330,7 @@ class _HomePageState extends State<HomePage>
                             ),
                           ],
                         )
-                      : Text('');
+                      : Container();
                 });
           }
         },

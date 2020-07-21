@@ -1,39 +1,26 @@
 import 'dart:io';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_rating_bar/flutter_rating_bar.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
-import 'package:uuid/uuid.dart';
 import 'package:virtualclass/services/fStoreCollection.dart';
 import 'package:virtualclass/services/teamArgs.dart';
 import 'package:virtualclass/services/userClassesArgs.dart';
 import 'package:virtualclass/services/userSkillsArgs.dart';
 import '../constants.dart';
 
-class ProfilePage extends StatefulWidget {
+class OtherUserProfile extends StatefulWidget {
   @override
-  _ProfilePageState createState() => _ProfilePageState();
+  _OtherUserProfileState createState() => _OtherUserProfileState();
 }
 
-class _ProfilePageState extends State<ProfilePage> {
+class _OtherUserProfileState extends State<OtherUserProfile> {
   Future<File> imageFile;
   bool _showProgress = false;
-  FirebaseUser user;
-
-  pickImageFromGallery() {
-    setState(() {
-      imageFile = ImagePicker.pickImage(source: ImageSource.gallery);
-      if (imageFile != null) {
-        _showProgress = true;
-        uploadPic(context);
-      } else {
-        _showProgress = false;
-      }
-    });
-  }
+  String userid;
+  var followers = [];
+  var following = [];
 
   void showAlertDialog(BuildContext context) {
     Widget okButton = FlatButton(
@@ -62,34 +49,6 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  Future uploadPic(BuildContext context) async {
-    _showProgress = true;
-    String fileName;
-    File img;
-    Uuid uuid = new Uuid();
-    await imageFile.then((onValue) {
-      fileName = uuid.v1() + onValue.path.split('/').last;
-      print('>>>>>>>>>>> File NAMe' + fileName);
-      img = onValue;
-    });
-    StorageReference storageReference =
-        FirebaseStorage.instance.ref().child('images/').child(fileName);
-
-    final StorageUploadTask uploadTask = storageReference.putFile(img);
-    StorageTaskSnapshot taskSnapshot = await uploadTask.onComplete;
-    setState(() {
-      print("Profile Picture uploaded");
-    });
-    new DbUserCollection(user.uid)
-        .updateuserProfilerPic(fileName, uuid, user.uid)
-        .then((onValue) {
-      setState(() {
-        _showProgress = false;
-      });
-      showAlertDialog(context);
-    });
-  }
-
   getPofile(String uid) async {
     var fireStore = Firestore.instance;
     DocumentSnapshot dsn =
@@ -99,13 +58,15 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    user = Provider.of<FirebaseUser>(context);
+    userid = ModalRoute.of(context).settings.arguments;
+    setFollwersAndFollwing(userid);
+    final user = Provider.of<FirebaseUser>(context);
     _showProgress = false;
     return Scaffold(
       body: Padding(
         padding: const EdgeInsets.all(10.0),
         child: FutureBuilder(
-          future: getPofile(user.uid),
+          future: getPofile(userid),
           builder: (_, snapShot) {
             if (snapShot.connectionState == ConnectionState.waiting) {
               // ignore: missing_return
@@ -162,7 +123,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                     Spacer(),
                                     GestureDetector(
                                       onTap: () {
-                                        pickImageFromGallery();
+                                        //pickImageFromGallery();
                                       },
                                       child: CircleAvatar(
                                         backgroundImage: NetworkImage(
@@ -172,21 +133,68 @@ class _ProfilePageState extends State<ProfilePage> {
                                       ),
                                     ),
                                     Spacer(),
-                                    GestureDetector(
-                                      onTap: () {
-                                        navToEditprofile();
-                                      },
-                                      child: Card(
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(5.0),
-                                          child: Icon(
-                                            Icons.mode_edit,
-                                            color: Colors.black,
-                                          ),
-                                        ),
-                                        elevation: 5,
-                                      ),
-                                    ),
+                                    userid == user.uid
+                                        ? GestureDetector(
+                                            onTap: () {
+                                              //navToEditprofile();
+                                            },
+                                            child: Card(
+                                              child: Padding(
+                                                padding:
+                                                    const EdgeInsets.all(5.0),
+                                                child: Icon(
+                                                  Icons.mode_edit,
+                                                  color: Colors.black,
+                                                ),
+                                              ),
+                                              elevation: 5,
+                                            ),
+                                          )
+                                        : followers.contains(user.uid)
+                                            ? GestureDetector(
+                                                onTap: () {
+                                                  new DbUserCollection(user.uid)
+                                                      .unFollowUser(userid)
+                                                      .then((onValue) {
+                                                    setState(() {});
+                                                  });
+                                                },
+                                                child: Card(
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            5.0),
+                                                    child: Text(
+                                                      'UnFollow',
+                                                      style: TextStyle(
+                                                          color: Colors.red),
+                                                    ),
+                                                  ),
+                                                  elevation: 5,
+                                                ),
+                                              )
+                                            : GestureDetector(
+                                                onTap: () {
+                                                  new DbUserCollection(user.uid)
+                                                      .followUser(userid)
+                                                      .then((onValue) {
+                                                    setState(() {});
+                                                  });
+                                                },
+                                                child: Card(
+                                                  child: Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            5.0),
+                                                    child: Text(
+                                                      'Follow',
+                                                      style: TextStyle(
+                                                          color: Colors.green),
+                                                    ),
+                                                  ),
+                                                  elevation: 5,
+                                                ),
+                                              ),
                                   ],
                                 ),
                               ),
@@ -252,7 +260,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                           onTap: () {
                                             Navigator.pushNamed(
                                                 context, '/ShowUsersPosts',
-                                                arguments: user.uid);
+                                                arguments: userid);
                                           },
                                           child: Text(
                                             "Posts",
@@ -351,7 +359,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                       fontSize: 13),
                                 )
                               : Text(
-                                  'Gender  Grmale',
+                                  'Gender  Female',
                                   style: TextStyle(
                                       fontWeight: FontWeight.normal,
                                       fontSize: 13),
@@ -510,7 +518,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                     Spacer(),
                                     GestureDetector(
                                       onTap: () {
-                                        pickImageFromGallery();
+                                        //pickImageFromGallery();
                                       },
                                       child: CircleAvatar(
                                         backgroundImage: NetworkImage(
@@ -524,16 +532,49 @@ class _ProfilePageState extends State<ProfilePage> {
                                       onTap: () {
                                         navToEditprofile();
                                       },
-                                      child: Card(
-                                        child: Padding(
-                                          padding: const EdgeInsets.all(5.0),
-                                          child: Icon(
-                                            Icons.mode_edit,
-                                            color: Colors.black,
-                                          ),
-                                        ),
-                                        elevation: 5,
-                                      ),
+                                      child: followers.contains(user.uid)
+                                          ? GestureDetector(
+                                              onTap: () {
+                                                new DbUserCollection(user.uid)
+                                                    .unFollowUser(userid)
+                                                    .then((onValue) {
+                                                  setState(() {});
+                                                });
+                                              },
+                                              child: Card(
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(5.0),
+                                                  child: Text(
+                                                    'UnFollow',
+                                                    style: TextStyle(
+                                                        color: Colors.red),
+                                                  ),
+                                                ),
+                                                elevation: 5,
+                                              ),
+                                            )
+                                          : GestureDetector(
+                                              onTap: () {
+                                                new DbUserCollection(user.uid)
+                                                    .followUser(userid)
+                                                    .then((onValue) {
+                                                  setState(() {});
+                                                });
+                                              },
+                                              child: Card(
+                                                child: Padding(
+                                                  padding:
+                                                      const EdgeInsets.all(5.0),
+                                                  child: Text(
+                                                    'Follow',
+                                                    style: TextStyle(
+                                                        color: Colors.green),
+                                                  ),
+                                                ),
+                                                elevation: 5,
+                                              ),
+                                            ),
                                     ),
                                   ],
                                 ),
@@ -573,12 +614,13 @@ class _ProfilePageState extends State<ProfilePage> {
                                   Expanded(
                                     child: Column(
                                       children: <Widget>[
-                                        GestureDetector(
+                                        InkWell(
                                           onTap: () {
                                             Navigator.pushNamed(
                                                 context, '/ShowUsersPosts',
-                                                arguments: user.uid);
+                                                arguments: userid);
                                           },
+                                          splashColor: PrimaryColor,
                                           child: Text(
                                             "Posts",
                                             style: TextStyle(
@@ -792,5 +834,14 @@ class _ProfilePageState extends State<ProfilePage> {
       context,
       '/EditProfile',
     );
+  }
+
+  void setFollwersAndFollwing(String otherUsersId) async {
+    DocumentSnapshot dnsp = await Firestore.instance
+        .collection('users')
+        .document(otherUsersId)
+        .get();
+    followers = dnsp.data['followers'];
+    following = dnsp.data['following'];
   }
 }
