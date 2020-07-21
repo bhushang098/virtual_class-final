@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:provider/provider.dart';
 import 'package:virtualclass/constants.dart';
 import 'package:virtualclass/screens/teamPage.dart';
 import 'package:virtualclass/screens/homeScreen.dart';
@@ -17,24 +19,22 @@ class _MainScreenState extends State<MainScreen> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   PageController _pageController = PageController();
 
-  List<Widget> _screens = [
-    HomePage(),
-    SkillsPage(),
-    TeamPage(),
-    ClassesPage(),
-    UsersPage()
-  ];
+  FirebaseUser user;
 
   Widget appBarTitle = new Text('Virtual Class');
   Icon actionIcon = new Icon(Icons.search);
 
   @override
-  void dispose() {
-    print('>>>>>>>>>>>>>>>>>>>>>>> Disposing >>>>>>>>>>');
-  }
-
-  @override
   Widget build(BuildContext context) {
+    user = Provider.of<FirebaseUser>(context);
+    var likedPosts = ModalRoute.of(context).settings.arguments;
+    List<Widget> _screens = [
+      HomePage(likedPosts: likedPosts),
+      SkillsPage(),
+      TeamPage(),
+      ClassesPage(),
+      UsersPage()
+    ];
     return Scaffold(
       key: _scaffoldKey,
       bottomNavigationBar: CustomBottomNavigationBar(

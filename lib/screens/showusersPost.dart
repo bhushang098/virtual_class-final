@@ -30,12 +30,16 @@ class _ShowUsersPostsState extends State<ShowUsersPosts> {
   Widget build(BuildContext context) {
     final userId = ModalRoute.of(context).settings.arguments;
     final user = Provider.of<FirebaseUser>(context);
+    setPostLiked(user.uid);
     return Scaffold(
       appBar: AppBar(
         title: Text(' Posts'),
       ),
-      body: FutureBuilder(
-        future: getpostsmadebyuser(userId),
+      body: StreamBuilder(
+        stream: Firestore.instance
+            .collection('posts')
+            .orderBy('time_uploaded', descending: true)
+            .snapshots(),
         builder: (_, snapShot) {
           if (snapShot.connectionState == ConnectionState.waiting) {
             // ignore: missing_return
@@ -45,9 +49,10 @@ class _ShowUsersPostsState extends State<ShowUsersPosts> {
           } else {
             return ListView.builder(
                 physics: BouncingScrollPhysics(),
-                itemCount: snapShot.data.length,
+                itemCount: snapShot.data.documents.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return snapShot.data[index].data['user_id_who_posted']
+                  return snapShot
+                              .data.documents[index].data['user_id_who_posted']
                               .split('??.??')
                               .last ==
                           userId
@@ -69,21 +74,29 @@ class _ShowUsersPostsState extends State<ShowUsersPosts> {
                                       leading: CircleAvatar(
                                         radius: 15,
                                         backgroundImage: NetworkImage(snapShot
-                                            .data[index].data['profile_url']),
+                                            .data
+                                            .documents[index]
+                                            .data['profile_url']),
                                       ),
-                                      title: Text(snapShot.data[index]
+                                      title: Text(snapShot.data.documents[index]
                                           .data['user_id_who_posted']
                                           .split('??.??')
                                           .first),
                                       subtitle: Text(convertTimeStamp(snapShot
-                                          .data[index].data['time_uploaded'])),
+                                          .data
+                                          .documents[index]
+                                          .data['time_uploaded'])),
                                       trailing: _liked_Posts.contains(snapShot
-                                              .data[index].data['post_id']
+                                              .data
+                                              .documents[index]
+                                              .data['post_id']
                                               .toString())
                                           ? GestureDetector(
                                               onTap: () {
                                                 _liked_Posts.remove(snapShot
-                                                    .data[index].data['post_id']
+                                                    .data
+                                                    .documents[index]
+                                                    .data['post_id']
                                                     .toString());
                                                 _likedPost_list.clear();
                                                 _liked_Posts.forEach((ele) {
@@ -96,12 +109,11 @@ class _ShowUsersPostsState extends State<ShowUsersPosts> {
 
                                                 new DbUserCollection(user.uid)
                                                     .removeLikeInPost(snapShot
-                                                        .data[index]
+                                                        .data
+                                                        .documents[index]
                                                         .data['post_id']
                                                         .toString())
-                                                    .then((onValue) {
-                                                  setState(() {});
-                                                });
+                                                    .then((onValue) {});
                                               },
                                               child: Column(
                                                 children: <Widget>[
@@ -110,7 +122,9 @@ class _ShowUsersPostsState extends State<ShowUsersPosts> {
                                                     color: Colors.red,
                                                   ),
                                                   Text(snapShot
-                                                      .data[index].data['likes']
+                                                      .data
+                                                      .documents[index]
+                                                      .data['likes']
                                                       .toString()),
                                                 ],
                                               ),
@@ -118,7 +132,9 @@ class _ShowUsersPostsState extends State<ShowUsersPosts> {
                                           : GestureDetector(
                                               onTap: () {
                                                 _liked_Posts.add(snapShot
-                                                    .data[index].data['post_id']
+                                                    .data
+                                                    .documents[index]
+                                                    .data['post_id']
                                                     .toString());
                                                 _likedPost_list.clear();
                                                 _liked_Posts.forEach((ele) {
@@ -129,35 +145,37 @@ class _ShowUsersPostsState extends State<ShowUsersPosts> {
                                                         _likedPost_list);
                                                 new DbUserCollection(user.uid)
                                                     .addLikeInPost(snapShot
-                                                        .data[index]
+                                                        .data
+                                                        .documents[index]
                                                         .data['post_id']
                                                         .toString())
-                                                    .then((onValue) {
-                                                  setState(() {});
-                                                });
+                                                    .then((onValue) {});
                                               },
                                               child: Column(children: <Widget>[
                                                 Icon(Icons.favorite_border),
                                                 Text(snapShot
-                                                    .data[index].data['likes']
+                                                    .data
+                                                    .documents[index]
+                                                    .data['likes']
                                                     .toString()),
                                               ]),
                                             ),
                                     ),
                                     Padding(
                                       padding: const EdgeInsets.all(20.0),
-                                      child: Text(
-                                          snapShot.data[index].data['content']),
+                                      child: Text(snapShot.data.documents[index]
+                                          .data['content']),
                                     ),
                                     SizedBox(
                                       height: 5,
                                     ),
-                                    snapShot.data[index].data['is_image']
+                                    snapShot.data.documents[index]
+                                            .data['is_image']
                                         ? Padding(
                                             padding: const EdgeInsets.all(8.0),
                                             child: Image.network(
-                                              snapShot
-                                                  .data[index].data['image_url']
+                                              snapShot.data.documents[index]
+                                                  .data['image_url']
                                                   .toString(),
                                               height: MediaQuery.of(context)
                                                       .size
@@ -169,7 +187,7 @@ class _ShowUsersPostsState extends State<ShowUsersPosts> {
                                               alignment: Alignment.center,
                                             ),
                                           )
-                                        : snapShot.data[index]
+                                        : snapShot.data.documents[index]
                                                     .data['image_url'] ==
                                                 null
                                             ? Text('')
@@ -185,7 +203,8 @@ class _ShowUsersPostsState extends State<ShowUsersPosts> {
                                                       .size
                                                       .width,
                                                   child: NetworkPlayer(snapShot
-                                                      .data[index]
+                                                      .data
+                                                      .documents[index]
                                                       .data['image_url']
                                                       .toString()),
                                                 ),
@@ -204,38 +223,52 @@ class _ShowUsersPostsState extends State<ShowUsersPosts> {
                                           SizedBox(
                                             width: 5,
                                           ),
-                                          Text(snapShot.data[index]
+                                          Text(snapShot.data.documents[index]
                                                       .data['comments'].length >
                                                   1
-                                              ? '${snapShot.data[index].data['comments'].length} Comments'
-                                              : ' ${snapShot.data[index].data['comments'].length} Comment'),
+                                              ? '${snapShot.data.documents[index].data['comments'].length} Comments'
+                                              : ' ${snapShot.data.documents[index].data['comments'].length} Comment'),
                                           Spacer(),
                                           GestureDetector(
                                             onTap: () {
                                               Post _post = new Post();
                                               _post.imageUrl = snapShot
-                                                  .data[index]
+                                                  .data
+                                                  .documents[index]
                                                   .data['image_url'];
                                               _post.content = snapShot
-                                                  .data[index].data['content'];
+                                                  .data
+                                                  .documents[index]
+                                                  .data['content'];
                                               _post.likes = snapShot
-                                                  .data[index].data['likes'];
+                                                  .data
+                                                  .documents[index]
+                                                  .data['likes'];
                                               _post.userIdWhoPosted = snapShot
-                                                  .data[index]
+                                                  .data
+                                                  .documents[index]
                                                   .data['user_id_who_posted'];
                                               _post.comments = snapShot
-                                                  .data[index].data['comments'];
+                                                  .data
+                                                  .documents[index]
+                                                  .data['comments'];
                                               _post.postId = snapShot
-                                                  .data[index].data['post_id'];
+                                                  .data
+                                                  .documents[index]
+                                                  .data['post_id'];
                                               _post.time_posted = snapShot
-                                                  .data[index]
+                                                  .data
+                                                  .documents[index]
                                                   .data['time_uploaded'];
 
                                               _post.profile_url = snapShot
-                                                  .data[index]
+                                                  .data
+                                                  .documents[index]
                                                   .data['profile_url'];
                                               _post.isImage = snapShot
-                                                  .data[index].data['is_image'];
+                                                  .data
+                                                  .documents[index]
+                                                  .data['is_image'];
 
                                               navToCommentscreen(_post);
                                             },
@@ -263,15 +296,6 @@ class _ShowUsersPostsState extends State<ShowUsersPosts> {
         },
       ),
     );
-  }
-
-  getpostsmadebyuser(String userId) async {
-    var fireStore = Firestore.instance;
-    QuerySnapshot qn = await fireStore
-        .collection('posts')
-        .orderBy('time_uploaded', descending: true)
-        .getDocuments();
-    return qn.documents;
   }
 
   String convertTimeStamp(var timeStamp) {

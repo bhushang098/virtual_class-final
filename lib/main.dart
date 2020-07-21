@@ -17,6 +17,8 @@ import 'package:virtualclass/screens/mainScreen.dart';
 import 'package:virtualclass/screens/makePostScreen.dart';
 import 'package:virtualclass/screens/otherUSerprofilePage.dart';
 import 'package:virtualclass/screens/profilepage.dart';
+import 'package:virtualclass/screens/showFollowers.dart';
+import 'package:virtualclass/screens/showFollowingusers.dart';
 import 'package:virtualclass/screens/showusersPost.dart';
 import 'package:virtualclass/screens/skillsPage.dart';
 import 'package:virtualclass/screens/welcomeScreen.dart';
@@ -78,6 +80,9 @@ class MyApp extends StatelessWidget {
           '/ShowUserMadeTeamsMain': (BuildContext context) =>
               new ShowUserMadeTeamsMain(),
           '/OtherUserProfile': (BuildContext context) => new OtherUserProfile(),
+          '/ShowFollowingUsers': (BuildContext context) =>
+              new ShowFollowingUsers(),
+          '/ShowFollowers': (BuildContext context) => new ShowFollowers(),
         },
         home: Wrapper(),
       ),

@@ -291,21 +291,27 @@ class _ProfilePageState extends State<ProfilePage> {
                                     ),
                                   ),
                                   Expanded(
-                                    child: Column(
-                                      children: <Widget>[
-                                        Text(
-                                          "Following",
-                                          style: TextStyle(
-                                            fontSize: 17,
-                                            fontWeight: FontWeight.bold,
+                                    child: InkWell(
+                                      onTap: () {
+                                        Navigator.pushNamed(
+                                            context, '/ShowFollowingUsers');
+                                      },
+                                      child: Column(
+                                        children: <Widget>[
+                                          Text(
+                                            "Following",
+                                            style: TextStyle(
+                                              fontSize: 17,
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
-                                        ),
-                                        Text(
-                                          snapShot.data['following'].length
-                                              .toString(),
-                                          style: TextStyle(fontSize: 14.0),
-                                        )
-                                      ],
+                                          Text(
+                                            snapShot.data['following'].length
+                                                .toString(),
+                                            style: TextStyle(fontSize: 14.0),
+                                          )
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -351,7 +357,7 @@ class _ProfilePageState extends State<ProfilePage> {
                                       fontSize: 13),
                                 )
                               : Text(
-                                  'Gender  Grmale',
+                                  'Gender  Female',
                                   style: TextStyle(
                                       fontWeight: FontWeight.normal,
                                       fontSize: 13),
@@ -598,39 +604,51 @@ class _ProfilePageState extends State<ProfilePage> {
                                     ),
                                   ),
                                   Expanded(
-                                    child: Column(
-                                      children: <Widget>[
-                                        Text(
-                                          "Followers",
-                                          style: TextStyle(
-                                            fontSize: 17.0,
-                                            fontWeight: FontWeight.bold,
+                                    child: InkWell(
+                                      onTap: () {
+                                        Navigator.pushNamed(
+                                            context, '/ShowFollowers');
+                                      },
+                                      child: Column(
+                                        children: <Widget>[
+                                          Text(
+                                            "Followers",
+                                            style: TextStyle(
+                                              fontSize: 17.0,
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
-                                        ),
-                                        Text(
-                                          snapShot.data['followers'].length
-                                              .toString(),
-                                          style: TextStyle(fontSize: 14.0),
-                                        )
-                                      ],
+                                          Text(
+                                            snapShot.data['followers'].length
+                                                .toString(),
+                                            style: TextStyle(fontSize: 14.0),
+                                          )
+                                        ],
+                                      ),
                                     ),
                                   ),
                                   Expanded(
-                                    child: Column(
-                                      children: <Widget>[
-                                        Text(
-                                          "Following",
-                                          style: TextStyle(
-                                            fontSize: 17,
-                                            fontWeight: FontWeight.bold,
+                                    child: InkWell(
+                                      onTap: () {
+                                        Navigator.pushNamed(
+                                            context, '/ShowFollowingUsers');
+                                      },
+                                      child: Column(
+                                        children: <Widget>[
+                                          Text(
+                                            "Following",
+                                            style: TextStyle(
+                                              fontSize: 17,
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
-                                        ),
-                                        Text(
-                                          snapShot.data['following'].length
-                                              .toString(),
-                                          style: TextStyle(fontSize: 14.0),
-                                        )
-                                      ],
+                                          Text(
+                                            snapShot.data['following'].length
+                                                .toString(),
+                                            style: TextStyle(fontSize: 14.0),
+                                          )
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ],

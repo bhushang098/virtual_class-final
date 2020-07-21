@@ -281,39 +281,53 @@ class _OtherUserProfileState extends State<OtherUserProfile> {
                                     ),
                                   ),
                                   Expanded(
-                                    child: Column(
-                                      children: <Widget>[
-                                        Text(
-                                          "Followers",
-                                          style: TextStyle(
-                                            fontSize: 17.0,
-                                            fontWeight: FontWeight.bold,
+                                    child: InkWell(
+                                      onTap: () {
+                                        Navigator.pushNamed(
+                                            context, '/ShowFollowers',
+                                            arguments: userid);
+                                      },
+                                      child: Column(
+                                        children: <Widget>[
+                                          Text(
+                                            "Followers",
+                                            style: TextStyle(
+                                              fontSize: 17.0,
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
-                                        ),
-                                        Text(
-                                          snapShot.data['followers'].length
-                                              .toString(),
-                                          style: TextStyle(fontSize: 14.0),
-                                        )
-                                      ],
+                                          Text(
+                                            snapShot.data['followers'].length
+                                                .toString(),
+                                            style: TextStyle(fontSize: 14.0),
+                                          )
+                                        ],
+                                      ),
                                     ),
                                   ),
                                   Expanded(
-                                    child: Column(
-                                      children: <Widget>[
-                                        Text(
-                                          "Following",
-                                          style: TextStyle(
-                                            fontSize: 17,
-                                            fontWeight: FontWeight.bold,
+                                    child: InkWell(
+                                      onTap: () {
+                                        Navigator.pushNamed(
+                                            context, '/ShowFollowingUsers',
+                                            arguments: userid);
+                                      },
+                                      child: Column(
+                                        children: <Widget>[
+                                          Text(
+                                            "Following",
+                                            style: TextStyle(
+                                              fontSize: 17,
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
-                                        ),
-                                        Text(
-                                          snapShot.data['following'].length
-                                              .toString(),
-                                          style: TextStyle(fontSize: 14.0),
-                                        )
-                                      ],
+                                          Text(
+                                            snapShot.data['following'].length
+                                                .toString(),
+                                            style: TextStyle(fontSize: 14.0),
+                                          )
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ],
@@ -640,39 +654,53 @@ class _OtherUserProfileState extends State<OtherUserProfile> {
                                     ),
                                   ),
                                   Expanded(
-                                    child: Column(
-                                      children: <Widget>[
-                                        Text(
-                                          "Followers",
-                                          style: TextStyle(
-                                            fontSize: 17.0,
-                                            fontWeight: FontWeight.bold,
+                                    child: InkWell(
+                                      onTap: () {
+                                        Navigator.pushNamed(
+                                            context, '/ShowFollowers',
+                                            arguments: userid);
+                                      },
+                                      child: Column(
+                                        children: <Widget>[
+                                          Text(
+                                            "Followers",
+                                            style: TextStyle(
+                                              fontSize: 17.0,
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
-                                        ),
-                                        Text(
-                                          snapShot.data['followers'].length
-                                              .toString(),
-                                          style: TextStyle(fontSize: 14.0),
-                                        )
-                                      ],
+                                          Text(
+                                            snapShot.data['followers'].length
+                                                .toString(),
+                                            style: TextStyle(fontSize: 14.0),
+                                          )
+                                        ],
+                                      ),
                                     ),
                                   ),
                                   Expanded(
-                                    child: Column(
-                                      children: <Widget>[
-                                        Text(
-                                          "Following",
-                                          style: TextStyle(
-                                            fontSize: 17,
-                                            fontWeight: FontWeight.bold,
+                                    child: InkWell(
+                                      onTap: () {
+                                        Navigator.pushNamed(
+                                            context, '/ShowFollowingUsers',
+                                            arguments: userid);
+                                      },
+                                      child: Column(
+                                        children: <Widget>[
+                                          Text(
+                                            "Following",
+                                            style: TextStyle(
+                                              fontSize: 17,
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
-                                        ),
-                                        Text(
-                                          snapShot.data['following'].length
-                                              .toString(),
-                                          style: TextStyle(fontSize: 14.0),
-                                        )
-                                      ],
+                                          Text(
+                                            snapShot.data['following'].length
+                                                .toString(),
+                                            style: TextStyle(fontSize: 14.0),
+                                          )
+                                        ],
+                                      ),
                                     ),
                                   ),
                                 ],

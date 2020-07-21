@@ -15,6 +15,9 @@ import 'package:virtualclass/services/fStoreCollection.dart';
 import 'package:virtualclass/services/serchdeligate.dart';
 
 class HomePage extends StatefulWidget {
+  HomePage({Key key, this.likedPosts}) : super(key: key);
+
+  var likedPosts;
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -27,18 +30,13 @@ class _HomePageState extends State<HomePage>
 
   var uuid = Uuid();
   Set<String> _liked_Posts;
-  List<String> _likedPost_list = [];
+  List<dynamic> _likedPost_list = [];
 
   @override
   void initState() {
     super.initState();
     _liked_Posts = new Set();
-  }
-
-  @override
-  void dispose() {
-    super.dispose();
-    print('>>>>>>>>>>>>>>>>>>>>>>>>>>> Disposing.. Homw');
+    _likedPost_list = widget.likedPosts;
   }
 
   _showDialog(title, text) {
@@ -60,11 +58,12 @@ class _HomePageState extends State<HomePage>
         });
   }
 
+  FirebaseUser user;
+
   @override
   Widget build(BuildContext context) {
     super.build(context);
-    final user = Provider.of<FirebaseUser>(context);
-    setPostLiked(user.uid);
+    user = Provider.of<FirebaseUser>(context);
     return Scaffold(
       backgroundColor: primaryLight,
       floatingActionButton: FloatingActionButton(
@@ -110,8 +109,11 @@ class _HomePageState extends State<HomePage>
               })
         ],
       ),
-      body: FutureBuilder(
-        future: getposts(),
+      body: StreamBuilder(
+        stream: Firestore.instance
+            .collection('posts')
+            .orderBy('time_uploaded', descending: true)
+            .snapshots(),
         builder: (_, snapShot) {
           if (snapShot.connectionState == ConnectionState.waiting) {
             // ignore: missing_return
@@ -121,9 +123,10 @@ class _HomePageState extends State<HomePage>
           } else {
             return ListView.builder(
                 physics: BouncingScrollPhysics(),
-                itemCount: snapShot.data.length,
+                itemCount: snapShot.data.documents.length,
                 itemBuilder: (BuildContext context, int index) {
-                  return snapShot.data[index].data['assigned_with'] == 'ALL'
+                  return snapShot.data.documents[index].data['assigned_with'] ==
+                          'ALL'
                       ? Column(
                           children: <Widget>[
                             SizedBox(
@@ -142,21 +145,28 @@ class _HomePageState extends State<HomePage>
                                       leading: CircleAvatar(
                                         radius: 15,
                                         backgroundImage: NetworkImage(snapShot
-                                            .data[index].data['profile_url']),
+                                            .data
+                                            .documents[index]
+                                            .data['profile_url']),
                                       ),
-                                      title: Text(snapShot.data[index]
+                                      title: Text(snapShot.data.documents[index]
                                           .data['user_id_who_posted']
                                           .split('??.??')
                                           .first),
                                       subtitle: Text(convertTimeStamp(snapShot
-                                          .data[index].data['time_uploaded'])),
-                                      trailing: _liked_Posts.contains(snapShot
-                                              .data[index].data['post_id']
-                                              .toString())
+                                          .data
+                                          .documents[index]
+                                          .data['time_uploaded'])),
+                                      trailing: _likedPost_list.contains(
+                                              snapShot.data.documents[index]
+                                                  .data['post_id']
+                                                  .toString())
                                           ? GestureDetector(
                                               onTap: () {
                                                 _liked_Posts.remove(snapShot
-                                                    .data[index].data['post_id']
+                                                    .data
+                                                    .documents[index]
+                                                    .data['post_id']
                                                     .toString());
                                                 _likedPost_list.clear();
                                                 _liked_Posts.forEach((ele) {
@@ -169,12 +179,11 @@ class _HomePageState extends State<HomePage>
 
                                                 new DbUserCollection(user.uid)
                                                     .removeLikeInPost(snapShot
-                                                        .data[index]
+                                                        .data
+                                                        .documents[index]
                                                         .data['post_id']
                                                         .toString())
-                                                    .then((onValue) {
-                                                  setState(() {});
-                                                });
+                                                    .then((onValue) {});
                                               },
                                               child: Column(
                                                 children: <Widget>[
@@ -183,7 +192,9 @@ class _HomePageState extends State<HomePage>
                                                     color: Colors.red,
                                                   ),
                                                   Text(snapShot
-                                                      .data[index].data['likes']
+                                                      .data
+                                                      .documents[index]
+                                                      .data['likes']
                                                       .toString()),
                                                 ],
                                               ),
@@ -191,7 +202,9 @@ class _HomePageState extends State<HomePage>
                                           : GestureDetector(
                                               onTap: () {
                                                 _liked_Posts.add(snapShot
-                                                    .data[index].data['post_id']
+                                                    .data
+                                                    .documents[index]
+                                                    .data['post_id']
                                                     .toString());
                                                 _likedPost_list.clear();
                                                 _liked_Posts.forEach((ele) {
@@ -202,35 +215,37 @@ class _HomePageState extends State<HomePage>
                                                         _likedPost_list);
                                                 new DbUserCollection(user.uid)
                                                     .addLikeInPost(snapShot
-                                                        .data[index]
+                                                        .data
+                                                        .documents[index]
                                                         .data['post_id']
                                                         .toString())
-                                                    .then((onValue) {
-                                                  setState(() {});
-                                                });
+                                                    .then((onValue) {});
                                               },
                                               child: Column(children: <Widget>[
                                                 Icon(Icons.favorite_border),
                                                 Text(snapShot
-                                                    .data[index].data['likes']
+                                                    .data
+                                                    .documents[index]
+                                                    .data['likes']
                                                     .toString()),
                                               ]),
                                             ),
                                     ),
                                     Padding(
                                       padding: const EdgeInsets.all(20.0),
-                                      child: Text(
-                                          snapShot.data[index].data['content']),
+                                      child: Text(snapShot.data.documents[index]
+                                          .data['content']),
                                     ),
                                     SizedBox(
                                       height: 5,
                                     ),
-                                    snapShot.data[index].data['is_image']
+                                    snapShot.data.documents[index]
+                                            .data['is_image']
                                         ? Padding(
                                             padding: const EdgeInsets.all(8.0),
                                             child: Image.network(
-                                              snapShot
-                                                  .data[index].data['image_url']
+                                              snapShot.data.documents[index]
+                                                  .data['image_url']
                                                   .toString(),
                                               height: MediaQuery.of(context)
                                                       .size
@@ -242,7 +257,7 @@ class _HomePageState extends State<HomePage>
                                               alignment: Alignment.center,
                                             ),
                                           )
-                                        : snapShot.data[index]
+                                        : snapShot.data.documents[index]
                                                     .data['image_url'] ==
                                                 null
                                             ? Text('')
@@ -258,7 +273,8 @@ class _HomePageState extends State<HomePage>
                                                       .size
                                                       .width,
                                                   child: NetworkPlayer(snapShot
-                                                      .data[index]
+                                                      .data
+                                                      .documents[index]
                                                       .data['image_url']
                                                       .toString()),
                                                 ),
@@ -277,38 +293,52 @@ class _HomePageState extends State<HomePage>
                                           SizedBox(
                                             width: 5,
                                           ),
-                                          Text(snapShot.data[index]
+                                          Text(snapShot.data.documents[index]
                                                       .data['comments'].length >
                                                   1
-                                              ? '${snapShot.data[index].data['comments'].length} Comments'
-                                              : ' ${snapShot.data[index].data['comments'].length} Comment'),
+                                              ? '${snapShot.data.documents[index].data['comments'].length} Comments'
+                                              : ' ${snapShot.data.documents[index].data['comments'].length} Comment'),
                                           Spacer(),
                                           GestureDetector(
                                             onTap: () {
                                               Post _post = new Post();
                                               _post.imageUrl = snapShot
-                                                  .data[index]
+                                                  .data
+                                                  .documents[index]
                                                   .data['image_url'];
                                               _post.content = snapShot
-                                                  .data[index].data['content'];
+                                                  .data
+                                                  .documents[index]
+                                                  .data['content'];
                                               _post.likes = snapShot
-                                                  .data[index].data['likes'];
+                                                  .data
+                                                  .documents[index]
+                                                  .data['likes'];
                                               _post.userIdWhoPosted = snapShot
-                                                  .data[index]
+                                                  .data
+                                                  .documents[index]
                                                   .data['user_id_who_posted'];
                                               _post.comments = snapShot
-                                                  .data[index].data['comments'];
+                                                  .data
+                                                  .documents[index]
+                                                  .data['comments'];
                                               _post.postId = snapShot
-                                                  .data[index].data['post_id'];
+                                                  .data
+                                                  .documents[index]
+                                                  .data['post_id'];
                                               _post.time_posted = snapShot
-                                                  .data[index]
+                                                  .data
+                                                  .documents[index]
                                                   .data['time_uploaded'];
 
                                               _post.profile_url = snapShot
-                                                  .data[index]
+                                                  .data
+                                                  .documents[index]
                                                   .data['profile_url'];
                                               _post.isImage = snapShot
-                                                  .data[index].data['is_image'];
+                                                  .data
+                                                  .documents[index]
+                                                  .data['is_image'];
 
                                               navToCommentscreen(_post);
                                             },
@@ -357,15 +387,15 @@ class _HomePageState extends State<HomePage>
     return timeAgo(t);
   }
 
-  void setPostLiked(String uid) async {
-    DocumentSnapshot snapshot =
-        await Firestore.instance.collection('users').document(uid).get();
-    List<dynamic> userLiked = snapshot.data['post_liked'];
-
-    for (int i = 0; i < userLiked.length; i++) {
-      _liked_Posts.add(userLiked[i]);
-    }
-  }
+//  void setPostLiked(String uid) async {
+//    DocumentSnapshot snapshot =
+//        await Firestore.instance.collection('users').document(uid).get();
+//    List<dynamic> userLiked = snapshot.data['post_liked'];
+//
+//    for (int i = 0; i < userLiked.length; i++) {
+//      _liked_Posts.add(userLiked[i]);
+//    }
+//  }
 
   void navToCommentscreen(Post post) {
     Navigator.pushNamed(context, '/CommentScreen', arguments: post);

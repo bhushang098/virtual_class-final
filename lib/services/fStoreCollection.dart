@@ -58,6 +58,7 @@ class DbUserCollection {
       'classes_joined': [],
       'teams_joined': [],
       'skills': [],
+      'user_id': uid,
     });
   }
 

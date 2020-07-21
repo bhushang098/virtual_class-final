@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -12,6 +13,7 @@ class WelcomeScreen extends StatefulWidget {
 class _WelcomeScreenState extends State<WelcomeScreen> {
   @override
   Widget build(BuildContext context) {
+    final user = Provider.of<FirebaseUser>(context);
     return Scaffold(
       backgroundColor: DarkBackgroundColor,
       body: Column(
@@ -63,8 +65,10 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   FittedBox(
                     child: GestureDetector(
                       onTap: () {
+                        var likedPosts = getLikedPosts(user.uid);
                         Navigator.of(context).pushNamedAndRemoveUntil(
-                            '/MainPage', (Route<dynamic> route) => false);
+                            '/MainPage', (Route<dynamic> route) => false,
+                            arguments: likedPosts);
                       },
                       child: Container(
                         margin: EdgeInsets.only(bottom: 25),
@@ -100,5 +104,14 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
         ],
       ),
     );
+  }
+
+  getLikedPosts(uid) {
+    var snapshot = Firestore.instance.collection('users').document(uid).get();
+    var userLiked = [];
+    snapshot.then((onValue) {
+      userLiked = onValue.data['post_liked'];
+    });
+    return userLiked;
   }
 }
