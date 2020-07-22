@@ -87,29 +87,27 @@ class _ShowUsersPostsState extends State<ShowUsersPosts> {
                                           .data
                                           .documents[index]
                                           .data['time_uploaded'])),
-                                      trailing: _liked_Posts.contains(snapShot
-                                              .data
-                                              .documents[index]
-                                              .data['post_id']
-                                              .toString())
+                                      trailing: snapShot.data.documents[index]
+                                              .data['likes']
+                                              .contains(user.uid)
                                           ? GestureDetector(
                                               onTap: () {
-                                                _liked_Posts.remove(snapShot
-                                                    .data
-                                                    .documents[index]
-                                                    .data['post_id']
-                                                    .toString());
-
-                                                new DbUserCollection(user.uid)
-                                                    .updateLikesinUser(
-                                                        user.uid, _liked_Posts);
-
-                                                new DbUserCollection(user.uid)
-                                                    .removeLikeInPost(snapShot
+                                                List<dynamic> userWhoLiked =
+                                                    snapShot
                                                         .data
                                                         .documents[index]
-                                                        .data['post_id']
-                                                        .toString())
+                                                        .data['likes'];
+
+                                                userWhoLiked.remove(user.uid);
+
+                                                new DbUserCollection(user.uid)
+                                                    .updateLikeInPost(
+                                                        snapShot
+                                                            .data
+                                                            .documents[index]
+                                                            .data['post_id']
+                                                            .toString(),
+                                                        userWhoLiked)
                                                     .then((onValue) {});
                                               },
                                               child: Column(
@@ -122,27 +120,28 @@ class _ShowUsersPostsState extends State<ShowUsersPosts> {
                                                       .data
                                                       .documents[index]
                                                       .data['likes']
+                                                      .length
                                                       .toString()),
                                                 ],
                                               ),
                                             )
                                           : GestureDetector(
                                               onTap: () {
-                                                _liked_Posts.add(snapShot
-                                                    .data
-                                                    .documents[index]
-                                                    .data['post_id']
-                                                    .toString());
-
-                                                new DbUserCollection(user.uid)
-                                                    .updateLikesinUser(
-                                                        user.uid, _liked_Posts);
-                                                new DbUserCollection(user.uid)
-                                                    .addLikeInPost(snapShot
+                                                List<dynamic> userWhoLiked =
+                                                    snapShot
                                                         .data
                                                         .documents[index]
-                                                        .data['post_id']
-                                                        .toString())
+                                                        .data['likes'];
+                                                userWhoLiked.add(user.uid);
+
+                                                new DbUserCollection(user.uid)
+                                                    .updateLikeInPost(
+                                                        snapShot
+                                                            .data
+                                                            .documents[index]
+                                                            .data['post_id']
+                                                            .toString(),
+                                                        userWhoLiked)
                                                     .then((onValue) {});
                                               },
                                               child: Column(children: <Widget>[
@@ -151,6 +150,7 @@ class _ShowUsersPostsState extends State<ShowUsersPosts> {
                                                     .data
                                                     .documents[index]
                                                     .data['likes']
+                                                    .length
                                                     .toString()),
                                               ]),
                                             ),

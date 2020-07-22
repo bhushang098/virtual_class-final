@@ -21,15 +21,11 @@ class _MainScreenState extends State<MainScreen> {
 
   FirebaseUser user;
 
-  Widget appBarTitle = new Text('Virtual Class');
-  Icon actionIcon = new Icon(Icons.search);
-
   @override
   Widget build(BuildContext context) {
     user = Provider.of<FirebaseUser>(context);
-    List<dynamic> likedPosts = ModalRoute.of(context).settings.arguments;
     List<Widget> _screens = [
-      HomePage(likedPosts: likedPosts),
+      HomePage(),
       SkillsPage(),
       TeamPage(),
       ClassesPage(),

@@ -8,7 +8,7 @@ import 'package:virtualclass/modals/userModal.dart';
 import 'package:virtualclass/screens/networkVidScreen.dart';
 import 'package:virtualclass/screens/timeService.dart';
 import 'package:virtualclass/services/fStoreCollection.dart';
-
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import '../constants.dart';
 
 class TeamPosts extends StatefulWidget {
@@ -23,7 +23,7 @@ class _TeamPostsState extends State<TeamPosts>
     with AutomaticKeepAliveClientMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   Myusers _myusers;
-
+  YoutubePlayerController _controller;
   var uuid = Uuid();
   Set<String> _liked_Posts;
   List<String> _likedPost_list = [];
@@ -106,33 +106,27 @@ class _TeamPostsState extends State<TeamPosts>
                                           .data
                                           .documents[index]
                                           .data['time_uploaded'])),
-                                      trailing: _liked_Posts.contains(snapShot
-                                              .data
-                                              .documents[index]
-                                              .data['post_id']
-                                              .toString())
+                                      trailing: snapShot.data.documents[index]
+                                              .data['likes']
+                                              .contains(user.uid)
                                           ? GestureDetector(
                                               onTap: () {
-                                                _liked_Posts.remove(snapShot
-                                                    .data
-                                                    .documents[index]
-                                                    .data['post_id']
-                                                    .toString());
-                                                _likedPost_list.clear();
-                                                _liked_Posts.forEach((ele) {
-                                                  _likedPost_list.add(ele);
-                                                });
-
-                                                new DbUserCollection(user.uid)
-                                                    .updateLikesinUser(user.uid,
-                                                        _likedPost_list);
-
-                                                new DbUserCollection(user.uid)
-                                                    .removeLikeInPost(snapShot
+                                                List<dynamic> userWhoLiked =
+                                                    snapShot
                                                         .data
                                                         .documents[index]
-                                                        .data['post_id']
-                                                        .toString())
+                                                        .data['likes'];
+
+                                                userWhoLiked.remove(user.uid);
+
+                                                new DbUserCollection(user.uid)
+                                                    .updateLikeInPost(
+                                                        snapShot
+                                                            .data
+                                                            .documents[index]
+                                                            .data['post_id']
+                                                            .toString(),
+                                                        userWhoLiked)
                                                     .then((onValue) {});
                                               },
                                               child: Column(
@@ -145,30 +139,28 @@ class _TeamPostsState extends State<TeamPosts>
                                                       .data
                                                       .documents[index]
                                                       .data['likes']
+                                                      .length
                                                       .toString()),
                                                 ],
                                               ),
                                             )
                                           : GestureDetector(
                                               onTap: () {
-                                                _liked_Posts.add(snapShot
-                                                    .data
-                                                    .documents[index]
-                                                    .data['post_id']
-                                                    .toString());
-                                                _likedPost_list.clear();
-                                                _liked_Posts.forEach((ele) {
-                                                  _likedPost_list.add(ele);
-                                                });
-                                                new DbUserCollection(user.uid)
-                                                    .updateLikesinUser(user.uid,
-                                                        _likedPost_list);
-                                                new DbUserCollection(user.uid)
-                                                    .addLikeInPost(snapShot
+                                                List<dynamic> userWhoLiked =
+                                                    snapShot
                                                         .data
                                                         .documents[index]
-                                                        .data['post_id']
-                                                        .toString())
+                                                        .data['likes'];
+                                                userWhoLiked.add(user.uid);
+
+                                                new DbUserCollection(user.uid)
+                                                    .updateLikeInPost(
+                                                        snapShot
+                                                            .data
+                                                            .documents[index]
+                                                            .data['post_id']
+                                                            .toString(),
+                                                        userWhoLiked)
                                                     .then((onValue) {});
                                               },
                                               child: Column(children: <Widget>[
@@ -177,6 +169,7 @@ class _TeamPostsState extends State<TeamPosts>
                                                     .data
                                                     .documents[index]
                                                     .data['likes']
+                                                    .length
                                                     .toString()),
                                               ]),
                                             ),
@@ -211,24 +204,52 @@ class _TeamPostsState extends State<TeamPosts>
                                                     .data['image_url'] ==
                                                 null
                                             ? Text('')
-                                            : Padding(
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
-                                                child: Container(
-                                                  height: MediaQuery.of(context)
-                                                          .size
-                                                          .height /
-                                                      3,
-                                                  width: MediaQuery.of(context)
-                                                      .size
-                                                      .width,
-                                                  child: NetworkPlayer(snapShot
-                                                      .data
-                                                      .documents[index]
-                                                      .data['image_url']
-                                                      .toString()),
-                                                ),
-                                              ),
+                                            : snapShot.data.documents[index]
+                                                    .data['is_yt_vid']
+                                                ? Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            8.0),
+                                                    child: Container(
+                                                      height:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .height /
+                                                              3,
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                              .size
+                                                              .width,
+                                                      child: showYoutubeVideo(
+                                                          snapShot
+                                                              .data
+                                                              .documents[index]
+                                                              .data['image_url']
+                                                              .toString()),
+                                                    ),
+                                                  )
+                                                : Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            8.0),
+                                                    child: Container(
+                                                      height:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .height /
+                                                              3,
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                              .size
+                                                              .width,
+                                                      child: NetworkPlayer(
+                                                          snapShot
+                                                              .data
+                                                              .documents[index]
+                                                              .data['image_url']
+                                                              .toString()),
+                                                    ),
+                                                  ),
                                     SizedBox(
                                       height: 5,
                                     ),
@@ -289,6 +310,10 @@ class _TeamPostsState extends State<TeamPosts>
                                                   .data
                                                   .documents[index]
                                                   .data['is_image'];
+                                              _post.is_yt_vid = snapShot
+                                                  .data
+                                                  .documents[index]
+                                                  .data['is_yt_vid'];
 
                                               navToCommentscreen(_post);
                                             },
@@ -337,7 +362,32 @@ class _TeamPostsState extends State<TeamPosts>
     Navigator.pushNamed(context, '/CommentScreen', arguments: post);
   }
 
+  Widget showYoutubeVideo(String uTubeVdLink) {
+    if (uTubeVdLink == null) {
+    } else {
+      if (uTubeVdLink.isNotEmpty) {
+        try {
+          _controller = YoutubePlayerController(
+              initialVideoId: YoutubePlayer.convertUrlToId(uTubeVdLink));
+          return Container(
+            child: Column(
+              children: <Widget>[
+                YoutubePlayer(
+                  controller: _controller,
+                  showVideoProgressIndicator: true,
+                ),
+              ],
+            ),
+          );
+        } catch (e) {
+          print(e.toString());
+        }
+      }
+    }
+    return Container();
+  }
+
   @override
   // TODO: implement wantKeepAlive
-  bool get wantKeepAlive => null;
+  bool get wantKeepAlive => true;
 }

@@ -8,7 +8,6 @@ import 'package:uuid/uuid.dart';
 import 'package:virtualclass/constants.dart';
 import 'package:virtualclass/modals/postsmodal.dart';
 import 'package:virtualclass/modals/userModal.dart';
-import 'package:virtualclass/screens/deawer.dart';
 import 'package:virtualclass/screens/networkVidScreen.dart';
 import 'package:virtualclass/screens/timeService.dart';
 import 'package:virtualclass/services/fStoreCollection.dart';
@@ -16,9 +15,6 @@ import 'package:virtualclass/services/serchdeligate.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class HomePage extends StatefulWidget {
-  HomePage({Key key, this.likedPosts}) : super(key: key);
-
-  List<dynamic> likedPosts;
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -31,12 +27,10 @@ class _HomePageState extends State<HomePage>
   YoutubePlayerController _controller;
 
   var uuid = Uuid();
-  List<dynamic> _liked_Posts = [];
 
   @override
   void initState() {
     super.initState();
-    setPostLiked(widget.likedPosts);
   }
 
   _showDialog(title, text) {
@@ -64,7 +58,6 @@ class _HomePageState extends State<HomePage>
   Widget build(BuildContext context) {
     super.build(context);
     user = Provider.of<FirebaseUser>(context);
-
     return Scaffold(
       backgroundColor: primaryLight,
       floatingActionButton: FloatingActionButton(
@@ -151,29 +144,27 @@ class _HomePageState extends State<HomePage>
                                           .data
                                           .documents[index]
                                           .data['time_uploaded'])),
-                                      trailing: _liked_Posts.contains(snapShot
-                                              .data
-                                              .documents[index]
-                                              .data['post_id']
-                                              .toString())
+                                      trailing: snapShot.data.documents[index]
+                                              .data['likes']
+                                              .contains(user.uid)
                                           ? GestureDetector(
                                               onTap: () {
-                                                _liked_Posts.remove(snapShot
-                                                    .data
-                                                    .documents[index]
-                                                    .data['post_id']
-                                                    .toString());
-
-                                                new DbUserCollection(user.uid)
-                                                    .updateLikesinUser(
-                                                        user.uid, _liked_Posts);
-
-                                                new DbUserCollection(user.uid)
-                                                    .removeLikeInPost(snapShot
+                                                List<dynamic> userWhoLiked =
+                                                    snapShot
                                                         .data
                                                         .documents[index]
-                                                        .data['post_id']
-                                                        .toString())
+                                                        .data['likes'];
+
+                                                userWhoLiked.remove(user.uid);
+
+                                                new DbUserCollection(user.uid)
+                                                    .updateLikeInPost(
+                                                        snapShot
+                                                            .data
+                                                            .documents[index]
+                                                            .data['post_id']
+                                                            .toString(),
+                                                        userWhoLiked)
                                                     .then((onValue) {});
                                               },
                                               child: Column(
@@ -186,27 +177,28 @@ class _HomePageState extends State<HomePage>
                                                       .data
                                                       .documents[index]
                                                       .data['likes']
+                                                      .length
                                                       .toString()),
                                                 ],
                                               ),
                                             )
                                           : GestureDetector(
                                               onTap: () {
-                                                _liked_Posts.add(snapShot
-                                                    .data
-                                                    .documents[index]
-                                                    .data['post_id']
-                                                    .toString());
-
-                                                new DbUserCollection(user.uid)
-                                                    .updateLikesinUser(
-                                                        user.uid, _liked_Posts);
-                                                new DbUserCollection(user.uid)
-                                                    .addLikeInPost(snapShot
+                                                List<dynamic> userWhoLiked =
+                                                    snapShot
                                                         .data
                                                         .documents[index]
-                                                        .data['post_id']
-                                                        .toString())
+                                                        .data['likes'];
+                                                userWhoLiked.add(user.uid);
+
+                                                new DbUserCollection(user.uid)
+                                                    .updateLikeInPost(
+                                                        snapShot
+                                                            .data
+                                                            .documents[index]
+                                                            .data['post_id']
+                                                            .toString(),
+                                                        userWhoLiked)
                                                     .then((onValue) {});
                                               },
                                               child: Column(children: <Widget>[
@@ -215,6 +207,7 @@ class _HomePageState extends State<HomePage>
                                                     .data
                                                     .documents[index]
                                                     .data['likes']
+                                                    .length
                                                     .toString()),
                                               ]),
                                             ),
@@ -405,12 +398,6 @@ class _HomePageState extends State<HomePage>
   String convertTimeStamp(var timeStamp) {
     DateTime t = timeStamp.toDate();
     return timeAgo(t);
-  }
-
-  void setPostLiked(List<dynamic> userLiked) {
-    for (int i = 0; i < userLiked.length; i++) {
-      _liked_Posts.add(userLiked[i]);
-    }
   }
 
   void navToCommentscreen(Post post) {

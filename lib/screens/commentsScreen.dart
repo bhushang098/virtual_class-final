@@ -67,15 +67,15 @@ class _CommentsScreenState extends State<CommentsScreen> {
                       subtitle: Text(convertTimeStamp(_post.time_posted)),
                       trailing: Column(
                         children: <Widget>[
-                          _post.likes == 0
+                          _post.likes.contains(user.uid)
                               ? Icon(
-                                  Icons.favorite_border,
-                                )
-                              : Icon(
                                   Icons.favorite,
                                   color: Colors.red,
+                                )
+                              : Icon(
+                                  Icons.favorite_border,
                                 ),
-                          Text(_post.likes.toString()),
+                          Text(_post.likes.length.toString()),
                         ],
                       ),
                     ),

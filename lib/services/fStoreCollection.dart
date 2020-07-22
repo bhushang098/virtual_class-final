@@ -62,12 +62,6 @@ class DbUserCollection {
     });
   }
 
-  Future updateLikesinUser(String uid, likedPosts) async {
-    return await userCollection.document(uid).updateData({
-      'post_liked': likedPosts,
-    });
-  }
-
   Future addcomment(String comment, String uid, String postId) async {
     uuid = new Uuid();
     var newComment = comment;
@@ -94,23 +88,10 @@ class DbUserCollection {
     });
   }
 
-  Future addLikeInPost(String postId) async {
-    DocumentSnapshot snapshot =
-        await Firestore.instance.collection('posts').document(postId).get();
-    int likesBefore = snapshot.data['likes'];
-
+  Future updateLikeInPost(String postId, List<dynamic> userWhoLiked) async {
     return await postCollection
         .document(postId)
-        .updateData({'likes': likesBefore + 1});
-  }
-
-  Future removeLikeInPost(String postId) async {
-    DocumentSnapshot snapshot =
-        await Firestore.instance.collection('posts').document(postId).get();
-    int likesBefore = snapshot.data['likes'];
-    return await postCollection
-        .document(postId)
-        .updateData({'likes': likesBefore - 1});
+        .updateData({'likes': userWhoLiked});
   }
 
   Future<Myusers> getUserDeta(String uid) async {
@@ -153,7 +134,7 @@ class DbUserCollection {
     return await postCollection.document(fileName).setData({
       'content': caption,
       'image_url': fileUrl,
-      'likes': 0,
+      'likes': [],
       'post_id': fileName,
       'time_uploaded': Timestamp.fromDate(DateTime.now()),
       'user_id_who_posted': userName + '??.??' + uid,
@@ -167,6 +148,7 @@ class DbUserCollection {
   Future makePostWithVideo(String fileName, Uuid uuid, String caption,
       String uid, BuildContext context, String AssignedWith) async {
     //Whenever Stucked with Instance of Dynamic try Using var Insted Of String i Solvs
+
     var fileUrl;
 
     final StorageReference firebaseStorageRef =
@@ -189,7 +171,7 @@ class DbUserCollection {
       return await postCollection.document(fileName).setData({
         'content': caption,
         'image_url': fileUrl,
-        'likes': 0,
+        'likes': [],
         'post_id': fileName,
         'time_uploaded': Timestamp.fromDate(DateTime.now()),
         'user_id_who_posted': userName + '??.??' + uid,
@@ -236,7 +218,7 @@ class DbUserCollection {
     updateuserPostmade(uniquePostId);
     return await postCollection.document(uniquePostId).setData({
       'content': caption,
-      'likes': 0,
+      'likes': [],
       'post_id': uniquePostId,
       'time_uploaded': Timestamp.fromDate(DateTime.now()),
       'user_id_who_posted': userName + '??.??' + uid,

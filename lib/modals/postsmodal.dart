@@ -1,11 +1,19 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 
 class Post {
   String _userIdWhoPosted, _content, _imageUrl, _postId, _profile_url;
   Timestamp _time_posted;
-  int _likes;
   Map<String, dynamic> _comments;
   bool _isImage, _is_yt_vid;
+
+  List<dynamic> _likes;
+
+  List<dynamic> get likes => _likes;
+
+  set likes(List<dynamic> value) {
+    _likes = value;
+  }
 
   get is_yt_vid => _is_yt_vid;
 
@@ -50,12 +58,6 @@ class Post {
   }
 
   get content => _content;
-
-  int get likes => _likes;
-
-  set likes(int value) {
-    _likes = value;
-  }
 
   get imageUrl => _imageUrl;
 
