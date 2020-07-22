@@ -25,6 +25,8 @@ import 'package:virtualclass/screens/welcomeScreen.dart';
 import 'package:virtualclass/screens/wrapper.dart';
 import 'package:virtualclass/services/authentication.dart';
 import 'constants.dart';
+import 'messageTabScreens/messageTabsHolder.dart';
+import 'newScreens/homePage.dart';
 import 'sign_in.dart';
 import 'package:flutter/material.dart';
 
@@ -83,6 +85,8 @@ class MyApp extends StatelessWidget {
           '/ShowFollowingUsers': (BuildContext context) =>
               new ShowFollowingUsers(),
           '/ShowFollowers': (BuildContext context) => new ShowFollowers(),
+          '/NewHomePage': (BuildContext context) => new NewHomePage(),
+          '/MessageTabHolder': (BuildContext context) => new MessageTabHolder(),
         },
         home: Wrapper(),
       ),

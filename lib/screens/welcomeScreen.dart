@@ -65,10 +65,13 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   FittedBox(
                     child: GestureDetector(
                       onTap: () {
-                        var likedPosts = getLikedPosts(user.uid);
+//                        var likedPosts = getLikedPosts(user.uid);
+//                        Navigator.of(context).pushNamedAndRemoveUntil(
+//                            '/MainPage', (Route<dynamic> route) => false,
+//                            arguments: likedPosts);
+
                         Navigator.of(context).pushNamedAndRemoveUntil(
-                            '/MainPage', (Route<dynamic> route) => false,
-                            arguments: likedPosts);
+                            '/NewHomePage', (Route<dynamic> route) => false);
                       },
                       child: Container(
                         margin: EdgeInsets.only(bottom: 25),
