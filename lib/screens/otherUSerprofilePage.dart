@@ -34,7 +34,7 @@ class _OtherUserProfileState extends State<OtherUserProfile> {
     // Create AlertDialog
     AlertDialog alert = AlertDialog(
       title: Text("Profile Updated"),
-      content: Text('Updated Succesfully'),
+      content: Text('Updated Successfully'),
       actions: [
         okButton,
       ],
@@ -87,7 +87,7 @@ class _OtherUserProfileState extends State<OtherUserProfile> {
                             gradient: LinearGradient(
                                 begin: Alignment.topCenter,
                                 end: Alignment.bottomCenter,
-                                colors: [PrimaryColor, PrimaryColor]),
+                                colors: [PrimaryColor, secondryColor]),
                             borderRadius: BorderRadius.circular(15),
                           ),
                         ),
@@ -463,13 +463,6 @@ class _OtherUserProfileState extends State<OtherUserProfile> {
                                   title: Text(' Teams '),
                                 ),
                               ),
-                              ListTile(
-                                leading: Icon(
-                                  Icons.attach_money,
-                                  color: Colors.black,
-                                ),
-                                title: Text('Earnings'),
-                              ),
                             ],
                           ),
                         ),
@@ -496,7 +489,7 @@ class _OtherUserProfileState extends State<OtherUserProfile> {
                             gradient: LinearGradient(
                                 begin: Alignment.topCenter,
                                 end: Alignment.bottomCenter,
-                                colors: [PrimaryColor, PrimaryColor]),
+                                colors: [PrimaryColor, secondryColor]),
                             borderRadius: BorderRadius.circular(15),
                           ),
                         ),

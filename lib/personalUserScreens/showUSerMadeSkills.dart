@@ -1,13 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:connectivity/connectivity.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
 import 'package:virtualclass/modals/userModal.dart';
-import 'package:virtualclass/screens/deawer.dart';
-import 'package:virtualclass/services/fStoreCollection.dart';
-import 'package:virtualclass/services/serchdeligate.dart';
+
 import '../constants.dart';
 
 class ShowUserMadeSkills extends StatefulWidget {

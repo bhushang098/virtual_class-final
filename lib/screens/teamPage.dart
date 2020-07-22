@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:virtualclass/constants.dart';
 import 'package:virtualclass/modals/userModal.dart';
-import 'package:virtualclass/screens/deawer.dart';
 import 'package:virtualclass/services/fStoreCollection.dart';
 import 'package:virtualclass/services/serchdeligate.dart';
 
@@ -62,7 +61,6 @@ class _TeamPageState extends State<TeamPage> {
           navToMakenewTeams();
         },
       ),
-      endDrawer: MyDrawer(),
       appBar: AppBar(
         title: Text("Team Page"),
         actions: <Widget>[
@@ -87,12 +85,6 @@ class _TeamPageState extends State<TeamPage> {
                   navToprofilePage(_myusers);
                 }
                 print("u tapped profile");
-              }),
-          IconButton(
-              icon: Icon(Icons.menu),
-              onPressed: () {
-                _scaffoldKey.currentState.openEndDrawer();
-                print("u tapped menu");
               }),
         ],
       ),

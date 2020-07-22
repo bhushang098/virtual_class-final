@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:virtualclass/constants.dart';
 import 'package:virtualclass/modals/userModal.dart';
-import 'package:virtualclass/screens/deawer.dart';
 
 class ShowUserMadeTeams extends StatefulWidget {
   @override
@@ -24,7 +23,6 @@ class _ShowUserMadeTeamsState extends State<ShowUserMadeTeams> {
     return Scaffold(
       backgroundColor: primaryLight,
       key: _scaffoldKey,
-      endDrawer: MyDrawer(),
       appBar: AppBar(
         title: Text("Teams Made"),
       ),

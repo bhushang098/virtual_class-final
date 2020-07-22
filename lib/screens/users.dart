@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:virtualclass/constants.dart';
 import 'package:virtualclass/modals/userModal.dart';
-import 'package:virtualclass/screens/deawer.dart';
 import 'package:virtualclass/screens/professsorsPage.dart';
 import 'package:virtualclass/screens/studentsPage.dart';
 import 'package:virtualclass/services/fStoreCollection.dart';
@@ -67,7 +66,6 @@ class _UsersPageState extends State<UsersPage>
     return Scaffold(
       backgroundColor: primaryLight,
       key: _scaffoldKey,
-      endDrawer: MyDrawer(),
       appBar: AppBar(
         title: Text(" Users "),
         actions: <Widget>[
@@ -93,12 +91,6 @@ class _UsersPageState extends State<UsersPage>
                 }
                 print("u tapped profile");
               }),
-          IconButton(
-              icon: Icon(Icons.menu),
-              onPressed: () {
-                _scaffoldKey.currentState.openEndDrawer();
-                print("u tapped menu");
-              })
         ],
         bottom: TabBar(
           controller: _controller,
