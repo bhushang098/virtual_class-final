@@ -12,6 +12,7 @@ import 'package:flutter/services.dart';
 import 'package:virtualclass/constants.dart';
 import 'package:virtualclass/screens/videoScreen.dart';
 import 'package:virtualclass/services/fStoreCollection.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class MakePostScreen extends StatefulWidget {
   @override
@@ -25,7 +26,8 @@ class _MakePostScreenState extends State<MakePostScreen> {
   TextEditingController captnController = new TextEditingController();
   TextEditingController youTubeVideoLinkController =
       new TextEditingController();
-
+  YoutubePlayerController _controller;
+  int currentPos;
   String caption;
   String uTubeLink;
   String vidFileName;
@@ -48,7 +50,6 @@ class _MakePostScreenState extends State<MakePostScreen> {
     _islinkOk = false;
     _tasks = null;
     File video = await ImagePicker.pickVideo(source: ImageSource.gallery);
-
     setState(() {
       videoFile = video;
     });
@@ -136,7 +137,6 @@ class _MakePostScreenState extends State<MakePostScreen> {
   @override
   void initState() {
     super.initState();
-    _showProgress = false;
   }
 
   String assigedWith;
@@ -183,10 +183,24 @@ class _MakePostScreenState extends State<MakePostScreen> {
                   showAlertDialog(context);
                 });
               }
+              if (_controller != null) {
+                //TODO Make Post With YouTube Video
+                setState(() {
+                  _showProgress = true;
+                });
+
+                new DbUserCollection(user.uid)
+                    .makePostWithYouTubeVideo(uTubeLink, uuid, caption,
+                        user.uid, context, assigedWith)
+                    .then((onValue) {
+                  showAlertDialog(context);
+                });
+              }
 
               if (caption.isNotEmpty &&
                   imageFile == null &&
-                  videoFile == null) {
+                  videoFile == null &&
+                  _controller == null) {
                 setState(() {
                   _showProgress = true;
                 });
@@ -218,6 +232,19 @@ class _MakePostScreenState extends State<MakePostScreen> {
                 new DbUserCollection(user.uid)
                     .makePostWithVideo(vidFileName, uuid, caption, user.uid,
                         context, assigedWith)
+                    .then((onValue) {
+                  showAlertDialog(context);
+                });
+              }
+              if (_controller != null) {
+                //TODO Make Post With YouTube Video
+                setState(() {
+                  _showProgress = true;
+                });
+
+                new DbUserCollection(user.uid)
+                    .makePostWithYouTubeVideo(vidFileName, uuid, caption,
+                        user.uid, context, assigedWith)
                     .then((onValue) {
                   showAlertDialog(context);
                 });
@@ -292,16 +319,30 @@ class _MakePostScreenState extends State<MakePostScreen> {
               _islinkOk
                   ? Padding(
                       padding: const EdgeInsets.all(12.0),
-                      child: TextField(
-                        controller: youTubeVideoLinkController,
-                        decoration: InputDecoration(
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.all(
-                              Radius.circular(15.0),
+                      child: Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: TextField(
+                              controller: youTubeVideoLinkController,
+                              decoration: InputDecoration(
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.all(
+                                    Radius.circular(15.0),
+                                  ),
+                                ),
+                                hintText: "YouTube Video Link...",
+                              ),
                             ),
                           ),
-                          hintText: "YouTube Video Link...",
-                        ),
+                          RaisedButton(
+                            child: Text('preView'),
+                            onPressed: () {
+                              setState(() {
+                                uTubeLink = youTubeVideoLinkController.text;
+                              });
+                            },
+                          )
+                        ],
                       ),
                     )
                   : Text(''),
@@ -320,6 +361,7 @@ class _MakePostScreenState extends State<MakePostScreen> {
                 padding: const EdgeInsets.all(8.0),
                 child: showVideo(),
               ),
+              showYoutubeVideo(uTubeLink),
               TextFormField(
                 controller: captnController,
                 keyboardType: TextInputType.multiline,
@@ -401,7 +443,32 @@ class _MakePostScreenState extends State<MakePostScreen> {
             ));
   }
 
-  _showDialog(title, text) {
+  Widget showYoutubeVideo(String uTubeVdLink) {
+    if (uTubeVdLink == null) {
+    } else {
+      if (uTubeVdLink.isNotEmpty) {
+        try {
+          _controller = YoutubePlayerController(
+              initialVideoId: YoutubePlayer.convertUrlToId(uTubeVdLink));
+          return Container(
+            child: Column(
+              children: <Widget>[
+                YoutubePlayer(
+                  controller: _controller,
+                  showVideoProgressIndicator: true,
+                ),
+              ],
+            ),
+          );
+        } catch (e) {
+          print(e.toString());
+        }
+      }
+    }
+    return Container();
+  }
+
+  Widget _showDialog(title, text) {
     showDialog(
         context: context,
         builder: (context) {

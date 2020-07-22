@@ -1,4 +1,3 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -6,6 +5,7 @@ import 'package:virtualclass/modals/postsmodal.dart';
 import 'package:virtualclass/screens/networkVidScreen.dart';
 import 'package:virtualclass/screens/timeService.dart';
 import 'package:virtualclass/services/fStoreCollection.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class CommentsScreen extends StatefulWidget {
   @override
@@ -20,6 +20,7 @@ class _CommentsScreenState extends State<CommentsScreen> {
   String comment;
   TextEditingController commentController = new TextEditingController();
   FirebaseUser user;
+  YoutubePlayerController _controller;
 
   @override
   void initState() {
@@ -92,15 +93,27 @@ class _CommentsScreenState extends State<CommentsScreen> {
                           )
                         : _post.imageUrl == null
                             ? Text('')
-                            : Padding(
-                                padding: const EdgeInsets.all(8.0),
-                                child: Container(
-                                  height:
-                                      MediaQuery.of(context).size.height / 3,
-                                  width: MediaQuery.of(context).size.width,
-                                  child: NetworkPlayer(_post.imageUrl),
-                                ),
-                              ),
+                            : _post.is_yt_vid
+                                ? Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Container(
+                                      height:
+                                          MediaQuery.of(context).size.height /
+                                              3,
+                                      width: MediaQuery.of(context).size.width,
+                                      child: showYoutubeVideo(_post.imageUrl),
+                                    ),
+                                  )
+                                : Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: Container(
+                                      height:
+                                          MediaQuery.of(context).size.height /
+                                              3,
+                                      width: MediaQuery.of(context).size.width,
+                                      child: NetworkPlayer(_post.imageUrl),
+                                    ),
+                                  ),
                     SizedBox(
                       height: 5,
                     ),
@@ -220,5 +233,30 @@ class _CommentsScreenState extends State<CommentsScreen> {
         return alert;
       },
     );
+  }
+
+  Widget showYoutubeVideo(String uTubeVdLink) {
+    if (uTubeVdLink == null) {
+    } else {
+      if (uTubeVdLink.isNotEmpty) {
+        try {
+          _controller = YoutubePlayerController(
+              initialVideoId: YoutubePlayer.convertUrlToId(uTubeVdLink));
+          return Container(
+            child: Column(
+              children: <Widget>[
+                YoutubePlayer(
+                  controller: _controller,
+                  showVideoProgressIndicator: true,
+                ),
+              ],
+            ),
+          );
+        } catch (e) {
+          print(e.toString());
+        }
+      }
+    }
+    return Container();
   }
 }

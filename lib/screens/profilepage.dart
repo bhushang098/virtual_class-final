@@ -7,6 +7,7 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
+import 'package:virtualclass/services/authentication.dart';
 import 'package:virtualclass/services/fStoreCollection.dart';
 import 'package:virtualclass/services/teamArgs.dart';
 import 'package:virtualclass/services/userClassesArgs.dart';
@@ -22,6 +23,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Future<File> imageFile;
   bool _showProgress = false;
   FirebaseUser user;
+  Auth _auth;
 
   pickImageFromGallery() {
     setState(() {
@@ -95,6 +97,13 @@ class _ProfilePageState extends State<ProfilePage> {
     DocumentSnapshot dsn =
         await fireStore.collection('users').document(uid).get();
     return dsn;
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    _auth = new Auth();
+    super.initState();
   }
 
   @override
@@ -454,6 +463,22 @@ class _ProfilePageState extends State<ProfilePage> {
                                 ),
                                 title: Text('Earnings'),
                               ),
+                              InkWell(
+                                splashColor: PrimaryColor,
+                                onTap: () async {
+                                  await _auth.signOut();
+                                  Navigator.of(context).pushNamedAndRemoveUntil(
+                                      '/Loginpage',
+                                      (Route<dynamic> route) => false);
+                                },
+                                child: ListTile(
+                                  leading: Icon(
+                                    Icons.exit_to_app,
+                                    color: Colors.black,
+                                  ),
+                                  title: Text('Log Out'),
+                                ),
+                              ),
                             ],
                           ),
                         ),
@@ -782,6 +807,22 @@ class _ProfilePageState extends State<ProfilePage> {
                                     color: Colors.black,
                                   ),
                                   title: Text(' Teams '),
+                                ),
+                              ),
+                              InkWell(
+                                splashColor: PrimaryColor,
+                                onTap: () async {
+                                  await _auth.signOut();
+                                  Navigator.of(context).pushNamedAndRemoveUntil(
+                                      '/Loginpage',
+                                      (Route<dynamic> route) => false);
+                                },
+                                child: ListTile(
+                                  leading: Icon(
+                                    Icons.exit_to_app,
+                                    color: Colors.black,
+                                  ),
+                                  title: Text('Log Out'),
                                 ),
                               ),
                             ],

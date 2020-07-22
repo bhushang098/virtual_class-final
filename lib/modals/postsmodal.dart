@@ -5,7 +5,13 @@ class Post {
   Timestamp _time_posted;
   int _likes;
   Map<String, dynamic> _comments;
-  bool _isImage;
+  bool _isImage, _is_yt_vid;
+
+  get is_yt_vid => _is_yt_vid;
+
+  set is_yt_vid(value) {
+    _is_yt_vid = value;
+  }
 
   bool get isImage => _isImage;
 

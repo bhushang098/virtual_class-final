@@ -196,9 +196,57 @@ class DbUserCollection {
         'comments': {},
         'profile_url': profileUrl,
         'is_image': false,
+        'is_yt_vid': false,
         'assigned_with': AssignedWith,
       });
     }
+  }
+
+  Future makwPostWithCaption(Uuid uuid, String caption, String uid,
+      BuildContext context, String assigedWith) async {
+    DocumentSnapshot snapshot =
+        await Firestore.instance.collection('users').document(uid).get();
+    var userName = snapshot.data['name'];
+    var profileUrl = snapshot.data['profile_url'];
+    String uniquePostId = uuid.v1();
+    updateuserPostmade(uniquePostId);
+    return await postCollection.document(uniquePostId).setData({
+      'content': caption,
+      'likes': 0,
+      'post_id': uniquePostId,
+      'time_uploaded': Timestamp.fromDate(DateTime.now()),
+      'user_id_who_posted': userName + '??.??' + uid,
+      'comments': {},
+      'profile_url': profileUrl,
+      'is_image': false,
+      'assigned_with': assigedWith,
+      'image_url': null,
+    });
+  }
+
+  Future makePostWithYouTubeVideo(String youTubeLink, Uuid uuid, String caption,
+      String uid, BuildContext context, String assigedWith) async {
+    DocumentSnapshot snapshot =
+        await Firestore.instance.collection('users').document(uid).get();
+
+    var userName = snapshot.data['name'];
+    var profileUrl = snapshot.data['profile_url'];
+
+    String uniquePostId = uuid.v1();
+    updateuserPostmade(uniquePostId);
+    return await postCollection.document(uniquePostId).setData({
+      'content': caption,
+      'likes': 0,
+      'post_id': uniquePostId,
+      'time_uploaded': Timestamp.fromDate(DateTime.now()),
+      'user_id_who_posted': userName + '??.??' + uid,
+      'comments': {},
+      'profile_url': profileUrl,
+      'is_image': false,
+      'is_yt_vid': true,
+      'assigned_with': assigedWith,
+      'image_url': youTubeLink,
+    });
   }
 
   void updateuserPostmade(String postId) async {
@@ -397,30 +445,6 @@ class DbUserCollection {
     skillsMade.add(classId + '??.??' + className);
     return await userCollection.document(uid).updateData({
       'classes_made': skillsMade,
-    });
-  }
-
-  Future makwPostWithCaption(Uuid uuid, String caption, String uid,
-      BuildContext context, String assigedWith) async {
-    DocumentSnapshot snapshot =
-        await Firestore.instance.collection('users').document(uid).get();
-
-    var userName = snapshot.data['name'];
-    var profileUrl = snapshot.data['profile_url'];
-    updateuserPostmade(uid);
-    String uniquePostId = uuid.v1();
-
-    return await postCollection.document(uniquePostId).setData({
-      'content': caption,
-      'likes': 0,
-      'post_id': uniquePostId,
-      'time_uploaded': Timestamp.fromDate(DateTime.now()),
-      'user_id_who_posted': userName + '??.??' + uid,
-      'comments': {},
-      'profile_url': profileUrl,
-      'is_image': false,
-      'assigned_with': assigedWith,
-      'image_url': null,
     });
   }
 

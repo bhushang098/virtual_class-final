@@ -13,6 +13,7 @@ import 'package:virtualclass/screens/networkVidScreen.dart';
 import 'package:virtualclass/screens/timeService.dart';
 import 'package:virtualclass/services/fStoreCollection.dart';
 import 'package:virtualclass/services/serchdeligate.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class HomePage extends StatefulWidget {
   HomePage({Key key, this.likedPosts}) : super(key: key);
@@ -27,6 +28,7 @@ class _HomePageState extends State<HomePage>
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   Myusers _myusers;
+  YoutubePlayerController _controller;
 
   var uuid = Uuid();
   List<dynamic> _liked_Posts = [];
@@ -74,7 +76,6 @@ class _HomePageState extends State<HomePage>
         child: Icon(Icons.image),
       ),
       key: _scaffoldKey,
-      endDrawer: MyDrawer(),
       appBar: AppBar(
         title: Text("Home Page"),
         actions: <Widget>[
@@ -100,12 +101,6 @@ class _HomePageState extends State<HomePage>
                 }
                 print("u tapped profile");
               }),
-          IconButton(
-              icon: Icon(Icons.menu),
-              onPressed: () {
-                _scaffoldKey.currentState.openEndDrawer();
-                print("u tapped menu");
-              })
         ],
       ),
       body: StreamBuilder(
@@ -254,24 +249,52 @@ class _HomePageState extends State<HomePage>
                                                     .data['image_url'] ==
                                                 null
                                             ? Text('')
-                                            : Padding(
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
-                                                child: Container(
-                                                  height: MediaQuery.of(context)
-                                                          .size
-                                                          .height /
-                                                      3,
-                                                  width: MediaQuery.of(context)
-                                                      .size
-                                                      .width,
-                                                  child: NetworkPlayer(snapShot
-                                                      .data
-                                                      .documents[index]
-                                                      .data['image_url']
-                                                      .toString()),
-                                                ),
-                                              ),
+                                            : snapShot.data.documents[index]
+                                                    .data['is_yt_vid']
+                                                ? Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            8.0),
+                                                    child: Container(
+                                                      height:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .height /
+                                                              3,
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                              .size
+                                                              .width,
+                                                      child: showYoutubeVideo(
+                                                          snapShot
+                                                              .data
+                                                              .documents[index]
+                                                              .data['image_url']
+                                                              .toString()),
+                                                    ),
+                                                  )
+                                                : Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            8.0),
+                                                    child: Container(
+                                                      height:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .height /
+                                                              3,
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                              .size
+                                                              .width,
+                                                      child: NetworkPlayer(
+                                                          snapShot
+                                                              .data
+                                                              .documents[index]
+                                                              .data['image_url']
+                                                              .toString()),
+                                                    ),
+                                                  ),
                                     SizedBox(
                                       height: 5,
                                     ),
@@ -332,6 +355,10 @@ class _HomePageState extends State<HomePage>
                                                   .data
                                                   .documents[index]
                                                   .data['is_image'];
+                                              _post.is_yt_vid = snapShot
+                                                  .data
+                                                  .documents[index]
+                                                  .data['is_yt_vid'];
 
                                               navToCommentscreen(_post);
                                             },
@@ -394,6 +421,31 @@ class _HomePageState extends State<HomePage>
     DocumentSnapshot snapshot =
         await Firestore.instance.collection('users').document(uid).get();
     return snapshot.data['name'];
+  }
+
+  Widget showYoutubeVideo(String uTubeVdLink) {
+    if (uTubeVdLink == null) {
+    } else {
+      if (uTubeVdLink.isNotEmpty) {
+        try {
+          _controller = YoutubePlayerController(
+              initialVideoId: YoutubePlayer.convertUrlToId(uTubeVdLink));
+          return Container(
+            child: Column(
+              children: <Widget>[
+                YoutubePlayer(
+                  controller: _controller,
+                  showVideoProgressIndicator: true,
+                ),
+              ],
+            ),
+          );
+        } catch (e) {
+          print(e.toString());
+        }
+      }
+    }
+    return Container();
   }
 
   @override
