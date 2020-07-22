@@ -6,6 +6,8 @@ import 'package:uuid/uuid.dart';
 import 'package:virtualclass/modals/postsmodal.dart';
 import 'package:virtualclass/screens/timeService.dart';
 import 'package:virtualclass/services/fStoreCollection.dart';
+import 'package:virtualclass/services/showYtVideo.dart';
+import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 import 'networkVidScreen.dart';
 
 class ShowUsersPosts extends StatefulWidget {
@@ -17,18 +19,17 @@ class _ShowUsersPostsState extends State<ShowUsersPosts> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
 
   var uuid = Uuid();
-  Set<String> _liked_Posts;
-  List<String> _likedPost_list = [];
+  YoutubePlayerController _controller;
+  List<dynamic> _liked_Posts = [];
 
   @override
   void initState() {
     super.initState();
-    _liked_Posts = new Set();
   }
 
   @override
   Widget build(BuildContext context) {
-    final userId = ModalRoute.of(context).settings.arguments;
+    final otherUSerId = ModalRoute.of(context).settings.arguments;
     final user = Provider.of<FirebaseUser>(context);
     setPostLiked(user.uid);
     return Scaffold(
@@ -55,7 +56,7 @@ class _ShowUsersPostsState extends State<ShowUsersPosts> {
                               .data.documents[index].data['user_id_who_posted']
                               .split('??.??')
                               .last ==
-                          userId
+                          otherUSerId
                       ? Column(
                           children: <Widget>[
                             SizedBox(
@@ -98,14 +99,10 @@ class _ShowUsersPostsState extends State<ShowUsersPosts> {
                                                     .documents[index]
                                                     .data['post_id']
                                                     .toString());
-                                                _likedPost_list.clear();
-                                                _liked_Posts.forEach((ele) {
-                                                  _likedPost_list.add(ele);
-                                                });
 
                                                 new DbUserCollection(user.uid)
-                                                    .updateLikesinUser(user.uid,
-                                                        _likedPost_list);
+                                                    .updateLikesinUser(
+                                                        user.uid, _liked_Posts);
 
                                                 new DbUserCollection(user.uid)
                                                     .removeLikeInPost(snapShot
@@ -136,13 +133,10 @@ class _ShowUsersPostsState extends State<ShowUsersPosts> {
                                                     .documents[index]
                                                     .data['post_id']
                                                     .toString());
-                                                _likedPost_list.clear();
-                                                _liked_Posts.forEach((ele) {
-                                                  _likedPost_list.add(ele);
-                                                });
+
                                                 new DbUserCollection(user.uid)
-                                                    .updateLikesinUser(user.uid,
-                                                        _likedPost_list);
+                                                    .updateLikesinUser(
+                                                        user.uid, _liked_Posts);
                                                 new DbUserCollection(user.uid)
                                                     .addLikeInPost(snapShot
                                                         .data
@@ -191,24 +185,52 @@ class _ShowUsersPostsState extends State<ShowUsersPosts> {
                                                     .data['image_url'] ==
                                                 null
                                             ? Text('')
-                                            : Padding(
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
-                                                child: Container(
-                                                  height: MediaQuery.of(context)
-                                                          .size
-                                                          .height /
-                                                      3,
-                                                  width: MediaQuery.of(context)
-                                                      .size
-                                                      .width,
-                                                  child: NetworkPlayer(snapShot
-                                                      .data
-                                                      .documents[index]
-                                                      .data['image_url']
-                                                      .toString()),
-                                                ),
-                                              ),
+                                            : snapShot.data.documents[index]
+                                                    .data['is_yt_vid']
+                                                ? Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            8.0),
+                                                    child: Container(
+                                                      height:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .height /
+                                                              3,
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                              .size
+                                                              .width,
+                                                      child: showYoutubeVideo(
+                                                          snapShot
+                                                              .data
+                                                              .documents[index]
+                                                              .data['image_url']
+                                                              .toString()),
+                                                    ),
+                                                  )
+                                                : Padding(
+                                                    padding:
+                                                        const EdgeInsets.all(
+                                                            8.0),
+                                                    child: Container(
+                                                      height:
+                                                          MediaQuery.of(context)
+                                                                  .size
+                                                                  .height /
+                                                              3,
+                                                      width:
+                                                          MediaQuery.of(context)
+                                                              .size
+                                                              .width,
+                                                      child: NetworkPlayer(
+                                                          snapShot
+                                                              .data
+                                                              .documents[index]
+                                                              .data['image_url']
+                                                              .toString()),
+                                                    ),
+                                                  ),
                                     SizedBox(
                                       height: 5,
                                     ),
@@ -269,6 +291,10 @@ class _ShowUsersPostsState extends State<ShowUsersPosts> {
                                                   .data
                                                   .documents[index]
                                                   .data['is_image'];
+                                              _post.is_yt_vid = snapShot
+                                                  .data
+                                                  .documents[index]
+                                                  .data['is_yt_vid'];
 
                                               navToCommentscreen(_post);
                                             },
@@ -315,5 +341,30 @@ class _ShowUsersPostsState extends State<ShowUsersPosts> {
 
   void navToCommentscreen(Post post) {
     Navigator.pushNamed(context, '/CommentScreen', arguments: post);
+  }
+
+  Widget showYoutubeVideo(String uTubeVdLink) {
+    if (uTubeVdLink == null) {
+    } else {
+      if (uTubeVdLink.isNotEmpty) {
+        try {
+          _controller = YoutubePlayerController(
+              initialVideoId: YoutubePlayer.convertUrlToId(uTubeVdLink));
+          return Container(
+            child: Column(
+              children: <Widget>[
+                YoutubePlayer(
+                  controller: _controller,
+                  showVideoProgressIndicator: true,
+                ),
+              ],
+            ),
+          );
+        } catch (e) {
+          print(e.toString());
+        }
+      }
+    }
+    return Container();
   }
 }

@@ -15,7 +15,7 @@ class _ProfessorPageState extends State<ProfessorPage> {
     final user = Provider.of<FirebaseUser>(context);
     return Scaffold(
       body: FutureBuilder(
-        future: getStudents(),
+        future: getProffesors(),
         builder: (_, snapShot) {
           if (snapShot.connectionState == ConnectionState.waiting) {
             // ignore: missing_return
@@ -102,7 +102,7 @@ class _ProfessorPageState extends State<ProfessorPage> {
     );
   }
 
-  getStudents() async {
+  getProffesors() async {
     var fireStore = Firestore.instance;
     QuerySnapshot qn = await fireStore.collection('users').getDocuments();
     return qn.documents;

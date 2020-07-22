@@ -212,7 +212,7 @@ class DbUserCollection {
     updateuserPostmade(uniquePostId);
     return await postCollection.document(uniquePostId).setData({
       'content': caption,
-      'likes': 0,
+      'likes': [],
       'post_id': uniquePostId,
       'time_uploaded': Timestamp.fromDate(DateTime.now()),
       'user_id_who_posted': userName + '??.??' + uid,
