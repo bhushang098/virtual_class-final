@@ -17,7 +17,7 @@ import 'package:virtualclass/services/serchdeligate.dart';
 class HomePage extends StatefulWidget {
   HomePage({Key key, this.likedPosts}) : super(key: key);
 
-  var likedPosts;
+  List<dynamic> likedPosts;
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -29,14 +29,12 @@ class _HomePageState extends State<HomePage>
   Myusers _myusers;
 
   var uuid = Uuid();
-  Set<String> _liked_Posts;
-  List<dynamic> _likedPost_list = [];
+  List<dynamic> _liked_Posts = [];
 
   @override
   void initState() {
     super.initState();
-    _liked_Posts = new Set();
-    _likedPost_list = widget.likedPosts;
+    setPostLiked(widget.likedPosts);
   }
 
   _showDialog(title, text) {
@@ -64,6 +62,7 @@ class _HomePageState extends State<HomePage>
   Widget build(BuildContext context) {
     super.build(context);
     user = Provider.of<FirebaseUser>(context);
+
     return Scaffold(
       backgroundColor: primaryLight,
       floatingActionButton: FloatingActionButton(
@@ -157,10 +156,11 @@ class _HomePageState extends State<HomePage>
                                           .data
                                           .documents[index]
                                           .data['time_uploaded'])),
-                                      trailing: _likedPost_list.contains(
-                                              snapShot.data.documents[index]
-                                                  .data['post_id']
-                                                  .toString())
+                                      trailing: _liked_Posts.contains(snapShot
+                                              .data
+                                              .documents[index]
+                                              .data['post_id']
+                                              .toString())
                                           ? GestureDetector(
                                               onTap: () {
                                                 _liked_Posts.remove(snapShot
@@ -168,14 +168,10 @@ class _HomePageState extends State<HomePage>
                                                     .documents[index]
                                                     .data['post_id']
                                                     .toString());
-                                                _likedPost_list.clear();
-                                                _liked_Posts.forEach((ele) {
-                                                  _likedPost_list.add(ele);
-                                                });
 
                                                 new DbUserCollection(user.uid)
-                                                    .updateLikesinUser(user.uid,
-                                                        _likedPost_list);
+                                                    .updateLikesinUser(
+                                                        user.uid, _liked_Posts);
 
                                                 new DbUserCollection(user.uid)
                                                     .removeLikeInPost(snapShot
@@ -206,13 +202,10 @@ class _HomePageState extends State<HomePage>
                                                     .documents[index]
                                                     .data['post_id']
                                                     .toString());
-                                                _likedPost_list.clear();
-                                                _liked_Posts.forEach((ele) {
-                                                  _likedPost_list.add(ele);
-                                                });
+
                                                 new DbUserCollection(user.uid)
-                                                    .updateLikesinUser(user.uid,
-                                                        _likedPost_list);
+                                                    .updateLikesinUser(
+                                                        user.uid, _liked_Posts);
                                                 new DbUserCollection(user.uid)
                                                     .addLikeInPost(snapShot
                                                         .data
@@ -387,15 +380,11 @@ class _HomePageState extends State<HomePage>
     return timeAgo(t);
   }
 
-//  void setPostLiked(String uid) async {
-//    DocumentSnapshot snapshot =
-//        await Firestore.instance.collection('users').document(uid).get();
-//    List<dynamic> userLiked = snapshot.data['post_liked'];
-//
-//    for (int i = 0; i < userLiked.length; i++) {
-//      _liked_Posts.add(userLiked[i]);
-//    }
-//  }
+  void setPostLiked(List<dynamic> userLiked) {
+    for (int i = 0; i < userLiked.length; i++) {
+      _liked_Posts.add(userLiked[i]);
+    }
+  }
 
   void navToCommentscreen(Post post) {
     Navigator.pushNamed(context, '/CommentScreen', arguments: post);

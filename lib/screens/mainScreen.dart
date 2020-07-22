@@ -27,7 +27,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     user = Provider.of<FirebaseUser>(context);
-    var likedPosts = ModalRoute.of(context).settings.arguments;
+    List<dynamic> likedPosts = ModalRoute.of(context).settings.arguments;
     List<Widget> _screens = [
       HomePage(likedPosts: likedPosts),
       SkillsPage(),

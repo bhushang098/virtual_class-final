@@ -11,9 +11,11 @@ class WelcomeScreen extends StatefulWidget {
 }
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
+  List<dynamic> userLiked = [];
   @override
   Widget build(BuildContext context) {
     final user = Provider.of<FirebaseUser>(context);
+    getLikedPosts(user.uid);
     return Scaffold(
       backgroundColor: DarkBackgroundColor,
       body: Column(
@@ -65,10 +67,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   FittedBox(
                     child: GestureDetector(
                       onTap: () {
-                        var likedPosts = getLikedPosts(user.uid);
                         Navigator.of(context).pushNamedAndRemoveUntil(
                             '/MainPage', (Route<dynamic> route) => false,
-                            arguments: likedPosts);
+                            arguments: userLiked);
                       },
                       child: Container(
                         margin: EdgeInsets.only(bottom: 25),
@@ -108,10 +109,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 
   getLikedPosts(uid) {
     var snapshot = Firestore.instance.collection('users').document(uid).get();
-    var userLiked = [];
+
     snapshot.then((onValue) {
       userLiked = onValue.data['post_liked'];
     });
-    return userLiked;
   }
 }
