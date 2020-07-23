@@ -11,7 +11,7 @@ import 'package:virtualclass/modals/userModal.dart';
 import 'package:virtualclass/screens/networkVidScreen.dart';
 import 'package:virtualclass/screens/timeService.dart';
 import 'package:virtualclass/services/fStoreCollection.dart';
-import 'package:virtualclass/services/serchdeligate.dart';
+import 'package:virtualclass/services/searchDeligatePosts.dart';
 import 'package:youtube_player_flutter/youtube_player_flutter.dart';
 
 class HomePage extends StatefulWidget {

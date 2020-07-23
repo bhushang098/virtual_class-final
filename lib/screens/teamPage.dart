@@ -7,7 +7,7 @@ import 'package:virtualclass/constants.dart';
 import 'package:virtualclass/modals/teamModal.dart';
 import 'package:virtualclass/modals/userModal.dart';
 import 'package:virtualclass/services/fStoreCollection.dart';
-import 'package:virtualclass/services/serchdeligate.dart';
+import 'package:virtualclass/services/searchDeligateTeam.dart';
 
 class TeamPage extends StatefulWidget {
   @override

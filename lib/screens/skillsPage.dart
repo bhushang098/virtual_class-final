@@ -7,7 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:virtualclass/modals/skillModal.dart';
 import 'package:virtualclass/modals/userModal.dart';
 import 'package:virtualclass/services/fStoreCollection.dart';
-import 'package:virtualclass/services/serchdeligate.dart';
+import 'package:virtualclass/services/searchDeligateSkilll.dart';
 
 import '../constants.dart';
 

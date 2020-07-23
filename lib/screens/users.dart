@@ -8,7 +8,7 @@ import 'package:virtualclass/modals/userModal.dart';
 import 'package:virtualclass/screens/professsorsPage.dart';
 import 'package:virtualclass/screens/studentsPage.dart';
 import 'package:virtualclass/services/fStoreCollection.dart';
-import 'package:virtualclass/services/serchdeligate.dart';
+import 'package:virtualclass/services/searchDeligateUser.dart';
 
 class UsersPage extends StatefulWidget {
   @override
