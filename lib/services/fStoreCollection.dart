@@ -334,9 +334,9 @@ class DbUserCollection {
         .setData({
       'skill_name': skill.skillName,
       'about': skill.about,
-      'who_can_post': skill.whoCnaPost,
-      'who_can_see_post': skill.whoCanSeePost,
-      'who_can_send_message': skill.whoCanSendMessage,
+      'public_post': skill.whoCnaPost == 'Everyone' ? true : false,
+      'public_see_post': skill.whoCanSeePost == 'Everyone' ? true : false,
+      'public_comment': skill.whoCanSendMessage == 'Everyone' ? true : false,
       'skill_id': skill.skillId + '??.??' + skill.skillName,
       'user_id': skill.userId,
       'host': userName,

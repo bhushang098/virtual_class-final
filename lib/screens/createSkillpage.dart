@@ -66,7 +66,7 @@ class _CreateSkillsState extends State<CreateSkills> {
                   Icon(Icons.public, color: PrimaryColor),
                   Spacer(),
                   DropdownButton(
-                    hint: Text('Who Can See Post to skill'),
+                    hint: Text('Who Can  Post to skill'),
                     value: whoCanPostToSkill,
                     items: <DropdownMenuItem>[
                       DropdownMenuItem(
