@@ -1,12 +1,7 @@
 class Skill {
-  String _skillName,
-      _about,
-      _whoCnaPost,
-      _whoCanSendMessage,
-      _whoCanSeePost,
-      _userId,
-      _Skill_Id,
-      _hosted_by;
+  String _skillName, _about, _userId, _Skill_Id, _hosted_by, _skill_image;
+
+  bool _public_comment, _public_post, _public_see_post;
 
   double _price;
   Map<String, dynamic> _members;
@@ -15,6 +10,18 @@ class Skill {
 
   set skillName(String value) {
     _skillName = value;
+  }
+
+  get skill_image => _skill_image;
+
+  set skill_image(value) {
+    _skill_image = value;
+  }
+
+  get Skill_Id => _Skill_Id;
+
+  set Skill_Id(value) {
+    _Skill_Id = value;
   }
 
   get about => _about;
@@ -49,25 +56,25 @@ class Skill {
     _userId = value;
   }
 
-  get whoCanSeePost => _whoCanSeePost;
-
-  set whoCanSeePost(value) {
-    _whoCanSeePost = value;
-  }
-
-  get whoCanSendMessage => _whoCanSendMessage;
-
-  set whoCanSendMessage(value) {
-    _whoCanSendMessage = value;
-  }
-
-  get whoCnaPost => _whoCnaPost;
-
-  set whoCnaPost(value) {
-    _whoCnaPost = value;
-  }
-
   set about(value) {
     _about = value;
+  }
+
+  get public_see_post => _public_see_post;
+
+  set public_see_post(value) {
+    _public_see_post = value;
+  }
+
+  get public_post => _public_post;
+
+  set public_post(value) {
+    _public_post = value;
+  }
+
+  bool get public_comment => _public_comment;
+
+  set public_comment(bool value) {
+    _public_comment = value;
   }
 }

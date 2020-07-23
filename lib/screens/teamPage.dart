@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:virtualclass/constants.dart';
+import 'package:virtualclass/modals/teamModal.dart';
 import 'package:virtualclass/modals/userModal.dart';
 import 'package:virtualclass/services/fStoreCollection.dart';
 import 'package:virtualclass/services/serchdeligate.dart';
@@ -17,6 +18,8 @@ class _TeamPageState extends State<TeamPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
   Myusers _myusers;
   FirebaseUser user;
+
+  List<Team> _teamList = [];
 
   _showDialog(title, text) {
     showDialog(
@@ -50,6 +53,7 @@ class _TeamPageState extends State<TeamPage> {
   @override
   Widget build(BuildContext context) {
     user = Provider.of<FirebaseUser>(context);
+    _teamList.clear();
     return Scaffold(
       backgroundColor: primaryLight,
       key: _scaffoldKey,
@@ -67,8 +71,10 @@ class _TeamPageState extends State<TeamPage> {
           IconButton(
               icon: Icon(Icons.search),
               onPressed: () {
+                getTeamList();
                 showSearch(
-                    context: context, delegate: DeligateLectures(new List()));
+                    context: context,
+                    delegate: DeligateTeam(_teamList, context));
                 print("u tapped search");
               }),
           IconButton(
@@ -199,5 +205,35 @@ class _TeamPageState extends State<TeamPage> {
 
   void navToMakenewTeams() {
     Navigator.pushNamed(context, '/GetTeamDetails');
+  }
+
+  void getTeamList() {
+    _teamList = getTeamsData();
+  }
+
+  List<Team> getTeamsData() {
+    Firestore.instance
+        .collection('teams')
+        .getDocuments()
+        .then((QuerySnapshot snapshot) {
+      snapshot.documents.forEach((f) => _teamList.add(buildTeamClass(f)));
+    });
+    return _teamList;
+  }
+
+  Team buildTeamClass(DocumentSnapshot f) {
+    Team _team = new Team();
+    _team.teamName = f.data['team_name'];
+    _team.about = f.data['about'];
+    _team.location = f.data['location'];
+    _team.userId = f.data['user_id'];
+    _team.teamId = f.data['team_id'];
+    _team.public_post = f.data['public_post'];
+    _team.public_see_post = f.data['public_see_post'];
+    _team.public_comment = f.data['public_comment'];
+    _team.members = f.data['members'];
+    _team.team_image = f.data['team_image'];
+    _team.host = f.data['host'];
+    return _team;
   }
 }

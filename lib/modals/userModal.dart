@@ -1,8 +1,7 @@
 class Myusers {
-  String _name, _email, _phone, _profile_url;
-  bool _gender;
+  String _name, _email, _phone, _profile_url, _location, _userId;
+  bool _gender, _isTeacher;
   int _noOfPost;
-
   List<dynamic> _followers;
   List<dynamic> _following;
   List<dynamic> _posts;
@@ -10,6 +9,7 @@ class Myusers {
   List<dynamic> _videos;
   List<dynamic> _links;
   List<dynamic> _post_liked;
+  List<dynamic> _skills;
 
   String get name => _name;
 
@@ -17,10 +17,34 @@ class Myusers {
     _name = value;
   }
 
+  List<dynamic> get skills => _skills;
+
+  set skills(List<dynamic> value) {
+    _skills = value;
+  }
+
+  get userId => _userId;
+
+  set userId(value) {
+    _userId = value;
+  }
+
   get profile_url => _profile_url;
 
   set profile_url(value) {
     _profile_url = value;
+  }
+
+  get isTeacher => _isTeacher;
+
+  set isTeacher(value) {
+    _isTeacher = value;
+  }
+
+  get location => _location;
+
+  set location(value) {
+    _location = value;
   }
 
   get email => _email;

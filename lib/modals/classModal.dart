@@ -1,15 +1,35 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class Classes {
   String _className, _location;
-  DateTime _startDate, _endDate;
-  TimeOfDay _startTime;
-  String _duration;
+  Timestamp _startDate, _endDate;
+  Timestamp _startTime;
+  String _duration, _class_image;
   bool _daily;
-  String _about;
+  String _about, _host;
   bool _isFree;
   double fees;
   String _userId, _classId;
+  Map<String, dynamic> _members;
+
+  Map<String, dynamic> get members => _members;
+
+  set members(Map<String, dynamic> value) {
+    _members = value;
+  }
+
+  get host => _host;
+
+  set host(value) {
+    _host = value;
+  }
+
+  get class_image => _class_image;
+
+  set class_image(value) {
+    _class_image = value;
+  }
 
   String get className => _className;
 
@@ -49,21 +69,15 @@ class Classes {
     _daily = value;
   }
 
-  TimeOfDay get startTime => _startTime;
+  Timestamp get startTime => _startTime;
 
-  set startTime(TimeOfDay value) {
+  set startTime(Timestamp value) {
     _startTime = value;
   }
 
-  get endDate => _endDate;
+  Timestamp get startDate => _startDate;
 
-  set endDate(value) {
-    _endDate = value;
-  }
-
-  DateTime get startDate => _startDate;
-
-  set startDate(DateTime value) {
+  set startDate(Timestamp value) {
     _startDate = value;
   }
 
@@ -75,5 +89,11 @@ class Classes {
 
   set duration(String value) {
     _duration = value;
+  }
+
+  get endDate => _endDate;
+
+  set endDate(value) {
+    _endDate = value;
   }
 }

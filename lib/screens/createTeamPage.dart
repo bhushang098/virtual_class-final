@@ -230,9 +230,12 @@ class _CreateTeamPageState extends State<CreateTeamPage> {
                   _team.about = about;
                   _team.location = classLocation;
                   _team.teamName = teamName;
-                  _team.whoCanSeePost = whoCanSeePost;
-                  _team.whoCanSendMessage = whoCanSeMessage;
-                  _team.whoCnaPost = whoCanPostToTeam;
+                  _team.public_see_post =
+                      whoCanSeePost == 'Everyone' ? true : false;
+                  _team.public_comment =
+                      whoCanSeMessage == 'Everyone' ? true : false;
+                  _team.public_post =
+                      whoCanPostToTeam == 'Everyone' ? true : false;
                   _team.teamId = new Uuid().v1();
                   new DbUserCollection(user.uid)
                       .makeNewTeam(_team)

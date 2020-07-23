@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:provider/provider.dart';
+import 'package:virtualclass/modals/skillModal.dart';
 import 'package:virtualclass/modals/userModal.dart';
 import 'package:virtualclass/services/fStoreCollection.dart';
 import 'package:virtualclass/services/serchdeligate.dart';
@@ -16,6 +17,7 @@ class SkillsPage extends StatefulWidget {
 }
 
 class _SkillsPageState extends State<SkillsPage> {
+  List<Skill> _skillList = [];
   Myusers _myusers;
   FirebaseUser user;
   _showDialog(title, text) {
@@ -46,6 +48,7 @@ class _SkillsPageState extends State<SkillsPage> {
     user = Provider.of<FirebaseUser>(context);
     final GlobalKey<ScaffoldState> _scaffoldKey =
         new GlobalKey<ScaffoldState>();
+    _skillList.clear();
     return Scaffold(
       backgroundColor: primaryLight,
       key: _scaffoldKey,
@@ -81,8 +84,10 @@ class _SkillsPageState extends State<SkillsPage> {
           IconButton(
               icon: Icon(Icons.search),
               onPressed: () {
+                getSkillList();
                 showSearch(
-                    context: context, delegate: DeligateLectures(new List()));
+                    context: context,
+                    delegate: DeligateSkill(_skillList, context));
                 print("u tapped search");
               }),
           IconButton(
@@ -219,5 +224,36 @@ class _SkillsPageState extends State<SkillsPage> {
 
   void navToDetailsPage(String skillId) {
     Navigator.pushNamed(context, '/SkillDetailsPage', arguments: skillId);
+  }
+
+  void getSkillList() {
+    _skillList = getSkillsData();
+  }
+
+  List<Skill> getSkillsData() {
+    Firestore.instance
+        .collection('skills')
+        .getDocuments()
+        .then((QuerySnapshot snapshot) {
+      snapshot.documents.forEach((f) => _skillList.add(buildSkillClass(f)));
+    });
+    return _skillList;
+  }
+
+  Skill buildSkillClass(DocumentSnapshot f) {
+    Skill _skill = new Skill();
+    _skill.skillName = f.data['skill_name'];
+    _skill.about = f.data['about'];
+    _skill.public_comment = f.data['public_comment'];
+    _skill.public_post = f.data['public_post'];
+    _skill.public_see_post = f.data['public_see_post'];
+    _skill.userId = f.data['user_id'];
+    _skill.skillId = f.data['skill_id'];
+    _skill.hosted_by = f.data['host'];
+    _skill.skill_image = f.data['skill_image'];
+    _skill.price = f.data['fees'];
+    _skill.members = f.data['members'];
+
+    return _skill;
   }
 }

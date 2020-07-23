@@ -22,6 +22,7 @@ class _UsersPageState extends State<UsersPage>
   Myusers _myusers;
   FirebaseUser user;
   TabController _controller;
+  List<Myusers> _userList = [];
   _showDialog(title, text) {
     showDialog(
         context: context,
@@ -63,6 +64,7 @@ class _UsersPageState extends State<UsersPage>
   @override
   Widget build(BuildContext context) {
     user = Provider.of<FirebaseUser>(context);
+    _userList.clear();
     return Scaffold(
       backgroundColor: primaryLight,
       key: _scaffoldKey,
@@ -72,8 +74,10 @@ class _UsersPageState extends State<UsersPage>
           IconButton(
               icon: Icon(Icons.search),
               onPressed: () {
+                getUsersList();
                 showSearch(
-                    context: context, delegate: DeligateLectures(new List()));
+                    context: context,
+                    delegate: DeligateUsers(_userList, context));
                 print("u tapped search");
               }),
           IconButton(
@@ -112,5 +116,32 @@ class _UsersPageState extends State<UsersPage>
         children: [StudentsPage(), ProfessorPage()],
       ),
     );
+  }
+
+  void getUsersList() {
+    _userList = getUsersData();
+  }
+
+  List<Myusers> getUsersData() {
+    Firestore.instance
+        .collection('users')
+        .getDocuments()
+        .then((QuerySnapshot snapshot) {
+      snapshot.documents.forEach((f) => _userList.add(buildUsersClass(f)));
+    });
+    return _userList;
+  }
+
+  Myusers buildUsersClass(DocumentSnapshot f) {
+    Myusers _user = new Myusers();
+
+    _user.name = f.data['name'];
+    _user.profile_url = f.data['profile_url'];
+    _user.location = f.data['location'];
+    _user.skills = f.data['skills'];
+    _user.isTeacher = f.data['is_teacher'];
+    _user.userId = f.data['user_id'];
+
+    return _user;
   }
 }

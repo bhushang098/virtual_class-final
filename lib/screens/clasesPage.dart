@@ -4,6 +4,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:virtualclass/modals/classModal.dart';
 import 'package:virtualclass/modals/userModal.dart';
 import 'package:virtualclass/services/fStoreCollection.dart';
 import 'package:virtualclass/services/serchdeligate.dart';
@@ -17,6 +18,8 @@ class ClassesPage extends StatefulWidget {
 
 class _ClassesPageState extends State<ClassesPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = new GlobalKey<ScaffoldState>();
+
+  List<Classes> _classList = [];
   Myusers _myusers;
   FirebaseUser user;
   _showDialog(title, text) {
@@ -54,6 +57,7 @@ class _ClassesPageState extends State<ClassesPage> {
 
   @override
   Widget build(BuildContext context) {
+    _classList.clear();
     user = Provider.of<FirebaseUser>(context);
     return Scaffold(
       backgroundColor: primaryLight,
@@ -90,8 +94,10 @@ class _ClassesPageState extends State<ClassesPage> {
           IconButton(
               icon: Icon(Icons.search),
               onPressed: () {
+                getClassList();
                 showSearch(
-                    context: context, delegate: DeligateLectures(new List()));
+                    context: context,
+                    delegate: DeligateClass(_classList, context));
                 print("u tapped search");
               }),
           IconButton(
@@ -267,5 +273,40 @@ class _ClassesPageState extends State<ClassesPage> {
 
   void navToDetailsPage(String classId) {
     Navigator.pushNamed(context, '/ClassDetailsPage', arguments: classId);
+  }
+
+  void getClassList() {
+    _classList = getClassData();
+  }
+
+  List<Classes> getClassData() {
+    Firestore.instance
+        .collection('classes')
+        .getDocuments()
+        .then((QuerySnapshot snapshot) {
+      snapshot.documents.forEach((f) => _classList.add(buildTeamClass(f)));
+    });
+    return _classList;
+  }
+
+  Classes buildTeamClass(DocumentSnapshot f) {
+    Classes _class = new Classes();
+
+    _class.className = f.data['class_name'];
+    _class.location = f.data['location'];
+    _class.startDate = f.data['start_date'];
+    _class.endDate = f.data['end_date'];
+    _class.startTime = f.data['timing'];
+    _class.host = f.data['host'];
+    _class.daily = f.data['is_daily'];
+    _class.about = f.data['about'];
+    //_class.isFree = f.data['class_name'];
+    _class.fees = f.data['fees'];
+    _class.userId = f.data['user_id'];
+    _class.classId = f.data['class_id'];
+    _class.members = f.data['members'];
+    _class.class_image = f.data['class_image'];
+
+    return _class;
   }
 }

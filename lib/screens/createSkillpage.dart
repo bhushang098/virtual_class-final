@@ -225,9 +225,12 @@ class _CreateSkillsState extends State<CreateSkills> {
                   _skill.userId = user.uid;
                   _skill.about = about;
                   _skill.skillName = skillName;
-                  _skill.whoCanSeePost = whoCanSeePost;
-                  _skill.whoCanSendMessage = whoCanSeMessage;
-                  _skill.whoCnaPost = whoCanPostToSkill;
+                  _skill.public_see_post =
+                      whoCanSeePost == 'Everyone' ? true : false;
+                  _skill.public_comment =
+                      whoCanSeMessage == 'Everyone' ? true : false;
+                  _skill.public_post =
+                      whoCanPostToSkill == 'Everyone' ? true : false;
                   _skill.price = double.parse(fess);
                   _skill.skillId = new Uuid().v1();
                   new DbUserCollection(user.uid)

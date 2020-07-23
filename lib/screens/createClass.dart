@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -281,12 +282,17 @@ class _CreateClassState extends State<CreateClass> {
                   _class.about = about;
                   _class.className = className;
                   _class.location = location;
-                  _class.startDate = startDate;
+                  _class.startDate = Timestamp.fromDate(startDate);
                   _class.endDate = endDate;
                   _class.daily = _isDaily;
                   _class.fees = double.tryParse(fess);
                   _class.classId = uuid.v1();
-                  _class.startTime = startTime;
+                  _class.startTime = Timestamp.fromDate(new DateTime(
+                      DateTime.now().year,
+                      DateTime.now().month,
+                      DateTime.now().day,
+                      startTime.hour,
+                      startTime.minute));
                   new DbUserCollection(user.uid)
                       .makeNewClass(_class)
                       .then((onValue) {

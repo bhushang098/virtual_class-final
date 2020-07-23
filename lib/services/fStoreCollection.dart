@@ -301,9 +301,9 @@ class DbUserCollection {
       'team_name': team.teamName,
       'about': team.about,
       'location': team.location,
-      'public_post': team.whoCnaPost == 'Everyone' ? true : false,
-      'public_see_post': team.whoCanSeePost == 'Everyone' ? true : false,
-      'public_comment': team.whoCanSendMessage == 'Everyone' ? true : false,
+      'public_post': team.public_post,
+      'public_see_post': team.public_see_post,
+      'public_comment': team.public_comment,
       'team_id': team.teamId + '??.??' + team.teamName,
       'user_id': team.userId,
       'members': {},
@@ -334,9 +334,9 @@ class DbUserCollection {
         .setData({
       'skill_name': skill.skillName,
       'about': skill.about,
-      'public_post': skill.whoCnaPost == 'Everyone' ? true : false,
-      'public_see_post': skill.whoCanSeePost == 'Everyone' ? true : false,
-      'public_comment': skill.whoCanSendMessage == 'Everyone' ? true : false,
+      'public_post': skill.public_post == 'Everyone' ? true : false,
+      'public_see_post': skill.public_see_post == 'Everyone' ? true : false,
+      'public_comment': skill.public_comment == 'Everyone' ? true : false,
       'skill_id': skill.skillId + '??.??' + skill.skillName,
       'user_id': skill.userId,
       'host': userName,
@@ -396,8 +396,12 @@ class DbUserCollection {
         await Firestore.instance.collection('users').document(uid).get();
     var userName = snapshot.data['name'];
 
-    DateTime startTime = DateTime(DateTime.now().year, DateTime.now().month,
-        DateTime.now().day, classes.startTime.hour, classes.startTime.minute);
+    DateTime startTime = DateTime(
+        DateTime.now().year,
+        DateTime.now().month,
+        DateTime.now().day,
+        classes.startTime.toDate().hour,
+        classes.startTime.toDate().minute);
 
     updateuserCreatedClass(classes.classId, classes.className);
     return await classesCollection
