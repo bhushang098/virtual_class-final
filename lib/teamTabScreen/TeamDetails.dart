@@ -1,10 +1,8 @@
 import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
 import 'package:uuid/uuid.dart';
@@ -156,7 +154,10 @@ class _TeamDetailsState extends State<TeamDetails> {
                                     right: 30,
                                     child: RaisedButton(
                                       color: PrimaryColor,
-                                      child: Text('Leave'),
+                                      child: Text(
+                                        'Leave',
+                                        style: TextStyle(color: Colors.white),
+                                      ),
                                       onPressed: () {
                                         new DbUserCollection(user.uid)
                                             .updateUserLeavedTeams(
@@ -179,7 +180,10 @@ class _TeamDetailsState extends State<TeamDetails> {
                                     right: 30,
                                     child: RaisedButton(
                                       color: PrimaryColor,
-                                      child: Text('Join'),
+                                      child: Text(
+                                        'Join',
+                                        style: TextStyle(color: Colors.white),
+                                      ),
                                       onPressed: () {
                                         new DbUserCollection(user.uid)
                                             .makeTeamMember(

@@ -154,7 +154,10 @@ class _ClassDetailsState extends State<ClassDetails> {
                                     right: 30,
                                     child: RaisedButton(
                                       color: PrimaryColor,
-                                      child: Text('Leave'),
+                                      child: Text(
+                                        'Leave',
+                                        style: TextStyle(color: Colors.white),
+                                      ),
                                       onPressed: () {
                                         new DbUserCollection(user.uid)
                                             .updateUserLeavedClasses(
@@ -177,7 +180,10 @@ class _ClassDetailsState extends State<ClassDetails> {
                                     right: 30,
                                     child: RaisedButton(
                                       color: PrimaryColor,
-                                      child: Text('Join'),
+                                      child: Text(
+                                        'Join',
+                                        style: TextStyle(color: Colors.white),
+                                      ),
                                       onPressed: () {
                                         new DbUserCollection(user.uid)
                                             .makeClassMember(

@@ -53,9 +53,11 @@ class _HomePageState extends State<HomePage>
   }
 
   FirebaseUser user;
+  List<Post> _postList = [];
 
   @override
   Widget build(BuildContext context) {
+    _postList.clear();
     super.build(context);
     user = Provider.of<FirebaseUser>(context);
     return Scaffold(
@@ -75,8 +77,10 @@ class _HomePageState extends State<HomePage>
           IconButton(
               icon: Icon(Icons.search),
               onPressed: () {
+                getpostListForSearch();
                 showSearch(
-                    context: context, delegate: DeligateLectures(new List()));
+                    context: context,
+                    delegate: DeligatePostAll(_postList, context));
                 print("u tapped search");
               }),
           IconButton(
@@ -438,4 +442,35 @@ class _HomePageState extends State<HomePage>
   @override
   // TODO: implement wantKeepAlive
   bool get wantKeepAlive => true;
+
+  void getpostListForSearch() {
+    _postList = getpostData();
+  }
+
+  List<Post> getpostData() {
+    Firestore.instance
+        .collection('posts')
+        .where('assigned_with', isEqualTo: 'ALL')
+        .getDocuments()
+        .then((QuerySnapshot snapshot) {
+      snapshot.documents.forEach((f) => _postList.add(buildPostClass(f)));
+    });
+    return _postList;
+  }
+
+  Post buildPostClass(DocumentSnapshot f) {
+    Post _post = new Post();
+    _post.userIdWhoPosted = f.data['user_id_who_posted'];
+    _post.content = f.data['content'];
+    _post.imageUrl = f.data['image_url'];
+    _post.profile_url = f.data['profile_url'];
+    _post.postId = f.data['post_id'];
+    _post.time_posted = f.data['time_uploaded'];
+    _post.comments = f.data['comments'];
+    _post.isImage = f.data['is_image'];
+    _post.is_yt_vid = f.data['is_yt_vid'];
+    _post.likes = f.data['likes'];
+
+    return _post;
+  }
 }

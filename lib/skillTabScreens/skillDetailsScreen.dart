@@ -162,7 +162,10 @@ class _SkillDetailsScreenState extends State<SkillDetailsScreen> {
                                     right: 30,
                                     child: RaisedButton(
                                       color: PrimaryColor,
-                                      child: Text('Leave'),
+                                      child: Text(
+                                        'Leave',
+                                        style: TextStyle(color: Colors.white),
+                                      ),
                                       onPressed: () {
                                         new DbUserCollection(user.uid)
                                             .updateUserLeavedSkills(
@@ -185,7 +188,10 @@ class _SkillDetailsScreenState extends State<SkillDetailsScreen> {
                                     right: 30,
                                     child: RaisedButton(
                                       color: PrimaryColor,
-                                      child: Text('Join'),
+                                      child: Text(
+                                        'Join',
+                                        style: TextStyle(color: Colors.white),
+                                      ),
                                       onPressed: () {
                                         new DbUserCollection(user.uid)
                                             .makeSkillsMember(

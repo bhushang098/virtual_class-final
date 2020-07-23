@@ -282,21 +282,28 @@ class _ProfilePageState extends State<ProfilePage> {
                                     ),
                                   ),
                                   Expanded(
-                                    child: Column(
-                                      children: <Widget>[
-                                        Text(
-                                          "Followers",
-                                          style: TextStyle(
-                                            fontSize: 17.0,
-                                            fontWeight: FontWeight.bold,
+                                    child: InkWell(
+                                      splashColor: PrimaryColor,
+                                      onTap: () {
+                                        Navigator.pushNamed(
+                                            context, '/ShowFollowers');
+                                      },
+                                      child: Column(
+                                        children: <Widget>[
+                                          Text(
+                                            "Followers",
+                                            style: TextStyle(
+                                              fontSize: 17.0,
+                                              fontWeight: FontWeight.bold,
+                                            ),
                                           ),
-                                        ),
-                                        Text(
-                                          snapShot.data['followers'].length
-                                              .toString(),
-                                          style: TextStyle(fontSize: 14.0),
-                                        )
-                                      ],
+                                          Text(
+                                            snapShot.data['followers'].length
+                                                .toString(),
+                                            style: TextStyle(fontSize: 14.0),
+                                          )
+                                        ],
+                                      ),
                                     ),
                                   ),
                                   Expanded(
